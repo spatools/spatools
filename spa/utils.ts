@@ -10,7 +10,7 @@ export function createAccessor<T>(value: T): () => T {
 }
 
 /** Return an observable from value (or _default if undefined). If value is subscribable, returns value directly. */
-export function createObservable<T>(value: any, _default: any): KnockoutObservable<T> {
+export function createObservable<T>(value: any, _default?: any): KnockoutObservable<T> {
     if (_.isUndefined(value) || _.isNull(value))
         return ko.observable(_default);
 
@@ -21,7 +21,7 @@ export function createObservable<T>(value: any, _default: any): KnockoutObservab
 }
 
 /** Return an observable from value (or _default if undefined). If value is subscribable, returns value directly. */
-export function createObservableArray(value: any, mapFunction: (obj: any) => any, context?: any): KnockoutObservableArray {
+export function createObservableArray(value: any, mapFunction?: (obj: any) => any, context?: any): KnockoutObservableArray {
     if (typeof value === "undefined")
         return ko.observableArray();
 
@@ -147,6 +147,20 @@ export function getQueryString(key: string): any {
         return dictionary[key];
 
     return dictionary;
+}
+
+/** Load specified modules using RequireJS under a promise. */
+export function load(...modules: string[]): JQueryPromise {
+    return $.Deferred(function (dfd) {
+        var args = _.flatten(modules, true);
+
+        try {
+            require(args, dfd.resolve);
+        }
+        catch (ex) {
+            dfd.reject(ex);
+        }
+    }).promise();
 }
 
 //#endregion

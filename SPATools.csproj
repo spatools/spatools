@@ -72,28 +72,94 @@
     <Content Include="Scripts\typings\knockout\knockout.amd.d.ts" />
     <Content Include="Scripts\typings\knockout\knockout.d.ts" />
     <Content Include="Scripts\typings\moment\moment.d.ts" />
+    <Content Include="Scripts\typings\requirejs\require.d.ts" />
     <Content Include="Scripts\typings\underscore\underscore-typed.d.ts" />
     <Content Include="Scripts\typings\underscore\underscore.d.ts" />
-    <TypeScriptCompile Include="Src\asyncCommand.ts" />
-    <Content Include="Src\asyncCommand.js">
+    <TypeScriptCompile Include="spa\asyncCommand.ts" />
+    <Content Include="spa\asyncCommand.js">
       <DependentUpon>asyncCommand.ts</DependentUpon>
     </Content>
-    <Content Include="Src\asyncTimer.js">
+    <Content Include="spa\asyncTimer.js">
       <DependentUpon>asyncTimer.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Src\changeTracker.ts" />
-    <Content Include="Src\changeTracker.js">
+    <TypeScriptCompile Include="spa\changeTracker.ts" />
+    <Content Include="spa\changeTracker.js">
       <DependentUpon>changeTracker.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Src\command.ts" />
-    <Content Include="Src\command.js">
+    <TypeScriptCompile Include="spa\command.ts" />
+    <Content Include="spa\command.js">
       <DependentUpon>command.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Src\_definitions.d.ts" />
-    <Content Include="Src\event.js">
+    <TypeScriptCompile Include="spa\_definitions.d.ts" />
+    <TypeScriptCompile Include="spa\data\adapters.ts" />
+    <Content Include="spa\data\adapters.js">
+      <DependentUpon>adapters.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\data\adapters\odata.js">
+      <DependentUpon>odata.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\data\adapters\odata.ts" />
+    <TypeScriptCompile Include="spa\data\_data.d.ts" />
+    <TypeScriptCompile Include="spa\data\guid.ts" />
+    <TypeScriptCompile Include="spa\data\adapters\webapi.ts" />
+    <Content Include="spa\data\adapters\webapi.js">
+      <DependentUpon>webapi.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\context.ts" />
+    <Content Include="spa\data\context.js">
+      <DependentUpon>context.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\dataset.ts" />
+    <Content Include="spa\data\dataset.js">
+      <DependentUpon>dataset.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\dataview.ts" />
+    <Content Include="spa\data\dataview.js">
+      <DependentUpon>dataview.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\foreignview.ts" />
+    <Content Include="spa\data\foreignview.js">
+      <DependentUpon>foreignview.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\data\guid.js">
+      <DependentUpon>guid.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\query.ts" />
+    <TypeScriptCompile Include="spa\data\mapping.ts" />
+    <Content Include="spa\data\mapping.js">
+      <DependentUpon>mapping.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\data\query.js">
+      <DependentUpon>query.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\stores.ts" />
+    <TypeScriptCompile Include="spa\data\relationview.ts" />
+    <Content Include="spa\data\relationview.js">
+      <DependentUpon>relationview.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\remoteview.ts" />
+    <Content Include="spa\data\remoteview.js">
+      <DependentUpon>remoteview.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\data\stores.js">
+      <DependentUpon>stores.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\data\stores\memory.ts" />
+    <TypeScriptCompile Include="spa\data\stores\localstorage.ts" />
+    <TypeScriptCompile Include="spa\data\stores\indexeddb.ts" />
+    <Content Include="spa\data\stores\indexeddb.js">
+      <DependentUpon>indexeddb.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\data\stores\localstorage.js">
+      <DependentUpon>localstorage.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\data\stores\memory.js">
+      <DependentUpon>memory.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\event.js">
       <DependentUpon>event.ts</DependentUpon>
     </Content>
-    <Content Include="Src\event.ts" />
+    <Content Include="spa\event.ts" />
     <TypeScriptCompile Include="base\extenders.ts" />
     <Content Include="base\extenders.js">
       <DependentUpon>extenders.ts</DependentUpon>
@@ -102,43 +168,43 @@
     <Content Include="base\handlers.js">
       <DependentUpon>handlers.ts</DependentUpon>
     </Content>
-    <Content Include="Src\messenger.js">
+    <Content Include="spa\messenger.js">
       <DependentUpon>messenger.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Src\messenger.ts" />
-    <TypeScriptCompile Include="Src\asyncTimer.ts" />
-    <Content Include="Src\base64.js">
+    <TypeScriptCompile Include="spa\messenger.ts" />
+    <TypeScriptCompile Include="spa\asyncTimer.ts" />
+    <Content Include="spa\base64.js">
       <DependentUpon>base64.ts</DependentUpon>
     </Content>
-    <Content Include="Src\loader.js">
+    <Content Include="spa\loader.js">
       <DependentUpon>loader.ts</DependentUpon>
     </Content>
     <Content Include="base\moment.js">
       <DependentUpon>moment.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Src\store.ts" />
-    <Content Include="Src\operation.js">
+    <TypeScriptCompile Include="spa\store.ts" />
+    <Content Include="spa\operation.js">
       <DependentUpon>operation.ts</DependentUpon>
     </Content>
-    <Content Include="Src\store.js">
+    <Content Include="spa\store.js">
       <DependentUpon>store.ts</DependentUpon>
     </Content>
-    <Content Include="Src\timer.js">
+    <Content Include="spa\timer.js">
       <DependentUpon>timer.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Src\timer.ts" />
+    <TypeScriptCompile Include="spa\timer.ts" />
     <TypeScriptCompile Include="base\moment.ts" />
-    <TypeScriptCompile Include="Src\loader.ts" />
-    <TypeScriptCompile Include="Src\base64.ts" />
+    <TypeScriptCompile Include="spa\loader.ts" />
+    <TypeScriptCompile Include="spa\base64.ts" />
     <TypeScriptCompile Include="base\underscore.ts" />
-    <TypeScriptCompile Include="Src\operation.ts" />
+    <TypeScriptCompile Include="spa\operation.ts" />
     <Content Include="base\underscore.js">
       <DependentUpon>underscore.ts</DependentUpon>
     </Content>
-    <Content Include="Src\utils.js">
+    <Content Include="spa\utils.js">
       <DependentUpon>utils.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Src\utils.ts" />
+    <TypeScriptCompile Include="spa\utils.ts" />
     <TypeScriptCompile Include="_references.d.ts" />
   </ItemGroup>
   <ItemGroup>
@@ -147,9 +213,7 @@
   <ItemGroup>
     <Content Include="package.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Src\data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="README.md" />
   </ItemGroup>

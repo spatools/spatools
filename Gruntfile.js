@@ -30,8 +30,8 @@
                 }
             },
             modules: {
-                src: "src/*.ts",
-                dest: "<%= paths.base %>/",
+                src: "spa/**/*.ts",
+                dest: "<%= paths.output %>/",
                 options: {
                     declaration: false
                 }

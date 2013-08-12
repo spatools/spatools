@@ -1,4 +1,5 @@
 /// <reference path="../_references.d.ts" />
+/// <reference path="../Scripts/typings/requirejs/require.d.ts" />
 /// <reference path="../build/spatools.d.ts" />
 
 interface Size {

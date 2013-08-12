@@ -19,6 +19,27 @@ interface Window {
     moment: Moment;
     Globalize: GlobalizeStatic;
     globalStorage: Storage;
+
+    webkitIndexedDB: IDBFactory;
+    mozIndexedDB: IDBFactory;
+    IDBTransaction: IDBTransaction;
+    webkitIDBTransaction: IDBTransaction;
+    msIDBTransaction: IDBTransaction;
+    IDBKeyRange: IDBKeyRange;
+    webkitIDBKeyRange: IDBKeyRange;
+    msIDBKeyRange: IDBKeyRange;
+}
+
+interface EventTarget {
+    result?: any;
+}
+
+interface IDBVersionChangeEvent {
+    target: IDBVersionChangeEventTarget;
+}
+
+interface IDBVersionChangeEventTarget extends EventTarget {
+    transaction?: IDBTransaction;
 }
 
 interface MSEventObj {

@@ -105,8 +105,8 @@ _.mixin({
 
 //#region UnderscoreJS integration with KnockoutJS
 
-interface KnockoutObservableArrayFunctions {
-    each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context: any): KnockoutComputed<void>;
+interface KnockoutUnderscoreArrayFunctions {
+    each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context: any): KnockoutComputed<void >;
     map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context: any): KnockoutComputed<TResult[]>;
     select<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
     reduce<T, TResult>(iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult, memo: TResult, context?: any): KnockoutComputed<TResult>;
@@ -175,6 +175,23 @@ interface KnockoutObservableArrayFunctions {
     _zip(...arrays: any[][]): any[][];
     _indexOf<T>(value: T, isSorted?: boolean): number;
     _lastIndexOf<T>(value: T, from?: number): number;
+}
+
+interface KnockoutObservableArrayFunctions extends KnockoutUnderscoreArrayFunctions {
+    indexOf<T>(value: T, isSorted?: boolean): KnockoutComputed<number>;
+    lastIndexOf<T>(value: T, from?: number): KnockoutComputed<number>;
+}
+
+interface KnockoutUnderscoreObjectsFunctions {
+    keys(): KnockoutComputed<string[]>;
+    values(): KnockoutComputed<any[]>;
+    clone<T>(object: T): KnockoutComputed<T>;
+    isEmpty(object: any): KnockoutComputed<boolean>;
+
+    _keys(): string[];
+    _values(): any[];
+    _clone<T>(object: T): T;
+    _isEmpty(object: any): boolean;
 }
 
 module spa {

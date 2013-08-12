@@ -156,6 +156,24 @@ define(["require", "exports"], function(require, exports) {
     }
     exports.getQueryString = getQueryString;
 
+    /** Load specified modules using RequireJS under a promise. */
+    function load() {
+        var modules = [];
+        for (var _i = 0; _i < (arguments.length - 0); _i++) {
+            modules[_i] = arguments[_i + 0];
+        }
+        return $.Deferred(function (dfd) {
+            var args = _.flatten(modules, true);
+
+            try  {
+                require(args, dfd.resolve);
+            } catch (ex) {
+                dfd.reject(ex);
+            }
+        }).promise();
+    }
+    exports.load = load;
+
     //#endregion
     //#region String Methods
     /** Fill given text with given char while text length < given length */
