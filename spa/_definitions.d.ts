@@ -7,18 +7,6 @@ interface Size {
     height: number;
 }
 
-interface CommandOptions {
-    execute(): any;
-    canExecute? (): boolean;
-    context?: any;
-}
-
-interface AsyncCommandOptions {
-    execute($data: any, complete?: () => void): any;
-    canExecute? (isExecuting?: boolean): boolean;
-    context?: any;
-}
-
 interface OperationOptions {
     useArguments?: boolean;
     cache?: boolean;
