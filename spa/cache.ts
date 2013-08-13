@@ -76,22 +76,20 @@ function cache(key: string, url: string, mime: string, force?: boolean): JQueryP
 function downloadAndEncode(key: string, url: string, mime: string): JQueryPromise<any> {
     if (!deferreds[key]) {
         cacheEntries[key] = false;
-        deferreds[key] =
-        $.ajax({ url: url, dataType: "text" })
-         .then(function (content) {
-             memory[key] = {
-                 key: key,
-                 mime: mime,
-                 url: url,
-                 content: base64.encode(content)
-             };
-         
-             cacheEntries[key] = true;
-             delete deferreds[key];
-             save();
-         
-             return memory[key];
-         });
+        deferreds[key] = $.ajax({ url: url, dataType: "text" }).then(function (content) {
+            memory[key] = {
+                key: key,
+                mime: mime,
+                url: url,
+                content: base64.encode(content)
+            };
+            
+            cacheEntries[key] = true;
+            delete deferreds[key];
+            save();
+            
+            return memory[key];
+        });
     }
 
     return deferreds[key];
