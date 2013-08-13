@@ -7,6 +7,7 @@ declare module _ {
     export function sum<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context: any): number;
     export function average<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
     export function count<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): number;
+    export function filterMap<T, TResult>(collection: { [key: string]: T }, iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
     export function filterMap<T, TResult>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
     export function index<T>(collection: T[], iterator?: (element: T, index?: number, list?: T[]) => boolean, context?: any): number;
     export function partialEnd<T>(func: () => T, ...args: any[]): () => T;

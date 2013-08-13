@@ -7,6 +7,12 @@ interface Size {
     height: number;
 }
 
+interface KnockoutBindingHandlers {
+    fullscreen: {
+        init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => {}, viewModel: any, bindingContext: KnockoutBindingContext): void;
+    };
+}
+
 interface OperationOptions {
     useArguments?: boolean;
     cache?: boolean;

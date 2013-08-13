@@ -19,6 +19,7 @@ interface Window {
     moment: Moment;
     Globalize: GlobalizeStatic;
     globalStorage: Storage;
+    ActiveXObject: any;
 
     webkitIndexedDB: IDBFactory;
     mozIndexedDB: IDBFactory;
@@ -28,6 +29,11 @@ interface Window {
     IDBKeyRange: IDBKeyRange;
     webkitIDBKeyRange: IDBKeyRange;
     msIDBKeyRange: IDBKeyRange;
+}
+
+interface Document {
+    fullScreen: any;
+    webkitIsFullScreen: any;
 }
 
 interface EventTarget {

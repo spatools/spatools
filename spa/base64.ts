@@ -125,10 +125,12 @@ else {
     };
 }
 
+/** Create Data URL with specified mime type and context */
 var createDataURL = function(mimeType: string, content: string): string {
     return "data:" + mimeType + ";base64," + encode(content);
 }
 
+/** Download a file and encode it as Data URL */
 var downloadFileAsDataURL = function(url: string) : JQueryDeferred<string> {
     return $.Deferred<string>(function (dfd) {
         var xhr = new XMLHttpRequest();

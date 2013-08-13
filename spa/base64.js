@@ -110,10 +110,12 @@ define(["require", "exports"], function(require, exports) {
         };
     }
 
+    /** Create Data URL with specified mime type and context */
     var createDataURL = function (mimeType, content) {
         return "data:" + mimeType + ";base64," + encode(content);
     };
 
+    /** Download a file and encode it as Data URL */
     var downloadFileAsDataURL = function (url) {
         return $.Deferred(function (dfd) {
             var xhr = new XMLHttpRequest();

@@ -76,6 +76,14 @@
     <Content Include="Scripts\typings\underscore\underscore-typed.d.ts" />
     <Content Include="Scripts\typings\underscore\underscore.d.ts" />
     <TypeScriptCompile Include="spa\changeTracker.ts" />
+    <TypeScriptCompile Include="spa\animation.ts" />
+    <Content Include="spa\animation.js">
+      <DependentUpon>animation.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\cache.ts" />
+    <Content Include="spa\cache.js">
+      <DependentUpon>cache.ts</DependentUpon>
+    </Content>
     <Content Include="spa\changeTracker.js">
       <DependentUpon>changeTracker.ts</DependentUpon>
     </Content>
@@ -161,6 +169,14 @@
     <Content Include="base\handlers.js">
       <DependentUpon>handlers.ts</DependentUpon>
     </Content>
+    <TypeScriptCompile Include="spa\fullscreen.ts" />
+    <Content Include="spa\fullscreen.js">
+      <DependentUpon>fullscreen.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\keyboard.ts" />
+    <Content Include="spa\keyboard.js">
+      <DependentUpon>keyboard.ts</DependentUpon>
+    </Content>
     <Content Include="spa\messenger.js">
       <DependentUpon>messenger.ts</DependentUpon>
     </Content>
@@ -175,8 +191,16 @@
       <DependentUpon>moment.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="spa\store.ts" />
+    <TypeScriptCompile Include="spa\navigator.ts" />
+    <Content Include="spa\navigator.js">
+      <DependentUpon>navigator.ts</DependentUpon>
+    </Content>
     <Content Include="spa\operation.js">
       <DependentUpon>operation.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\path.ts" />
+    <Content Include="spa\path.js">
+      <DependentUpon>path.ts</DependentUpon>
     </Content>
     <Content Include="spa\store.js">
       <DependentUpon>store.ts</DependentUpon>

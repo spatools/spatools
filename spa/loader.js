@@ -2,11 +2,13 @@ define(["require", "exports"], function(require, exports) {
     /// <reference path="_definitions.d.ts" />
     var doc = document, head = doc.head, interval = 10, timeout = 150000, cssRules, sheet;
 
+    /** Load script document by url */
     function loadScript(url) {
         return $.ajax({ url: url, dataType: "script" });
     }
     exports.loadScript = loadScript;
 
+    /** Load specified style into current page */
     function loadStyle(css) {
         return $.Deferred(function (dfd) {
             var style = doc.createElement("style");
@@ -30,6 +32,7 @@ define(["require", "exports"], function(require, exports) {
     }
     exports.loadStyle = loadStyle;
 
+    /** Load specified stylesheet by url */
     function loadStylesheet(url) {
         return $.Deferred(function (dfd) {
             var link = doc.createElement("link");

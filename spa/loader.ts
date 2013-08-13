@@ -4,11 +4,13 @@ var doc = document, head = doc.head,
     interval = 10, timeout = 150000,
     cssRules, sheet;
 
+/** Load script document by url */
 export function loadScript(url: string): JQueryXHR {
     return $.ajax({ url: url, dataType: "script" });
 }
 
-export function loadStyle(css: string): JQueryPromise {
+/** Load specified style into current page */
+export function loadStyle(css: string): JQueryPromise<any> {
     return $.Deferred(function (dfd) {
         var style = doc.createElement("style");
         style.type = "text/css";
@@ -31,6 +33,7 @@ export function loadStyle(css: string): JQueryPromise {
     }).promise();
 }
 
+/** Load specified stylesheet by url */
 export function loadStylesheet(url: string): JQueryPromise<string> {
     return $.Deferred(function (dfd) {
         var link = doc.createElement("link");
