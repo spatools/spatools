@@ -16,4 +16,16 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
         }
     }
     exports.addTemplate = addTemplate;
+
+    function load() {
+        var widgets = [];
+        for (var _i = 0; _i < (arguments.length - 0); _i++) {
+            widgets[_i] = arguments[_i + 0];
+        }
+        widgets = _.map(widgets, function (widget) {
+            return "./ui/" + widget;
+        });
+        return utils.load.apply(null, widgets);
+    }
+    exports.load = load;
 });

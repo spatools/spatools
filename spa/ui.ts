@@ -15,3 +15,8 @@ export function addTemplate(id: string, template: string, engine?: KnockoutTempl
         });
     }
 }
+
+export function load(...widgets: string[]): JQueryPromise<any> {
+    widgets = _.map(widgets, widget => "./ui/" + widget);
+    return utils.load.apply(null, widgets);
+}
