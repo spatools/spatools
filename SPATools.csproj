@@ -222,6 +222,14 @@
     <Content Include="spa\timers.js">
       <DependentUpon>timers.ts</DependentUpon>
     </Content>
+    <TypeScriptCompile Include="spa\ui.ts" />
+    <Content Include="spa\ui.js">
+      <DependentUpon>ui.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\ui\templateEngine.ts" />
+    <Content Include="spa\ui\templateEngine.js">
+      <DependentUpon>templateEngine.ts</DependentUpon>
+    </Content>
     <Content Include="spa\utils.js">
       <DependentUpon>utils.ts</DependentUpon>
     </Content>
@@ -234,9 +242,7 @@
   <ItemGroup>
     <Content Include="package.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="spa\ui\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="README.md" />
   </ItemGroup>
