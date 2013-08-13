@@ -73,6 +73,7 @@
     <Content Include="Scripts\typings\knockout\knockout.d.ts" />
     <Content Include="Scripts\typings\moment\moment.d.ts" />
     <Content Include="Scripts\typings\requirejs\require.d.ts" />
+    <Content Include="Scripts\typings\sammyjs\sammyjs.d.ts" />
     <Content Include="Scripts\typings\underscore\underscore-typed.d.ts" />
     <Content Include="Scripts\typings\underscore\underscore.d.ts" />
     <TypeScriptCompile Include="spa\changeTracker.ts" />
@@ -201,6 +202,10 @@
     <TypeScriptCompile Include="spa\path.ts" />
     <Content Include="spa\path.js">
       <DependentUpon>path.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="spa\router.ts" />
+    <Content Include="spa\router.js">
+      <DependentUpon>router.ts</DependentUpon>
     </Content>
     <Content Include="spa\store.js">
       <DependentUpon>store.ts</DependentUpon>
