@@ -351,16 +351,20 @@ interface KnockoutTemplateSources {
 // nativeTemplateEngine.js
 //////////////////////////////////
 
-interface KnockoutNativeTemplateEngine {
-
-    renderTemplateSource(templateSource, bindingContext, options?);
-}
+interface KnockoutNativeTemplateEngine extends KnockoutTemplateEngine { }
 
 //////////////////////////////////
 // templateEngine.js
 //////////////////////////////////
 
-interface KnockoutTemplateEngine extends KnockoutNativeTemplateEngine {
+interface KnockoutTemplateEngineStatic {
+    prototype: KnockoutTemplateEngine;
+
+    new (): KnockoutTemplateEngine;
+}
+
+interface KnockoutTemplateEngine {
+    renderTemplateSource(templateSource, bindingContext, options?);
 
     createJavaScriptEvaluatorBlock(script: string);
 
@@ -414,12 +418,7 @@ interface KnockoutStatic {
     // templateEngine.js
     //////////////////////////////////
 
-    templateEngine: {
-
-        prototype: KnockoutTemplateEngine;
-
-        new (): KnockoutTemplateEngine;
-    };
+    templateEngine: KnockoutTemplateEngineStatic;
 
     //////////////////////////////////
     // templateRewriting.js

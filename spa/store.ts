@@ -1,5 +1,15 @@
 /// <reference path="_definitions.d.ts" />
 
+export interface ISimpleStorage {
+    length: number;
+
+    key(index: any): any;
+    getItem(key: any): any;
+    setItem(key: any, value: any): void;
+    removeItem(key: any): void;
+    clear(): void
+}
+
 var stores: any = {};
 function createFromIStorage(type: string, storage: ISimpleStorage): void {
     stores[type] = storage;
@@ -72,7 +82,7 @@ if (!_store)
 
 //#endregion
 
-//#eregion Public Methods
+//#region Public Methods
 
 export var length: number = 0;
 

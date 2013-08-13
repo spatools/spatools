@@ -2,15 +2,22 @@
 /// <reference path="../Scripts/typings/requirejs/require.d.ts" />
 /// <reference path="../build/spatools.d.ts" />
 
-interface Size {
-    width: number;
-    height: number;
-}
-
 interface KnockoutBindingHandlers {
     fullscreen: {
         init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => {}, viewModel: any, bindingContext: KnockoutBindingContext): void;
     };
+}
+
+interface KnockoutTemplateEngine {
+    addTemplate(id: string, template: string): void;
+}
+
+interface KnockoutTemplateSources {
+    require: any;
+}
+
+interface KnockoutStatic {
+    requireTemplateEngine: any;
 }
 
 interface OperationOptions {
@@ -32,14 +39,4 @@ interface OperationFunction extends Function {
     error: KnockoutObservable<string>;
     errorDetails: KnockoutObservable<any>;
     hasError: KnockoutObservable<boolean>;
-}
-
-interface ISimpleStorage {
-    length: number;
-
-    key(index: any): any;
-    getItem(key: any): any;
-    setItem(key: any, value: any): void;
-    removeItem(key: any): void;
-    clear(): void
 }

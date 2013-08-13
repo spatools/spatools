@@ -1,5 +1,4 @@
 define(["require", "exports"], function(require, exports) {
-    /// <reference path="_definitions.d.ts" />
     var stores = {};
     function createFromIStorage(type, storage) {
         stores[type] = storage;
@@ -67,7 +66,7 @@ define(["require", "exports"], function(require, exports) {
         _store = stores.memory;
 
     //#endregion
-    //#eregion Public Methods
+    //#region Public Methods
     exports.length = 0;
 
     function key(index) {

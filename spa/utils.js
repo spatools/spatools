@@ -1,5 +1,4 @@
 define(["require", "exports"], function(require, exports) {
-    /// <reference path="_definitions.d.ts" />
     exports.isIE = /*@cc_on!@*/ 0;
 
     //#region Knockout Utilities
