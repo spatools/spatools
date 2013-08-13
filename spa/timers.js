@@ -21,65 +21,72 @@ define(["require", "exports"], function(require, exports) {
             //#region Properties
             this.tickCount = 0;
             this.timeout = 0;
-            //#endregion
-            //#region Getters / Setters
-            /** Get the total number of ticks elapsed since timer started. */
-            this.getTickCount = function () {
-                return this.tickCount;
-            };
-            /** Set a new interval for the current timer. */
-            this.setInterval = function (interval) {
-                this.interval = interval * 1;
-            };
-            /** Set a new callback to be called when timer ticks. */
-            this.setCallback = function (callback) {
-                this.callback = callback;
-            };
-            //#endregion
-            //#region Public Methods
-            /** Start current timer. */
-            this.start = function (callOnFirstStart) {
-                if (typeof callOnFirstStart === "undefined") { callOnFirstStart = false; }
-                if (!this.callback)
-                    throw new Error("callback is not defined, define callback before start");
-
-                this.enabled = true;
-
-                if (callOnFirstStart || this.callOnFirstStart)
-                    this.callback.call(this.callBackContext);
-
-                this.setTimeout();
-            };
-            /** Stop current timer. */
-            this.stop = function () {
-                if (this.enabled) {
-                    this.enabled = false;
-                    clearTimeout(this.timeout);
-                }
-            };
-            /** Reset current timer by setting tick count to 0. */
-            this.reset = function () {
-                this.tickCount = 0;
-            };
-            //#endregion
-            //#region Private Methods
-            this.setTimeout = function () {
-                this.timeout = setTimeout(function () {
-                    this.onTimerTick.apply(this, arguments);
-                }, this.interval);
-            };
-            this.onTimerTick = function () {
-                this.tickCount += this.interval;
-                this.callback.call(this.callBackContext);
-
-                if (this.enabled) {
-                    this.setTimeout();
-                }
-            };
             if (enabled && callback) {
                 this.start();
             }
         }
+        //#endregion
+        //#region Getters / Setters
+        /** Get the total number of ticks elapsed since timer started. */
+        Timer.prototype.getTickCount = function () {
+            return this.tickCount;
+        };
+
+        /** Set a new interval for the current timer. */
+        Timer.prototype.setInterval = function (interval) {
+            this.interval = interval * 1;
+        };
+
+        /** Set a new callback to be called when timer ticks. */
+        Timer.prototype.setCallback = function (callback) {
+            this.callback = callback;
+        };
+
+        //#endregion
+        //#region Public Methods
+        /** Start current timer. */
+        Timer.prototype.start = function (callOnFirstStart) {
+            if (typeof callOnFirstStart === "undefined") { callOnFirstStart = false; }
+            if (!this.callback)
+                throw new Error("callback is not defined, define callback before start");
+
+            this.enabled = true;
+
+            if (callOnFirstStart || this.callOnFirstStart)
+                this.callback.call(this.callBackContext);
+
+            this.setTimeout();
+        };
+
+        /** Stop current timer. */
+        Timer.prototype.stop = function () {
+            if (this.enabled) {
+                this.enabled = false;
+                clearTimeout(this.timeout);
+            }
+        };
+
+        /** Reset current timer by setting tick count to 0. */
+        Timer.prototype.reset = function () {
+            this.tickCount = 0;
+        };
+
+        //#endregion
+        //#region Private Methods
+        Timer.prototype.setTimeout = function () {
+            this.timeout = setTimeout(function () {
+                this.onTimerTick.apply(this, arguments);
+            }, this.interval);
+        };
+
+        Timer.prototype.onTimerTick = function () {
+            this.tickCount += this.interval;
+            this.callback.call(this.callBackContext);
+
+            if (this.enabled) {
+                this.setTimeout();
+            }
+        };
         return Timer;
     })();
     exports.Timer = Timer;
@@ -105,64 +112,72 @@ define(["require", "exports"], function(require, exports) {
             //#region Properties
             this.tickCount = 0;
             this.timeout = 0;
-            //#endregion
-            //#region Getters / Setters
-            /** Get the total number of ticks elapsed since timer started. */
-            this.getTickCount = function () {
-                return this.tickCount;
-            };
-            /** Set a new interval for the current timer. */
-            this.setInterval = function (interval) {
-                this.interval = interval * 1;
-            };
-            /** Set a new callback to be called when timer ticks. */
-            this.setCallback = function (callback) {
-                this.callback = callback;
-            };
-            //#endregion
-            //#region Public Methods
-            /** Start current timer. */
-            this.start = function (callOnFirstStart) {
-                if (typeof callOnFirstStart === "undefined") { callOnFirstStart = false; }
-                if (!this.callback)
-                    throw new Error("callback is not defined, define callback before start");
-
-                this.enabled = true;
-
-                if (callOnFirstStart || this.callOnFirstStart)
-                    this.callback.call(this.callBackContext, this.completeCallback);
-            };
-            /** Stop current timer. */
-            this.stop = function () {
-                if (this.enabled) {
-                    this.enabled = false;
-                    clearTimeout(this.timeout);
-                }
-            };
-            /** Reset current timer by setting tick count to 0. */
-            this.reset = function () {
-                this.tickCount = 0;
-            };
-            //#endregion
-            //#region Private Methods
-            this.setTimeout = function () {
-                this.timeout = setTimeout(function () {
-                    this.onTimerTick.apply(this, arguments);
-                }, this.interval);
-            };
-            this.onTimerTick = function () {
-                this.tickCount += this.interval;
-                this.callback.call(this.callBackContext, this.completeCallback);
-            };
-            this.completeCallback = function () {
-                if (this.enabled) {
-                    this.setTimeout();
-                }
-            };
             if (enabled && callback) {
                 this.start();
             }
         }
+        //#endregion
+        //#region Getters / Setters
+        /** Get the total number of ticks elapsed since timer started. */
+        AsyncTimer.prototype.getTickCount = function () {
+            return this.tickCount;
+        };
+
+        /** Set a new interval for the current timer. */
+        AsyncTimer.prototype.setInterval = function (interval) {
+            this.interval = interval * 1;
+        };
+
+        /** Set a new callback to be called when timer ticks. */
+        AsyncTimer.prototype.setCallback = function (callback) {
+            this.callback = callback;
+        };
+
+        //#endregion
+        //#region Public Methods
+        /** Start current timer. */
+        AsyncTimer.prototype.start = function (callOnFirstStart) {
+            if (typeof callOnFirstStart === "undefined") { callOnFirstStart = false; }
+            if (!this.callback)
+                throw new Error("callback is not defined, define callback before start");
+
+            this.enabled = true;
+
+            if (callOnFirstStart || this.callOnFirstStart)
+                this.callback.call(this.callBackContext, this.completeCallback);
+        };
+
+        /** Stop current timer. */
+        AsyncTimer.prototype.stop = function () {
+            if (this.enabled) {
+                this.enabled = false;
+                clearTimeout(this.timeout);
+            }
+        };
+
+        /** Reset current timer by setting tick count to 0. */
+        AsyncTimer.prototype.reset = function () {
+            this.tickCount = 0;
+        };
+
+        //#endregion
+        //#region Private Methods
+        AsyncTimer.prototype.setTimeout = function () {
+            this.timeout = setTimeout(function () {
+                this.onTimerTick.apply(this, arguments);
+            }, this.interval);
+        };
+
+        AsyncTimer.prototype.onTimerTick = function () {
+            this.tickCount += this.interval;
+            this.callback.call(this.callBackContext, this.completeCallback);
+        };
+
+        AsyncTimer.prototype.completeCallback = function () {
+            if (this.enabled) {
+                this.setTimeout();
+            }
+        };
         return AsyncTimer;
     })();
     exports.AsyncTimer = AsyncTimer;

@@ -234,7 +234,9 @@
   <ItemGroup>
     <Content Include="package.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="spa\ui\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
   </ItemGroup>
