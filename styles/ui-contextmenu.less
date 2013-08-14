@@ -1,0 +1,153 @@
+﻿@import-once "variables.less";
+@import-once "mixins.less";
+
+@context-font-color: @content-color;
+@context-font-size: 12px;
+
+@context-background-color: #F1F1F1;
+@context-border-color: #979797;
+@context-border-radius: 3px;
+
+@context-item-height: 18px;
+@context-item-icon-size: 16px;
+@context-item-icon-bar-width: 26px;
+
+@context-hover-border-color: #AECFF7;
+@context-hover-background-color: #ECF1F6;
+@context-hover-gradient-direction: top;
+@context-hover-gradient-from: @context-hover-background-color + @gradient-default;
+@context-hover-gradient-to: @context-hover-background-color - @gradient-default;
+
+@context-box-shadow-left: 2px;
+@context-box-shadow-top: 2px;
+@context-box-shadow-blur: 2px;
+@context-box-shadow-color: #8E8E8E;
+
+@context-icon-arrow: "arrow-right.png";
+
+.ui-context {
+    font-size: @context-font-size;
+    background-color: @context-background-color;
+    border: solid 1px @context-border-color;
+    .box-shadow(@context-box-shadow-left, @context-box-shadow-top, @context-box-shadow-blur, @context-box-shadow-color);
+    .no-select;
+
+    ul {
+        .reset-list;
+        border: solid 2px lighten(@context-background-color, 2%);
+
+        li {
+            .reset-margin;
+            border: solid 1px @context-background-color;
+            .border-radius(@context-border-radius);
+            position: relative;
+            z-index: 2;
+
+
+            &:hover {
+                border-color: @context-hover-border-color;
+                background-color: @context-hover-background-color;
+                .linear-gradient(@context-hover-gradient-direction, @context-hover-gradient-from, @context-hover-gradient-to);
+
+                .inner {
+                    border-color: #EFF4FA;
+
+                }
+            }
+
+            &.separator {
+                border: 0;
+                height: 2px;
+                line-height: 2px;
+                z-index: 1;
+
+                .inner {
+                    height: 2px;
+                    line-height: 2px;
+                    border: 0;
+                    position: static;
+
+                    label {
+                        border-bottom: solid 1px #FFFFFF;
+                        background-color: #E0E0E0;
+                        height: 1px;
+                        position: static;
+                        line-height: 1px;
+                    }
+
+                    .icon-bar {
+                        height: 2px;
+                        line-height: 2px;
+                        position: static;
+                        vertical-align: top;
+                        width: @context-item-icon-bar-width + 2px; // include borders
+                    }
+                }
+            }
+
+            &.disabled {
+                .inner {
+                    .opacity;
+                }
+
+                label {
+                    color: #6D6D6D;
+                }
+
+                &:hover {
+                    border-color: #D4D3D3;
+                    .linear-gradient(@context-hover-gradient-direction, #F2F2F2, #E5E5E5);
+                    .inner { border-color: #E6E6E6; border-top-color: #F4F5F5; }
+                }
+            }
+
+            .inner {
+                display: block;
+                height: @context-item-height;
+                border: solid 1px @context-background-color;
+                .border-radius(@context-border-radius);
+
+                .icon-bar {
+                    display: block;
+                    float: left;
+                    width: @context-item-icon-bar-width;
+                    border-right: solid 1px #E2E3E3;
+
+                    .icon {
+                        display: block; 
+                        margin: ((@context-item-height - @context-item-icon-size + 2px) / 2) ((@context-item-icon-bar-width - @context-item-icon-size) / 2);
+                        width: @context-item-icon-size;
+                        height: @context-item-icon-size;
+                        background-repeat: no-repeat;
+
+                        &.page { background-image: url('../images/page.png'); }
+                        &.folder { background-image: url('../images/folder.png'); }
+                    }
+                }
+
+                label {
+                    display: block;
+                    color: @context-font-color;
+                    font-weight: normal;
+                    border-left: solid 1px #FFFFFF;
+                    vertical-align: top;
+                    line-height: @context-item-height + 4px; //include borders
+                    margin-left: @context-item-icon-bar-width + 1px; //include border
+                    padding-left: 5px;
+
+                    &.parent {
+                        .background-image(@context-icon-arrow, @images-path);
+                        background-repeat: no-repeat;
+                        background-position: 100% 50%;
+                    }
+                }
+
+                label, .icon-bar {
+                    height: @context-item-height + 4px; //include borders
+                    top: -2px;
+                    position: relative;
+                }
+            }
+        }
+    }
+}

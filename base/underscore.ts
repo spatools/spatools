@@ -4,7 +4,7 @@
 //#region UndescoreJS Extension
 
 declare module _ {
-    export function sum<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context: any): number;
+    export function sum<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
     export function average<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
     export function count<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): number;
     export function filterMap<T, TResult>(collection: { [key: string]: T }, iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
@@ -16,7 +16,7 @@ declare module _ {
 var p = Array.prototype;
 
 _.mixin({
-    sum: function <T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context: any): number {
+    sum: function <T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number {
         /// <summary>Sum each item of given array by using specified iterator function</summary>
         /// <param name="collection" type="Array">Array to sum in</param>
         /// <param name="iterator" type="Function">Function which return operand for sum</param>
@@ -107,17 +107,17 @@ _.mixin({
 //#region UnderscoreJS integration with KnockoutJS
 
 interface KnockoutUnderscoreArrayFunctions {
-    each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context: any): KnockoutComputed<void >;
-    map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context: any): KnockoutComputed<TResult[]>;
+    each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context?: any): KnockoutComputed<void>;
+    map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
     select<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
     reduce<T, TResult>(iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult, memo: TResult, context?: any): KnockoutComputed<TResult>;
     find<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T>;
     filter<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T[]>;
     reject<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T[]>;
-    sum<T>(iterator: (element: T, index?: number, list?: T[]) => number, context: any): KnockoutComputed<number>;
-    average<T>(iterator: (element: T, index?: number, list?: T[]) => number, context: any): KnockoutComputed<number>;
-    all<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context: any): KnockoutComputed<boolean>;
-    any<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context: any): KnockoutComputed<boolean>;
+    sum<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<number>;
+    average<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<number>;
+    all<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<boolean>;
+    any<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<boolean>;
     contains<T>(value: T): boolean;
     max<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<T>;
     min<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<T>;
@@ -142,17 +142,17 @@ interface KnockoutUnderscoreArrayFunctions {
     indexOf<T>(value: T, isSorted?: boolean): KnockoutComputed<number>;
     lastIndexOf<T>(value: T, from?: number): KnockoutComputed<number>;
 
-    _each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context: any): void;
-    _map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context: any): TResult[];
+    _each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context?: any): void;
+    _map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
     _select<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
     _reduce<T, TResult>(iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult, memo: TResult, context?: any): TResult;
     _find<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T;
     _filter<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T[];
     _reject<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T[];
-    _sum<T>(iterator: (element: T, index?: number, list?: T[]) => number, context: any): number;
-    _average<T>(iterator: (element: T, index?: number, list?: T[]) => number, context: any): number;
-    _all<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context: any): boolean;
-    _any<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context: any): boolean;
+    _sum<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
+    _average<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
+    _all<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): boolean;
+    _any<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): boolean;
     _contains<T>(value: T): boolean;
     _max<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): T;
     _min<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): T;

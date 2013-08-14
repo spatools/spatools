@@ -55,6 +55,24 @@
     <TypeScriptModuleKind>AMD</TypeScriptModuleKind>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="styles\mixins.css">
+      <DependentUpon>mixins.less</DependentUpon>
+    </Content>
+    <Content Include="styles\ui-contextmenu.css">
+      <DependentUpon>ui-contextmenu.less</DependentUpon>
+    </Content>
+    <Content Include="styles\ui-editor.css">
+      <DependentUpon>ui-editor.less</DependentUpon>
+    </Content>
+    <Content Include="styles\ui-ribbon.css">
+      <DependentUpon>ui-ribbon.less</DependentUpon>
+    </Content>
+    <Content Include="styles\ui-tree.css">
+      <DependentUpon>ui-tree.less</DependentUpon>
+    </Content>
+    <Content Include="styles\variables.css">
+      <DependentUpon>variables.less</DependentUpon>
+    </Content>
     <TypeScriptCompile Include="base\base.ts" />
     <TypeScriptCompile Include="base\base.d.ts" />
     <Content Include="base\base.js">
@@ -66,6 +84,7 @@
     </Content>
     <Content Include="Gruntfile.js" />
     <Content Include="Scripts\typings\globalize\globalize.d.ts" />
+    <Content Include="Scripts\typings\jqueryui\jqueryui.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Scripts\typings\knockout.mapping\knockout.mapping.d.ts" />
     <Content Include="Scripts\typings\knockout.validation\knockout.validation.d.ts" />
@@ -227,6 +246,12 @@
       <DependentUpon>ui.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="spa\ui\templateEngine.ts" />
+    <TypeScriptCompile Include="spa\ui\contextmenu\contextmenu.ts" />
+    <Content Include="spa\ui\contextmenu\contextmenu.js">
+      <DependentUpon>contextmenu.ts</DependentUpon>
+    </Content>
+    <Content Include="spa\ui\contextmenu\item.html" />
+    <Content Include="spa\ui\contextmenu\menu.html" />
     <Content Include="spa\ui\templateEngine.js">
       <DependentUpon>templateEngine.ts</DependentUpon>
     </Content>
@@ -242,7 +267,14 @@
   <ItemGroup>
     <Content Include="package.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="styles\mixins.less" />
+    <Content Include="styles\ui-contextmenu.less" />
+    <Content Include="styles\ui-editor.less" />
+    <Content Include="styles\ui-ribbon.less" />
+    <Content Include="styles\ui-tree.less" />
+    <Content Include="styles\variables.less" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
   </ItemGroup>

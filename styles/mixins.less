@@ -1,0 +1,266 @@
+@import-once "variables.less";
+
+//#region Common
+
+.reset-margin (@margin: 0, @padding: 0) {
+    margin: @margin;
+    padding: @padding;
+}
+
+.reset-list (@margin: 0, @padding: 0, @list-style: none) {
+    .reset-margin(@margin, @padding);
+    list-style: @list-style;
+}
+
+.no-select () {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.opacity (@opacity: .6) {
+    @o: @opacity * 100;
+    opacity: @opacity;
+    filter: alpha(opacity=@o);
+}
+
+.outline (@value: none) {
+    -moz-outline: @value;
+    outline: @value;
+}
+
+.bold () {
+    font-family: @font-bold;
+    font-weight: normal;
+}
+
+.no-wrap () {
+    text-wrap: none;
+    white-space: nowrap;
+}
+
+.circle (@diameter, @border-width: 1px, @border-color: #000) {
+    width: @diameter;
+    height: @diameter;
+    .border-radius(@diameter);
+    border: solid @border-width @border-color;
+}
+
+//#endregion
+
+//#region Backgrounds
+
+.background-image(@path, @basePath: "") {
+    @newPath: %(@concat-format, @basePath, @path);
+    background-image: url(@newPath);
+}
+
+.background-size(@size: 100%) {
+    -moz-background-size: @size;
+    -o-background-size: @size;
+    -webkit-background-size: @size;
+    background-size: @size;
+}
+
+.background-clip(@value: inherit) {
+    -moz-background-clip: @value;
+    -webkit-background-clip: @value;
+    background-clip: @value;
+}
+
+//#endregion
+
+//#region Gradient Background
+
+.linear-gradient (top, @from, @to) {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(@from), to(@to));
+    -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=@from, endColorstr=@to);
+    filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=@from, endColorstr=@to);
+}
+
+.linear-gradient (bottom, @from, @to) {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(@from), to(@to));
+    -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=@to, endColorstr=@from);
+    filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=@to, endColorstr=@from);
+}
+
+.linear-gradient (left, @from, @to) {
+    background-image: -webkit-gradient(linear, left top, right top, from(@from), to(@to));
+    -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=1, startColorstr=@from, endColorstr=@to);
+    filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=1, startColorstr=@from, endColorstr=@to);
+}
+
+.linear-gradient (right, @from, @to) {
+    background-image: -webkit-gradient(linear, right top, left top, from(@from), to(@to));
+    -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=1, startColorstr=@to, endColorstr=@from);
+    filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=1, startColorstr=@to, endColorstr=@from);
+}
+
+.linear-gradient (@direction, @from, @to) {
+    background-image: linear-gradient(@direction, @from, @to);
+    background-image: -p-linear-gradient(@direction, @from, @to);
+    background-image: -moz-linear-gradient(@direction, @from, @to);
+    background-image: -webkit-linear-gradient(@direction, @from, @to);
+    background-image: -ms-linear-gradient(@direction, @from, @to);
+}
+
+    .linear-gradient (@direction, @from, @to) when (@direction = false) {
+    }
+
+//#endregion
+
+//#region Box Shadow
+
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #000) {
+    -moz-box-shadow: @arguments;
+    -webkit-box-shadow: @arguments;
+    box-shadow: @arguments;
+}
+
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @size: 0, @color: #000) {
+    -moz-box-shadow: @arguments;
+    -webkit-box-shadow: @arguments;
+    box-shadow: @arguments;
+}
+
+//#endregion
+
+//#region Border Radius
+
+.border-radius(@radius: 0) {
+    -moz-border-radius: @radius @radius @radius @radius;
+    -webkit-border-radius: @radius;
+    border-radius: @radius;
+}
+
+.border-radius(@tl, @tr, @br, @bl) {
+    -moz-border-radius: @tl @tr @br @bl;
+    -webkit-border-radius: @tl @tr @br @bl;
+    border-radius: @tl @tr @br @bl;
+}
+
+.border-radius(@tl1, @tl2, @tr1, @tr2, @br1, @br2, @bl1, @bl2) {
+    -moz-border-radius: @tl1 @tr1 @br1 @bl1 / @tl2 @tr2 @br2 @bl2;
+    -webkit-border-radius: @tl1 @tr1 @br1 @bl1 / @tl2 @tr2 @br2 @bl2;
+    border-radius: @tl1 @tr1 @br1 @bl1 / @tl2 @tr2 @br2 @bl2;
+}
+
+//#endregion
+
+//#region Animation
+
+.transition(...) {
+    -moz-transition: @arguments;
+    -o-transition: @arguments;
+    -webkit-transition: @arguments;
+    transition: @arguments;
+}
+
+//#endregion
+
+//#region Positionning
+
+.dock-full() {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.dock-left(@width: auto) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: @width;
+}
+
+.dock-right(@width: auto) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: @width;
+}
+
+.dock-top(@height: auto) {
+    position: absolute;
+    top: 0;
+    height: @height;
+    left: 0;
+    right: 0;
+}
+
+.dock-bottom(@height: auto) {
+    position: absolute;
+    bottom: 0;
+    height: @height;
+    left: 0;
+    right: 0;
+}
+
+.box-center(@width, @height, @margin: 0, @padding: 0) {
+    position: absolute;
+    width: @width;
+    height: @height;
+    .reset-margin(@margin, @padding);
+    top: 50%;
+    left: 50%;
+    margin-left: -(@width / 2);
+    margin-top: -(@height / 2);
+}
+
+
+//#endregion
+
+//#region Grid System
+
+.column(@column-span: 1, @column-count: 12, @margin-width: 1%, @full-width: 100%) {
+    @totalMargin: (@column-count - 1) * @margin-width;
+    @columnWidth: (@full-width - @totalMargin) / @column-count;
+    @wideColumn: (@columnWidth * @column-span) + (@margin-width * (@column-span - 1));
+    width: @wideColumn;
+    margin-left: @margin-width;
+}
+
+.column-responsive(@width: 100%, @margin: 0) {
+    float: none;
+    width: @width;
+    margin: @margin;
+}
+
+//#endregion
+
+//#region Utils
+
+.clear-fix () {
+    &:after {
+        content: ".";
+        clear: both;
+        display: block;
+        height: 0;
+        visibility: hidden;
+    }
+}
+
+.toupper () {
+    text-transform: uppercase;
+}
+
+.tolower () {
+    text-transform: lowercase;
+}
+
+.icon-font(@font) {
+    font-family: @font;
+    speak: none;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+}
+
+//#endregion

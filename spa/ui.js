@@ -23,7 +23,7 @@ define(["require", "exports", "./utils"], function(require, exports, __utils__) 
             widgets[_i] = arguments[_i + 0];
         }
         widgets = _.map(widgets, function (widget) {
-            return "./ui/" + widget;
+            return "./ui/" + widget + "/" + widget;
         });
         return utils.load.apply(null, widgets);
     }

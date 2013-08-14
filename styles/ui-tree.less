@@ -1,0 +1,145 @@
+﻿@import-once "variables.less";
+@import-once "mixins.less";
+
+@tree-order-separator-color: #000;
+@tree-sprite-arrow: "folder-arrow.png";
+
+/* tree */
+.ui-tree {
+    .reset-list;
+    padding: 10px 3px;
+    font-size: 12px;
+    line-height: 1;
+
+    li {
+        .reset-margin;
+        display: block;
+        white-space: nowrap;
+        position: relative;
+
+        &.rename > .node { .reset-margin; }
+        
+        &.open > .node > .handle {
+            background-position: -32px 0;
+
+            &.hover {
+                background-position: -48px 0;
+            }
+        }
+
+        &.empty .node .handle {
+            background-image: none;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .node {
+            //display: inline-block; min-width: 248px;
+            padding: 2px 1px;
+
+            &.hover, &.selected {
+                padding: 1px 0;
+                .border-radius(@content-border-radius);
+            }
+
+            &.hover {
+                border: solid 1px @content-hover-border-color;
+                background-color: @content-hover-background-color;
+                .linear-gradient(@content-hover-background-gradient-direction, @content-hover-background-gradient-from, @content-hover-background-gradient-to);
+            }
+
+                &.selected, &.hover.selected {
+                    border: solid 1px @content-active-border-color;
+                    background-color: @content-active-background-color;
+                    .linear-gradient(@content-active-background-gradient-direction, @content-active-background-gradient-from, @content-active-background-gradient-to);
+                }
+
+            .handle {
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+                background-repeat: no-repeat;
+                vertical-align: middle;
+                .background-image(@tree-sprite-arrow, @images-path);
+
+                &.hover {
+                    background-position: -16px 0;
+                }
+            }
+
+            label {
+                display: inline;
+                color: @content-color;
+                padding: 1px 0 1px 5px;
+                cursor: pointer;
+                vertical-align: middle;
+                .no-select;
+            }
+
+            input.rename {
+                border: 1px solid @form-border-color;
+                padding: 0;
+                vertical-align: middle;
+                height: 16px;
+                margin-left: 3px;
+            }
+        }
+
+        .node-order {
+            position: absolute;
+            background: transparent;
+            height: 4px;
+
+            &.top {
+                top: 0;
+                left: 0;
+                right: 0;
+                border-top: solid 3px transparent;
+            }
+
+            &.bottom {
+                bottom: 0;
+                left: 0;
+                right: 0;
+                border-bottom: solid 3px transparent;
+            }
+
+            &.hover {
+                border-color: @tree-order-separator-color;
+            }
+        }
+    }
+
+    .icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        cursor: pointer;
+
+        &.folder {
+            .background-image("folder.png", @images-path);
+        }
+
+        &.page {
+            .background-image("page.png", @images-path);
+        }
+    }
+}
+/* drag icon */
+.drag-icon { 
+    width: 35px; 
+    height: 35px; 
+    padding: 10px;
+    background-color: @content-active-background-gradient-to; 
+    border: solid 1px @content-hover-border-color; 
+    .border-radius(4px);
+    .opacity(.5);
+    .box-shadow(3px, 3px, 3px, #666);
+
+    span { display: inline-block; width: 35px; height: 35px; }
+    .folder { .background-image("folder-large.png", @images-path); }
+    .page { .background-image("page-large.png", @images-path); }
+}

@@ -6,6 +6,14 @@ interface KnockoutBindingHandlers {
     fullscreen: {
         init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => {}, viewModel: any, bindingContext: KnockoutBindingContext): void;
     };
+
+    contextmenu: {
+        init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+    };
+
+    subcontextmenu: {
+        init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+    };
 }
 
 interface KnockoutTemplateEngine {
