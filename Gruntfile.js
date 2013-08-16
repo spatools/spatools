@@ -35,6 +35,24 @@
                 options: {
                     declaration: false
                 }
+            },
+            samples: {
+                src: "samples/**/*.ts",
+                dest: "<%= paths.output %>/",
+                options: {
+                    declaration: false
+                }
+            }
+        },
+
+        copy: {
+            modules: {
+                src: "spa/**/*.html",
+                dest: "<%= paths.output %>/"
+            },
+            samples: {
+                src: "samples/**/*.html",
+                dest: "<%= paths.output %>/"
             }
         },
 
@@ -42,6 +60,29 @@
             base: {
                 src: "<%= typescript.base.dest %>",
                 dest: "<%= paths.output %>/spatools.min.js"
+            }
+        },
+
+        less: {
+            debug: {
+                files: {
+                    "css/ui-contextmenu.css": "css/ui-contextmenu.less",
+                    "css/ui-editor.css": "css/ui-editor.less",
+                    "css/ui-ribbon.css": "css/ui-ribbon.less",
+                    "css/ui-tree.css": "css/ui-tree.less",
+                }
+            },
+
+            production: {
+                options: {
+                    yuicompress: true
+                },
+                files: {
+                    "<%= paths.output %>/css/ui-contextmenu.css": "css/ui-contextmenu.less",
+                    "<%= paths.output %>/css/ui-editor.css": "css/ui-editor.less",
+                    "<%= paths.output %>/css/ui-ribbon.css": "css/ui-ribbon.less",
+                    "<%= paths.output %>/css/ui-tree.css": "css/ui-tree.less",
+                }
             }
         }
     });
@@ -53,9 +94,11 @@
 
     // Build Steps
     grunt.registerTask("build_base", ["typescript:base", "uglify:base"]);
-    grunt.registerTask("build_modules", ["typescript:modules"]);
+    grunt.registerTask("build_modules", ["typescript:modules", "copy:modules"]);
+    grunt.registerTask("build_samples", ["typescript:samples", "copy:samples"]);
+    grunt.registerTask("build_ui", ["less"]);
 
 
     // Buildset Tasks
-    grunt.registerTask("default", ["build_base", "build_modules"]);
+    grunt.registerTask("default", ["build_base", "build_modules", "build_samples", "build_ui"]);
 };

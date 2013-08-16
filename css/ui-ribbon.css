@@ -1,0 +1,524 @@
+.ribbon {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  height: 120px;
+  z-index: 99;
+}
+.ribbon.collapsed {
+  height: 30px;
+}
+.ribbon.collapsed ul.ribbon-pages {
+  border-bottom: solid 1px #333333;
+}
+.ribbon a.back-button {
+  display: block;
+  position: absolute;
+  top: 3px;
+  width: 60px;
+  height: 25px;
+  background: #f39200;
+  text-align: center;
+}
+.ribbon a.back-button span.ribbon-icon {
+  display: inline-block;
+  margin-top: 5px;
+}
+.ribbon div.ribbon-actions {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  height: 25px;
+  line-height: 25px;
+  text-align: right;
+}
+.ribbon div.ribbon-actions a.expander {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  font-size: 25px;
+  color: #333333;
+}
+.ribbon div.ribbon-actions a.expander:before {
+  font-family: "ribbon";
+  speak: none;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  content: 'd';
+}
+.ribbon div.ribbon-actions a.expander.expanded:before {
+  content: 'u';
+}
+.ribbon ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ribbon ul.ribbon-pages {
+  height: 28px;
+  padding-left: 80px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page {
+  margin-top: 3px;
+  height: 25px;
+  line-height: 25px;
+  display: inline-block;
+}
+.ribbon ul.ribbon-pages li.ribbon-page.selected a.ribbon-page-header {
+  border-color: #333333;
+  background: #F5F8FE;
+}
+.ribbon ul.ribbon-pages li.ribbon-page.selected .ribbon-groups {
+  display: block;
+}
+.ribbon ul.ribbon-pages li.ribbon-page.selected.special a.ribbon-page-header {
+  border-color: #f39200;
+  background: #fee5bd;
+}
+.ribbon ul.ribbon-pages li.ribbon-page.selected.special .ribbon-groups {
+  background: #fee5bd;
+  border-color: #f39200;
+}
+.ribbon ul.ribbon-pages li.ribbon-page a.ribbon-page-header {
+  display: inline-block;
+  position: relative;
+  padding: 0 10px;
+  border: solid 1px transparent;
+  border-bottom: 0;
+  text-decoration: none;
+  color: #333333;
+  z-index: 5;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 90px;
+  padding: 0 5px;
+  margin-top: -1px;
+  border: solid 1px #333333;
+  border-width: 1px 0;
+  background: #F5F8FE;
+  display: none;
+  z-index: 3;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups.collapsed {
+  display: none;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group {
+  position: relative;
+  float: left;
+  height: 80px;
+  padding: 0 5px;
+  margin: 5px 0;
+  border-right: solid 1px #abc;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group h3 {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #f39200;
+  text-align: center;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content {
+  height: 60px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-group-item {
+  float: left;
+  margin: 2px;
+  padding: 4px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-button button {
+  display: block;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  padding: 5px;
+  background: none;
+  border: 0;
+  color: #333333;
+  font-family: Segoe UI, Verdana, Helvetica, Sans-Serif;
+  font-size: 12px;
+  font-weight: normal;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-button button:hover,
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-button button.selected {
+  background: #f39200;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-button button span.ribbon-button-title {
+  white-space: nowrap;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-button button span.ribbon-icon {
+  display: block;
+  margin: 0 auto;
+  margin-top: 5px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-checkbox label {
+  display: inline-block;
+  width: 110px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-input.ribbon-long-text {
+  display: block;
+  width: 100%;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-input.ribbon-long-text input.ribbon-input-text {
+  display: block;
+  width: 100%;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-input label {
+  display: inline-block;
+  min-width: 16px;
+  margin-right: 5px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-input input {
+  width: 50px;
+  margin: 0;
+  padding: 2px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-input select {
+  margin: 0;
+  padding: 2px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-slider label {
+  margin-top: -2px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-slider div.ribbon-slider-handle {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  margin-left: 5px;
+  height: 10px;
+  background: #ffffff;
+  border: solid 1px #333333;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-slider div.ribbon-slider-handle .ui-slider-handle {
+  width: 10px;
+  height: 10px;
+  background: #aaaaaa;
+  border: solid 1px #333333;
+  border-width: 0 1px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-slider div.ribbon-slider-handle .ui-slider-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 99;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list {
+  position: relative;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content {
+  line-height: 18px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-list-item {
+  line-height: 18px;
+  height: 18px;
+  margin: 1px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-button button {
+  padding: 2px;
+  text-align: left;
+  display: block;
+  width: 100%;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-button button span.ribbon-button-title {
+  margin-left: 20px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-button button span.ribbon-icon {
+  position: absolute;
+  margin: 0;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-flyout button.ribbon-flyout-button {
+  padding-right: 15px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-flyout button.ribbon-flyout-button span.ribbon-flyout-arrow {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-flyout button.ribbon-flyout-button span.ribbon-flyout-arrow:before {
+  font-family: "ribbon";
+  speak: none;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  content: 'd';
+  color: #333333;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-checkbox {
+  padding: 2px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-checkbox label {
+  width: auto;
+  margin-left: 20px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-list ul.ribbon-list-content li.ribbon-checkbox input {
+  position: absolute;
+  left: 2px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-form.ribbon-form-inline ul.ribbon-form-content {
+  line-height: 28px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-form.ribbon-form-inline ul.ribbon-form-content li.ribbon-form-item {
+  display: inline-block;
+  line-height: 28px;
+  height: 28px;
+  margin: 1px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-form ul.ribbon-form-content {
+  line-height: 28px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-form ul.ribbon-form-content li.ribbon-form-item {
+  line-height: 28px;
+  height: 28px;
+  margin: 1px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-flyout button.ribbon-flyout-button span.ribbon-button-title {
+  padding-right: 10px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-flyout button.ribbon-flyout-button span.ribbon-flyout-arrow {
+  position: absolute;
+  bottom: 6px;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-flyout button.ribbon-flyout-button span.ribbon-flyout-arrow:before {
+  font-family: "ribbon";
+  speak: none;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  content: 'd';
+  color: #333333;
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-flyout ul.ribbon-flyout-content {
+  position: absolute;
+  overflow: hidden;
+  display: inline-block;
+  padding: 3px 5px;
+  border: solid 1px #ddd;
+  background: #fff;
+  z-index: 9;
+  -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+.ribbon ul.ribbon-pages li.ribbon-page ul.ribbon-groups li.ribbon-group ul.ribbon-content li.ribbon-flyout ul.ribbon-flyout-content li.ribbon-flyout-item {
+  float: left;
+  margin: 2px;
+  padding: 4px;
+}
+.sprite-ribbon {
+  background: transparent no-repeat;
+  background-image: url("../assets/sprite-ribbon.png");
+}
+.sprite-ribbon.accept {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -478px;
+}
+.sprite-ribbon.add {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -446px;
+}
+.sprite-ribbon.align {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -414px;
+}
+.sprite-ribbon.background {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -382px;
+}
+.sprite-ribbon.cancel {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -350px;
+}
+.sprite-ribbon.duplicate {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -318px;
+}
+.sprite-ribbon.duration {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -286px;
+}
+.sprite-ribbon.height {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -254px;
+}
+.sprite-ribbon.layers {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -222px;
+}
+.sprite-ribbon.publish {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -190px;
+}
+.sprite-ribbon.remove {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -158px;
+}
+.sprite-ribbon.transition {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -126px;
+}
+.sprite-ribbon.width {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -94px;
+}
+.sprite-ribbon.zoom-fit {
+  width: 32px;
+  height: 32px;
+  background-position: 0 -62px;
+}
+.sprite-ribbon.datetime {
+  width: 32px;
+  height: 31px;
+  background-position: 0 -31px;
+}
+.sprite-ribbon.picture {
+  width: 32px;
+  height: 31px;
+  background-position: 0 0;
+}
+.sprite-ribbon.zoom-in {
+  width: 29px;
+  height: 32px;
+  background-position: -32px -388px;
+}
+.sprite-ribbon.zoom-out {
+  width: 29px;
+  height: 32px;
+  background-position: -32px -356px;
+}
+.sprite-ribbon.print {
+  width: 32px;
+  height: 28px;
+  background-position: -32px -328px;
+}
+.sprite-ribbon.paste {
+  width: 28px;
+  height: 31px;
+  background-position: -32px -297px;
+}
+.sprite-ribbon.save {
+  width: 28px;
+  height: 31px;
+  background-position: -32px -266px;
+}
+.sprite-ribbon.zoom-100 {
+  width: 26px;
+  height: 32px;
+  background-position: -32px -234px;
+}
+.sprite-ribbon.back {
+  width: 21px;
+  height: 16px;
+  background-position: -32px -218px;
+}
+.sprite-ribbon.align-small {
+  width: 16px;
+  height: 16px;
+  background-position: -32px -202px;
+}
+.sprite-ribbon.duration-small {
+  width: 16px;
+  height: 16px;
+  background-position: -32px -186px;
+}
+.sprite-ribbon.height-small {
+  width: 16px;
+  height: 16px;
+  background-position: -32px -170px;
+}
+.sprite-ribbon.layers-small {
+  width: 16px;
+  height: 16px;
+  background-position: -32px -154px;
+}
+.sprite-ribbon.pages-small {
+  width: 16px;
+  height: 16px;
+  background-position: -32px -138px;
+}
+.sprite-ribbon.versions-small {
+  width: 16px;
+  height: 16px;
+  background-position: -32px -122px;
+}
+.sprite-ribbon.width-small {
+  width: 16px;
+  height: 16px;
+  background-position: -32px -106px;
+}
+.sprite-ribbon.copy-small {
+  width: 15px;
+  height: 16px;
+  background-position: -32px -90px;
+}
+.sprite-ribbon.select-small {
+  width: 16px;
+  height: 15px;
+  background-position: -32px -75px;
+}
+.sprite-ribbon.zoom-in-small {
+  width: 15px;
+  height: 16px;
+  background-position: -32px -59px;
+}
+.sprite-ribbon.zoom-out-small {
+  width: 15px;
+  height: 16px;
+  background-position: -32px -43px;
+}
+.sprite-ribbon.rules-small {
+  width: 15px;
+  height: 15px;
+  background-position: -32px -28px;
+}
+.sprite-ribbon.find-small {
+  width: 15px;
+  height: 13px;
+  background-position: -32px -15px;
+}
+.sprite-ribbon.cut-small {
+  width: 9px;
+  height: 15px;
+  background-position: -32px 0;
+}

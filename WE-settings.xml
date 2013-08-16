@@ -44,15 +44,15 @@
     <ScssGenerateCssFile>True</ScssGenerateCssFile>
     <ScssMinify>True</ScssMinify>
     <ScssShowPreviewWindow>True</ScssShowPreviewWindow>
-    <TypeScriptAddGeneratedFilesToProject>true</TypeScriptAddGeneratedFilesToProject>
+    <TypeScriptAddGeneratedFilesToProject>false</TypeScriptAddGeneratedFilesToProject>
     <TypeScriptCompileES3>true</TypeScriptCompileES3>
     <TypeScriptCompileOnBuild>false</TypeScriptCompileOnBuild>
-    <TypeScriptGenerateJsFile>true</TypeScriptGenerateJsFile>
+    <TypeScriptGenerateJsFile>false</TypeScriptGenerateJsFile>
     <TypeScriptKeepComments>true</TypeScriptKeepComments>
     <TypeScriptMinify>false</TypeScriptMinify>
     <TypeScriptProduceSourceMap>false</TypeScriptProduceSourceMap>
     <TypeScriptResaveWithUtf8BOM>false</TypeScriptResaveWithUtf8BOM>
-    <TypeScriptShowPreviewWindow>true</TypeScriptShowPreviewWindow>
+    <TypeScriptShowPreviewWindow>false</TypeScriptShowPreviewWindow>
     <TypeScriptUseAmdModule>true</TypeScriptUseAmdModule>
   </settings>
 </webessentials>

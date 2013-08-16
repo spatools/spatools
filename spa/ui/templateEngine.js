@@ -153,6 +153,8 @@ define(["require", "exports"], function(require, exports) {
 
     ko.requireTemplateEngine = exports.RequireEngine;
 
+    exports.defaultInstance = new exports.RequireEngine(new ko.nativeTemplateEngine());
+
     function setTemplateEngine(innerEngine) {
         ko.setTemplateEngine(new exports.RequireEngine(innerEngine));
     }

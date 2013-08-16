@@ -170,6 +170,8 @@ RequireEngine.prototype.renderTemplate = function (template: any, bindingContext
 
 ko.requireTemplateEngine = RequireEngine;
 
+export var defaultInstance = new RequireEngine(new ko.nativeTemplateEngine());
+
 export function setTemplateEngine(innerEngine?: KnockoutTemplateEngine): void {
     ko.setTemplateEngine(new RequireEngine(innerEngine));
 }

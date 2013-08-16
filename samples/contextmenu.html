@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Context Menu Sample</title>
+
+    <link rel="stylesheet" type="text/css" href="../css/ui-contextmenu.css" />
+</head>
+<body>
+    <div id="main">
+        <h2>Context Menu Sample</h2>
+        <p>Right click on any child to show context menu</p>
+        <ul data-bind="foreach: items">
+            <li data-bind="text: text, contextmenu: $root.menu"></li>
+        </ul>
+    </div>
+
+    <script type="text/javascript" src="../../Scripts/jquery-2.0.3.js"></script>
+    <script type="text/javascript" src="../../Scripts/jquery-ui-1.10.3.js"></script>
+    <script type="text/javascript" src="../../Scripts/knockout-2.3.0.debug.js"></script>
+    <script type="text/javascript" src="../../Scripts/underscore.js"></script>
+    <script type="text/javascript" src="../../build/spatools.js"></script>
+    <script type="text/javascript" src="../../Scripts/require.js" data-main="contextmenu"></script>
+</body>
+</html>

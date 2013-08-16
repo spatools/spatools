@@ -1,0 +1,142 @@
+.ui-context {
+  font-size: 12px;
+  background-color: #f1f1f1;
+  border: solid 1px #979797;
+  -moz-box-shadow: 2px 2px 2px #8e8e8e;
+  -webkit-box-shadow: 2px 2px 2px #8e8e8e;
+  box-shadow: 2px 2px 2px #8e8e8e;
+  -moz-box-shadow: 2px 2px 2px #8e8e8e #000000;
+  -webkit-box-shadow: 2px 2px 2px #8e8e8e #000000;
+  box-shadow: 2px 2px 2px #8e8e8e #000000;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ui-context ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: solid 2px #f6f6f6;
+}
+.ui-context ul li {
+  margin: 0;
+  padding: 0;
+  border: solid 1px #f1f1f1;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  position: relative;
+  z-index: 2;
+}
+.ui-context ul li:hover {
+  border-color: #aecff7;
+  background-color: #ecf1f6;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f3f6), to(#e8eff6));
+  -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#f0f3f6, endColorstr=#e8eff6);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#f0f3f6, endColorstr=#e8eff6);
+  background-image: linear-gradient(top, #f0f3f6, #e8eff6);
+  background-image: -p-linear-gradient(top, #f0f3f6, #e8eff6);
+  background-image: -moz-linear-gradient(top, #f0f3f6, #e8eff6);
+  background-image: -webkit-linear-gradient(top, #f0f3f6, #e8eff6);
+  background-image: -ms-linear-gradient(top, #f0f3f6, #e8eff6);
+}
+.ui-context ul li:hover .inner {
+  border-color: #EFF4FA;
+}
+.ui-context ul li.separator {
+  border: 0;
+  height: 2px;
+  line-height: 2px;
+  z-index: 1;
+}
+.ui-context ul li.separator .inner {
+  height: 2px;
+  line-height: 2px;
+  border: 0;
+  position: static;
+}
+.ui-context ul li.separator .inner label {
+  border-bottom: solid 1px #FFFFFF;
+  background-color: #E0E0E0;
+  height: 1px;
+  position: static;
+  line-height: 1px;
+}
+.ui-context ul li.separator .inner .icon-bar {
+  height: 2px;
+  line-height: 2px;
+  position: static;
+  vertical-align: top;
+  width: 28px;
+}
+.ui-context ul li.disabled .inner {
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+.ui-context ul li.disabled label {
+  color: #6D6D6D;
+}
+.ui-context ul li.disabled:hover {
+  border-color: #D4D3D3;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e5e5e5));
+  -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#f2f2f2, endColorstr=#e5e5e5);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#f2f2f2, endColorstr=#e5e5e5);
+  background-image: linear-gradient(top, #f2f2f2, #e5e5e5);
+  background-image: -p-linear-gradient(top, #f2f2f2, #e5e5e5);
+  background-image: -moz-linear-gradient(top, #f2f2f2, #e5e5e5);
+  background-image: -webkit-linear-gradient(top, #f2f2f2, #e5e5e5);
+  background-image: -ms-linear-gradient(top, #f2f2f2, #e5e5e5);
+}
+.ui-context ul li.disabled:hover .inner {
+  border-color: #E6E6E6;
+  border-top-color: #F4F5F5;
+}
+.ui-context ul li .inner {
+  display: block;
+  height: 18px;
+  border: solid 1px #f1f1f1;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.ui-context ul li .inner .icon-bar {
+  display: block;
+  float: left;
+  width: 26px;
+  border-right: solid 1px #E2E3E3;
+}
+.ui-context ul li .inner .icon-bar .icon {
+  display: block;
+  margin: 2px 5px;
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+}
+.ui-context ul li .inner .icon-bar .icon.page {
+  background-image: url('../images/page.png');
+}
+.ui-context ul li .inner .icon-bar .icon.folder {
+  background-image: url('../images/folder.png');
+}
+.ui-context ul li .inner label {
+  display: block;
+  color: #000000;
+  font-weight: normal;
+  border-left: solid 1px #FFFFFF;
+  vertical-align: top;
+  line-height: 22px;
+  margin-left: 27px;
+  padding-left: 5px;
+}
+.ui-context ul li .inner label.parent {
+  background-image: url("../assets/arrow-right.png");
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+}
+.ui-context ul li .inner label,
+.ui-context ul li .inner .icon-bar {
+  height: 22px;
+  top: -2px;
+  position: relative;
+}

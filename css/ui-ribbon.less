@@ -1,0 +1,619 @@
+﻿@import-once "variables.less";
+@import-once "mixins.less";
+
+@ribbon-size: 120px;
+@ribbon-collapsed-size: 30px;
+
+@icon-arrow-down: 'd';
+@icon-arrow-up: 'u';
+
+.ribbon {
+    .no-select;
+    height: @ribbon-size;
+    z-index: 99;
+
+    &.collapsed {
+        height: @ribbon-collapsed-size;
+
+        ul.ribbon-pages {
+            border-bottom: solid 1px @font-color;
+        }
+    }
+
+    a.back-button {
+        display: block;
+        position: absolute;
+        top: 3px;
+        width: 60px;
+        height: 25px;
+        background: @accent-color;
+        text-align: center;
+
+        span.ribbon-icon {
+            display: inline-block;
+            margin-top: 5px;
+        }
+    }
+
+    div.ribbon-actions {
+        position: absolute;
+        top: 3px;
+        right: 0;
+        height: 25px;
+        line-height: 25px;
+        text-align: right;
+
+        a.expander {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            font-size: 25px;
+            color: @font-color;
+
+            &:before {
+                .icon-font("ribbon");
+                content: @icon-arrow-down;
+            }
+
+            &.expanded:before {
+                content: @icon-arrow-up;
+            }
+        }
+    }
+
+    ul {
+        .reset-list;
+
+        &.ribbon-pages {
+            height: 28px;
+            padding-left: 80px;
+
+            li.ribbon-page {
+                margin-top: 3px;
+                height: 25px;
+                line-height: 25px;
+                display: inline-block;
+
+                &.selected {
+                    a.ribbon-page-header {
+                        border-color: @font-color;
+                        background: #F5F8FE;
+                    }
+
+                    .ribbon-groups {
+                        display: block;
+                    }
+
+                    &.special {
+                        a.ribbon-page-header {
+                            border-color: @accent-color;
+                            background: @accent-color-3;
+                        }
+
+                        .ribbon-groups {
+                            background: @accent-color-3;
+                            border-color: @accent-color;
+                        }
+                    }
+                }
+
+                a.ribbon-page-header {
+                    display: inline-block;
+                    position: relative;
+                    padding: 0 10px;
+                    border: solid 1px transparent;
+                    border-bottom: 0;
+                    text-decoration: none;
+                    color: @font-color;
+                    z-index: 5;
+                }
+
+                ul.ribbon-groups {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    height: 90px;
+                    padding: 0 5px;
+                    margin-top: -1px;
+                    border: solid 1px @font-color;
+                    border-width: 1px 0;
+                    background: #F5F8FE;
+                    display: none;
+                    z-index: 3;
+
+                    &.collapsed {
+                        display: none;
+                    }
+
+                    li.ribbon-group {
+                        position: relative;
+                        float: left;
+                        height: 80px;
+                        padding: 0 5px;
+                        margin: 5px 0;
+                        border-right: solid 1px #abc;
+
+                        h3 {
+                            position: absolute;
+                            bottom: -5px;
+                            left: 0;
+                            right: 0;
+                            .reset-margin;
+                            font-size: @editor-font-size;
+                            color: @accent-color;
+                            text-align: center;
+                        }
+
+                        ul.ribbon-content {
+                            height: 60px;
+
+                            li.ribbon-group-item {
+                                float: left;
+                                margin: 2px;
+                                padding: 4px;
+                            }
+
+                            li.ribbon-button {
+                                button {
+                                    display: block;
+                                    text-align: center;
+                                    .reset-margin;
+                                    padding: 5px;
+                                    background: none;
+                                    border: 0;
+                                    color: @font-color;
+                                    font-family: @font-family;
+                                    font-size: @editor-font-size - 2px;
+                                    font-weight: normal;
+
+                                    &:hover, &.selected {
+                                        background: @accent-color;
+                                    }
+
+                                    span.ribbon-button-title {
+                                        white-space: nowrap;
+                                    }
+
+                                    span.ribbon-icon {
+                                        display: block;
+                                        margin: 0 auto;
+                                        margin-top: 5px;
+                                    }
+                                }
+                            }
+
+                            li.ribbon-checkbox {
+                                label {
+                                    display: inline-block;
+                                    width: 110px;
+                                }
+                            }
+
+                            li.ribbon-input {
+                                &.ribbon-long-text {
+                                    display: block;
+                                    width: 100%;
+
+                                    input.ribbon-input-text {
+                                        display: block;
+                                        width: 100%;
+                                    }
+                                }
+
+                                label {
+                                    display: inline-block;
+                                    min-width: 16px;
+                                    margin-right: 5px;
+                                }
+
+                                input {
+                                    width: 50px;
+                                    margin: 0;
+                                    padding: 2px;
+                                }
+
+                                select {
+                                    margin: 0;
+                                    padding: 2px;
+                                }
+                            }
+
+                            li.ribbon-slider {
+                                label {
+                                    margin-top: -2px;
+                                }
+
+                                div.ribbon-slider-handle {
+                                    position: relative;
+                                    display: inline-block;
+                                    width: 120px;
+                                    margin-left: 5px;
+                                    height: 10px;
+                                    background: @background-color;
+                                    border: solid 1px @font-color;
+
+                                    .ui-slider-handle {
+                                        width: 10px;
+                                        height: 10px;
+                                        background: @font-color-sub;
+                                        border: solid 1px @font-color;
+                                        border-width: 0 1px;
+                                    }
+                                    
+                                    .ui-slider-overlay {
+                                        .dock-full;
+                                        background: transparent;
+                                        z-index: 99;
+                                        .no-select;
+                                        cursor: pointer;
+                                    }
+                                }
+                            }
+
+                            li.ribbon-list {
+                                position: relative;
+
+                                ul.ribbon-list-content {
+                                    line-height: 18px;
+
+                                    li.ribbon-list-item {
+                                        line-height: 18px;
+                                        height: 18px;
+                                        margin: 1px;
+                                    }
+
+                                    li.ribbon-button {
+                                        button {
+                                            padding: 2px;
+                                            text-align: left;
+                                            display: block;
+                                            width: 100%;
+
+                                            span.ribbon-button-title {
+                                                margin-left: 20px;
+                                            }
+
+                                            span.ribbon-icon {
+                                                position: absolute;
+                                                margin: 0;
+                                            }
+                                        }
+                                    }
+
+                                    li.ribbon-flyout {
+                                        button.ribbon-flyout-button {
+                                            padding-right: 15px;
+
+                                            span.ribbon-flyout-arrow {
+                                                position: absolute;
+                                                top: 1px;
+                                                right: 0;
+                                                width: 14px;
+                                                height: 14px;
+                                                font-size: 14px;
+
+                                                &:before {
+                                                    .icon-font("ribbon");
+                                                    content: @icon-arrow-down;
+                                                    color: @font-color;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    li.ribbon-checkbox {
+                                        padding: 2px;
+
+                                        label {
+                                            width: auto;
+                                            margin-left: 20px;
+                                        }
+
+                                        input {
+                                            position: absolute;
+                                            left: 2px;
+                                        }
+                                    }
+                                }
+                            }
+
+                            li.ribbon-form {
+                                &.ribbon-form-inline {
+                                    ul.ribbon-form-content {
+                                        line-height: 28px;
+
+                                        li.ribbon-form-item {
+                                            display: inline-block;
+                                            line-height: 28px;
+                                            height: 28px;
+                                            margin: 1px;
+                                        }
+                                    }
+                                }
+
+                                ul.ribbon-form-content {
+                                    line-height: 28px;
+
+                                    li.ribbon-form-item {
+                                        line-height: 28px;
+                                        height: 28px;
+                                        margin: 1px;
+                                    }
+                                }
+                            }
+
+                            li.ribbon-flyout {
+                                button.ribbon-flyout-button {
+                                    span.ribbon-button-title {
+                                        padding-right: 10px;
+                                    }
+
+                                    span.ribbon-flyout-arrow {
+                                        position: absolute;
+                                        bottom: 6px;
+                                        right: 0;
+                                        width: 14px;
+                                        height: 14px;
+                                        font-size: 14px;
+
+                                        &:before {
+                                            .icon-font("ribbon");
+                                            content: @icon-arrow-down;
+                                            color: @font-color;
+                                        }
+                                    }
+                                }
+
+                                ul.ribbon-flyout-content {
+                                    position: absolute;
+                                    overflow: hidden;
+                                    display: inline-block;
+                                    padding: 3px 5px;
+                                    border: solid 1px #ddd;
+                                    background: #fff;
+                                    z-index: 9;
+                                    -webkit-box-shadow: 0 0 1px 1px rgba(0,0,0,0.2);
+                                    -moz-box-shadow: 0 0 1px 1px rgba(0,0,0,0.2);
+                                    box-shadow: 0 0 1px 1px rgba(0,0,0,0.2);
+
+                                    li.ribbon-flyout-item {
+                                        float: left;
+                                        margin: 2px;
+                                        padding: 4px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.sprite-ribbon {
+    background: transparent no-repeat;
+    .background-image("sprite-ribbon.png", @images-path);
+
+    &.accept {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -478px;
+    }
+
+    &.add {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -446px;
+    }
+
+    &.align {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -414px;
+    }
+
+    &.background {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -382px;
+    }
+
+    &.cancel {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -350px;
+    }
+
+    &.duplicate {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -318px;
+    }
+
+    &.duration {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -286px;
+    }
+
+    &.height {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -254px;
+    }
+
+    &.layers {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -222px;
+    }
+
+    &.publish {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -190px;
+    }
+
+    &.remove {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -158px;
+    }
+
+    &.transition {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -126px;
+    }
+
+    &.width {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -94px;
+    }
+
+    &.zoom-fit {
+        width: 32px;
+        height: 32px;
+        background-position: 0 -62px;
+    }
+
+    &.datetime {
+        width: 32px;
+        height: 31px;
+        background-position: 0 -31px;
+    }
+
+    &.picture {
+        width: 32px;
+        height: 31px;
+        background-position: 0 0;
+    }
+
+    &.zoom-in {
+        width: 29px;
+        height: 32px;
+        background-position: -32px -388px;
+    }
+
+    &.zoom-out {
+        width: 29px;
+        height: 32px;
+        background-position: -32px -356px;
+    }
+
+    &.print {
+        width: 32px;
+        height: 28px;
+        background-position: -32px -328px;
+    }
+
+    &.paste {
+        width: 28px;
+        height: 31px;
+        background-position: -32px -297px;
+    }
+
+    &.save {
+        width: 28px;
+        height: 31px;
+        background-position: -32px -266px;
+    }
+
+    &.zoom-100 {
+        width: 26px;
+        height: 32px;
+        background-position: -32px -234px;
+    }
+
+    &.back {
+        width: 21px;
+        height: 16px;
+        background-position: -32px -218px;
+    }
+
+    &.align-small {
+        width: 16px;
+        height: 16px;
+        background-position: -32px -202px;
+    }
+
+    &.duration-small {
+        width: 16px;
+        height: 16px;
+        background-position: -32px -186px;
+    }
+
+    &.height-small {
+        width: 16px;
+        height: 16px;
+        background-position: -32px -170px;
+    }
+
+    &.layers-small {
+        width: 16px;
+        height: 16px;
+        background-position: -32px -154px;
+    }
+
+    &.pages-small {
+        width: 16px;
+        height: 16px;
+        background-position: -32px -138px;
+    }
+
+    &.versions-small {
+        width: 16px;
+        height: 16px;
+        background-position: -32px -122px;
+    }
+
+    &.width-small {
+        width: 16px;
+        height: 16px;
+        background-position: -32px -106px;
+    }
+
+    &.copy-small {
+        width: 15px;
+        height: 16px;
+        background-position: -32px -90px;
+    }
+
+    &.select-small {
+        width: 16px;
+        height: 15px;
+        background-position: -32px -75px;
+    }
+
+    &.zoom-in-small {
+        width: 15px;
+        height: 16px;
+        background-position: -32px -59px;
+    }
+
+    &.zoom-out-small {
+        width: 15px;
+        height: 16px;
+        background-position: -32px -43px;
+    }
+
+    &.rules-small {
+        width: 15px;
+        height: 15px;
+        background-position: -32px -28px;
+    }
+
+    &.find-small {
+        width: 15px;
+        height: 13px;
+        background-position: -32px -15px;
+    }
+
+    &.cut-small {
+        width: 9px;
+        height: 15px;
+        background-position: -32px 0;
+    }
+}

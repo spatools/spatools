@@ -1,0 +1,159 @@
+/* tree */
+.ui-tree {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  padding: 10px 3px;
+  font-size: 12px;
+  line-height: 1;
+}
+.ui-tree li {
+  margin: 0;
+  padding: 0;
+  display: block;
+  white-space: nowrap;
+  position: relative;
+}
+.ui-tree li.rename > .node {
+  margin: 0;
+  padding: 0;
+}
+.ui-tree li.open > .node > .handle {
+  background-position: -32px 0;
+}
+.ui-tree li.open > .node > .handle.hover {
+  background-position: -48px 0;
+}
+.ui-tree li.empty .node .handle {
+  background-image: none;
+}
+.ui-tree li ul {
+  padding-left: 20px;
+}
+.ui-tree li .node {
+  padding: 2px 1px;
+}
+.ui-tree li .node.hover,
+.ui-tree li .node.selected {
+  padding: 1px 0;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+}
+.ui-tree li .node.hover {
+  border: solid 1px #b8d6fb;
+  background-color: #f9fbfd;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f9fbfd), to(#ebf3fd));
+  -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#f9fbfd, endColorstr=#ebf3fd);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#f9fbfd, endColorstr=#ebf3fd);
+  background-image: linear-gradient(top, #f9fbfd, #ebf3fd);
+  background-image: -p-linear-gradient(top, #f9fbfd, #ebf3fd);
+  background-image: -moz-linear-gradient(top, #f9fbfd, #ebf3fd);
+  background-image: -webkit-linear-gradient(top, #f9fbfd, #ebf3fd);
+  background-image: -ms-linear-gradient(top, #f9fbfd, #ebf3fd);
+}
+.ui-tree li .node.selected,
+.ui-tree li .node.hover.selected {
+  border: solid 1px #7da2ce;
+  background-color: #dbeafc;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#dbeafc), to(#c1dcfc));
+  -ms-filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#dbeafc, endColorstr=#c1dcfc);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GrandientType=0, startColorstr=#dbeafc, endColorstr=#c1dcfc);
+  background-image: linear-gradient(top, #dbeafc, #c1dcfc);
+  background-image: -p-linear-gradient(top, #dbeafc, #c1dcfc);
+  background-image: -moz-linear-gradient(top, #dbeafc, #c1dcfc);
+  background-image: -webkit-linear-gradient(top, #dbeafc, #c1dcfc);
+  background-image: -ms-linear-gradient(top, #dbeafc, #c1dcfc);
+}
+.ui-tree li .node .handle {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  background-image: url("../assets/folder-arrow.png");
+}
+.ui-tree li .node .handle.hover {
+  background-position: -16px 0;
+}
+.ui-tree li .node label {
+  display: inline;
+  color: #000000;
+  padding: 1px 0 1px 5px;
+  cursor: pointer;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ui-tree li .node input.rename {
+  border: 1px solid #646464;
+  padding: 0;
+  vertical-align: middle;
+  height: 16px;
+  margin-left: 3px;
+}
+.ui-tree li .node-order {
+  position: absolute;
+  background: transparent;
+  height: 4px;
+}
+.ui-tree li .node-order.top {
+  top: 0;
+  left: 0;
+  right: 0;
+  border-top: solid 3px transparent;
+}
+.ui-tree li .node-order.bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-bottom: solid 3px transparent;
+}
+.ui-tree li .node-order.hover {
+  border-color: #000000;
+}
+.ui-tree .icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.ui-tree .icon.folder {
+  background-image: url("../assets/folder.png");
+}
+.ui-tree .icon.page {
+  background-image: url("../assets/page.png");
+}
+/* drag icon */
+.drag-icon {
+  width: 35px;
+  height: 35px;
+  padding: 10px;
+  background-color: #c1dcfc;
+  border: solid 1px #b8d6fb;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  -moz-box-shadow: 3px 3px 3px #666666;
+  -webkit-box-shadow: 3px 3px 3px #666666;
+  box-shadow: 3px 3px 3px #666666;
+  -moz-box-shadow: 3px 3px 3px #666666 #000000;
+  -webkit-box-shadow: 3px 3px 3px #666666 #000000;
+  box-shadow: 3px 3px 3px #666666 #000000;
+}
+.drag-icon span {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+}
+.drag-icon .folder {
+  background-image: url("../assets/folder-large.png");
+}
+.drag-icon .page {
+  background-image: url("../assets/page-large.png");
+}
