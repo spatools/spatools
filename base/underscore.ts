@@ -109,7 +109,7 @@ _.mixin({
 interface KnockoutUnderscoreArrayFunctions {
     each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context?: any): KnockoutComputed<void>;
     map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
-    select<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
+    filterMap<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
     reduce<T, TResult>(iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult, memo: TResult, context?: any): KnockoutComputed<TResult>;
     find<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T>;
     filter<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T[]>;
@@ -144,7 +144,7 @@ interface KnockoutUnderscoreArrayFunctions {
 
     _each<T>(iterator: (element: T, index?: number, list?: T[]) => void , context?: any): void;
     _map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
-    _select<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
+    _filterMap<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
     _reduce<T, TResult>(iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult, memo: TResult, context?: any): TResult;
     _find<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T;
     _filter<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T[];
@@ -213,7 +213,7 @@ module spa {
             return _[method].apply(_, arguments);
         };
     });
-    _.each(["each", "map", "select", "reduce", "find", "filter", "reject", "sum", "average", "all", "any", "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"], function (method) {
+    _.each(["each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any", "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"], function (method) {
         underscore.collections[method] = function () {
             var args = arguments;
             return ko.computed(function () {

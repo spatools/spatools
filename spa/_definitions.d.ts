@@ -14,6 +14,24 @@ interface KnockoutBindingHandlers {
     subcontextmenu: {
         init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
     };
+
+    draggable: {
+        init(element: any, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+        update(element: any, valueAccessor: () => any): void;
+    };
+
+    popOut: { update(element: HTMLElement, valueAccessor: () => any): void; };
+    ribbon: KnockoutBindingHandler;
+    ribbonPage: KnockoutBindingHandler;
+    ribbonGroup: KnockoutBindingHandler;
+    ribbonList: KnockoutBindingHandler;
+    ribbonForm: KnockoutBindingHandler;
+    ribbonItem: KnockoutBindingHandler;
+    ribbonButton: KnockoutBindingHandler;
+    ribbonCheckbox: KnockoutBindingHandler;
+    ribbonInput: KnockoutBindingHandler;
+    ribbonSlider: KnockoutBindingHandler;
+    ribbonFlyout: KnockoutBindingHandler;
 }
 
 interface KnockoutTemplateEngine {
@@ -22,6 +40,10 @@ interface KnockoutTemplateEngine {
 
 interface KnockoutTemplateSources {
     require: any;
+}
+
+interface KnockoutTemplateSourcesDomElement {
+    nodes(element: any): any;
 }
 
 interface KnockoutStatic {

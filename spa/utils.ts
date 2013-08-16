@@ -5,6 +5,11 @@ export interface Size {
     height: number;
 }
 
+export interface Point {
+    x: number;
+    y: number;
+}
+
 export var isIE = /*@cc_on!@*/0;
 
 //#region Knockout Utilities
