@@ -1,13 +1,6 @@
 /// <reference path="../_definitions.d.ts" />
 
 import utils = require("../utils");
-import engine = require("./templateEngine");
-import ui = require("../ui");
-
-export var defaults = {
-    cssClass: 'ui-context',
-    width: 190
-};
 
 //#region Private Methods 
 

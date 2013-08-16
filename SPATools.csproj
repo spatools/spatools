@@ -74,6 +74,7 @@
       <DependentUpon>variables.less</DependentUpon>
     </Content>
     <Content Include="samples\contextmenu.html" />
+    <TypeScriptCompile Include="spa\ui\tree.ts" />
     <TypeScriptCompile Include="spa\ui\ribbon.ts" />
     <TypeScriptCompile Include="spa\ui\draggable.ts" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />

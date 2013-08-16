@@ -10,7 +10,6 @@ interface KnockoutBindingHandlers {
     contextmenu: {
         init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
     };
-
     subcontextmenu: {
         init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
     };
@@ -32,6 +31,26 @@ interface KnockoutBindingHandlers {
     ribbonInput: KnockoutBindingHandler;
     ribbonSlider: KnockoutBindingHandler;
     ribbonFlyout: KnockoutBindingHandler;
+
+    treenodedrag: {
+        init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+        update(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+    };
+    treenodedrop: {
+        init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+        update(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+    };
+    treenodeselectvisible: {
+        update(element: HTMLElement, valueAccessor: () => any): void;
+    };
+    treenoderename: {
+        init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+        update(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
+    };
+    tree: {
+        init(element: HTMLElement, valueAccessor: () => any): void;
+        update(element: HTMLElement, valueAccessor: () => any): void;
+    };
 }
 
 interface KnockoutTemplateEngine {
@@ -48,6 +67,7 @@ interface KnockoutTemplateSourcesDomElement {
 
 interface KnockoutStatic {
     requireTemplateEngine: any;
+    selectExtensions: any;
 }
 
 interface OperationOptions {
