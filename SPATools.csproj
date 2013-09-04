@@ -74,10 +74,13 @@
       <DependentUpon>variables.less</DependentUpon>
     </Content>
     <Content Include="samples\contextmenu.html" />
+    <TypeScriptCompile Include="spa\ui\editor.ts" />
     <TypeScriptCompile Include="spa\ui\tree.ts" />
     <TypeScriptCompile Include="spa\ui\ribbon.ts" />
     <TypeScriptCompile Include="spa\ui\draggable.ts" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
+    <Content Include="samples\editor.html" />
+    <Content Include="samples\editor.ts" />
     <Content Include="Scripts\jquery-2.0.3.js" />
     <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery-2.0.3.min.map" />
@@ -88,6 +91,12 @@
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
+    <Content Include="Scripts\typings\jqueryui\jqueryui.d.ts" />
+    <Content Include="Scripts\typings\jquery\jquery.d.ts" />
+    <Content Include="Scripts\typings\moment\moment.d.ts" />
+    <Content Include="Scripts\typings\requirejs\require.d.ts" />
+    <Content Include="Scripts\typings\sammyjs\sammyjs.d.ts" />
+    <Content Include="Scripts\typings\underscore\underscore.d.ts" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\underscore.min.map" />
@@ -102,17 +111,9 @@
     <Content Include="Scripts\knockout.validation.debug.js" />
     <Content Include="Scripts\knockout.validation.js" />
     <Content Include="Scripts\typings\globalize\globalize.d.ts" />
-    <Content Include="Scripts\typings\jqueryui\jqueryui.d.ts" />
-    <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Scripts\typings\knockout.mapping\knockout.mapping.d.ts" />
     <Content Include="Scripts\typings\knockout.validation\knockout.validation.d.ts" />
-    <Content Include="Scripts\typings\knockout\knockout.amd.d.ts" />
     <Content Include="Scripts\typings\knockout\knockout.d.ts" />
-    <Content Include="Scripts\typings\moment\moment.d.ts" />
-    <Content Include="Scripts\typings\requirejs\require.d.ts" />
-    <Content Include="Scripts\typings\sammyjs\sammyjs.d.ts" />
-    <Content Include="Scripts\typings\underscore\underscore-typed.d.ts" />
-    <Content Include="Scripts\typings\underscore\underscore.d.ts" />
     <TypeScriptCompile Include="spa\changeTracker.ts" />
     <TypeScriptCompile Include="spa\animation.ts" />
     <TypeScriptCompile Include="spa\cache.ts" />

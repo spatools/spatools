@@ -84,7 +84,7 @@ _.mixin({
         /// <returns type="Number">Index of first element filtered by iterator methods</returns>
 
         var result = -1;
-        _.find(collection, function (value, index?) {
+        _.find(collection, function (value, index?): boolean {
             if (iterator.apply(context, arguments) === true) {
                 result = index;
                 return true;
@@ -196,12 +196,12 @@ interface KnockoutUnderscoreObjectsFunctions {
 }
 
 module spa {
-    export var underscore = {
+    export var underscore: { objects: { [key: string]: Function }; collections: { [key: string]: Function } } = {
         objects: {},
         collections: {}
     };
 
-    _.each(["keys", "values", "clone", "isEmpty"], function (method) {
+    _.each(["keys", "values", "clone", "isEmpty"], function (method: string) {
         underscore.objects[method] = function () {
             var args = arguments;
             return ko.computed(function () {
@@ -213,7 +213,7 @@ module spa {
             return _[method].apply(_, arguments);
         };
     });
-    _.each(["each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any", "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"], function (method) {
+    _.each(["each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any", "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"], function (method: string) {
         underscore.collections[method] = function () {
             var args = arguments;
             return ko.computed(function () {
@@ -225,7 +225,7 @@ module spa {
             return _[method].apply(_, arguments);
         };
     });
-    _.each(["first", "initial", "last", "rest", "compact", "flatten", "without", "union", "intersection", "difference", "uniq", "zip", "indexOf", "lastIndexOf"], function (method) {
+    _.each(["first", "initial", "last", "rest", "compact", "flatten", "without", "union", "intersection", "difference", "uniq", "zip", "indexOf", "lastIndexOf"], function (method: string) {
         underscore.collections[method] = function () {
             var args = arguments;
             return ko.computed(function () {

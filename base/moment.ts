@@ -20,7 +20,7 @@ module spa {
 
         export function dateToString(moment: Moment, unix: boolean, utc: boolean, format: string): string {
             if (unix)
-                return moment.valueOf();
+                return moment.valueOf().toString();
             else if (utc)
                 return moment.utc().format(format);
             else
@@ -58,7 +58,7 @@ module spa {
                 },
                 getDate = function (moment: Moment): string {
                     if (opts.unix)
-                        return moment.valueOf();
+                        return moment.valueOf().toString();
                     else if (opts.utc)
                         return moment.utc().format(opts.format);
                     else

@@ -31,8 +31,8 @@ ko.extenders.delay = function (target: any, delay: number): any {
 };
 
 ko.extenders.cnotify = function (target: any, notifyWhen: any): any {
-    var latestValue = null,
-        superNotify = _.bind(ko.subscribable.fn.notifySubscribers, target),
+    var latestValue: any = null,
+        superNotify: Function = _.bind(ko.subscribable.fn.notifySubscribers, target),
         notify = function (value) {
             superNotify(latestValue, "beforeChange");
             superNotify(value);

@@ -342,7 +342,7 @@ export function mapEntityFromJSON<T>(json: string, initialState: entityStates, d
 
 export function mapEntityToJSON(entity: any, keepstate: boolean, dataSet: dataset.DataSet): string {
     var obj = mapEntityToJS(entity, keepstate, dataSet);
-    return ko.utils.stringifyJson(obj);
+    return ko.utils.stringifyJson.call(null, obj);
 }
 
 //#endregion

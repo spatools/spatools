@@ -3,7 +3,7 @@
 /// <reference path="Scripts/typings/knockout/knockout.d.ts" />
 /// <reference path="Scripts/typings/knockout.mapping/knockout.mapping.d.ts" />
 /// <reference path="Scripts/typings/knockout.validation/knockout.validation.d.ts" />
-/// <reference path="Scripts/typings/underscore/underscore-typed.d.ts" />
+/// <reference path="Scripts/typings/underscore/underscore.d.ts" />
 /// <reference path="Scripts/typings/moment/moment.d.ts" />
 /// <reference path="Scripts/typings/globalize/globalize.d.ts" />
 
@@ -30,11 +30,20 @@ interface Window {
     IDBKeyRange: IDBKeyRange;
     webkitIDBKeyRange: IDBKeyRange;
     msIDBKeyRange: IDBKeyRange;
+
+    rangy: any;
+}
+
+interface ViewCSS {
+    getComputedStyle(element: Element, pseudoElt?: any): CSSStyleDeclaration;
+    getComputedStyle(element: Node, pseudoElt?: any): CSSStyleDeclaration;
 }
 
 interface Document {
     fullScreen: any;
     webkitIsFullScreen: any;
+    execCommand(command: string, useStyle?: number, value?: any);
+    execCommand(command: string, useStyle?: boolean, value?: any);
 }
 
 interface EventTarget {
@@ -53,10 +62,6 @@ interface MSEventObj {
     eventType: string;
 }
 
-interface KnockoutStatic {
-    isWriteableObservable: (observable: any) => bool;
-}
-
 interface KnockoutObservableFunctions {
     equalityComparer: (a: any, b: any) => bool;
 }
@@ -67,4 +72,8 @@ interface KnockoutSubscribableFunctions {
 
 interface Function {
     result: any;
+}
+
+interface Node {
+    tagName: string;
 }

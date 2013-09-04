@@ -10,6 +10,16 @@ export interface Point {
     y: number;
 }
 
+export interface Position {
+    top: number;
+    left: number;
+}
+
+export interface ObservablePosition {
+    top: KnockoutObservable<number>;
+    left: KnockoutObservable<number>;
+}
+
 export var isIE = /*@cc_on!@*/0;
 
 //#region Knockout Utilities

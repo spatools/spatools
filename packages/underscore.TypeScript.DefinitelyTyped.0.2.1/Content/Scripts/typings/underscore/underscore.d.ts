@@ -1,48 +1,31 @@
-/* 
-underscore-1.4.4.d.ts may be freely distributed under the MIT license.
+// Type definitions for Underscore 1.4
+// Project: http://underscorejs.org/
+// Definitions by:
+// Boris Yankov <https://github.com/borisyankov/>
+// Josh Baldwin <https://github.com/jbaldwin/underscore.d.ts>
+// Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-Copyright (c) 2013 Josh Baldwin https://github.com/jbaldwin/underscore.d.ts
-
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation 
-files (the "Software"), to deal in the Software without 
-restriction, including without limitation the rights to use, 
-copy, modify, merge, publish, distribute, sublicense, and/or sell 
-copies of the Software, and to permit persons to whom the 
-Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be 
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
-OTHER DEALINGS IN THE SOFTWARE.
-*/
-
-/**************
-* OOP Wrapper *
-**************/
+// Notes:
+//  1) Parameter types may be declared as List<T> and Dictionary<T>.
+//     However, return types must be declared as T[] where possible
+//     otherwise Array<T> functions are not available on returns.
+//  2) Callbacks do not use '?' parameters!
 
 /**
 * Underscore OOP Wrapper, all Underscore functions that take an object
 * as the first parameter can be invoked through this function.
 * @param key First argument to Underscore object functions.
 **/
-declare function _<T>(value: T[]): _<T>;
+declare function _<T>(value: Array<T>): _<T>;
 declare function _<T>(value: T): _<T>;
 
 declare module _ {
 
 	/**
-	* underscore.js template settings, set templateSettings or pass as an argument 
+	* underscore.js template settings, set templateSettings or pass as an argument
 	* to 'template()' to overide defaults.
 	**/
-	interface _TemplateSettings {
+	interface TemplateSettings {
 		/**
 		* Default value is '/<%([\s\S]+?)%>/g'.
 		**/
@@ -59,9 +42,33 @@ declare module _ {
 		escape?: RegExp;
 	}
 
-	/**************
-	* Collections *
-	**************/
+	interface ListIterator<T, TResult> {
+		(value: T, index: number, list: T[]): TResult;
+	}
+
+	interface ObjectIterator<T, TResult> {
+		(element: T, key: string, list: any): TResult;
+	}
+
+	interface MemoIterator<T, TResult> {
+		(prev: TResult, curr: T, index: number, list: T[]): TResult;
+	}
+
+	interface Collection<T> { }
+
+	// Common interface between Arrays and jQuery objects
+	interface List<T> extends Collection<T> {
+		[index: number]: T;
+		length: number;
+	}
+
+	interface Dictionary<T> extends Collection<T> {
+		[index: string]: T;
+	}
+
+	/* *************
+	 * Collections *
+	 ************* */
 
 	/**
 	* Iterates over a list of elements, yielding each in turn to an iterator function. The iterator is
@@ -73,32 +80,35 @@ declare module _ {
 	* @param context 'this' object in `iterator`, optional.
 	**/
 	export function each<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => void,
+		list: List<T>,
+		iterator: ListIterator<T, void>,
 		context?: any): void;
+
 	/**
 	* @see _.each
-	* @param obj Iterators over this object's properties.
+	* @param object Iterators over this object's properties.
 	* @param iterator Iterator function for each property on `obj`.
+	* @param context 'this' object in `iterator`, optional.
 	**/
 	export function each<T extends {}>(
-		obj: T,
-		iterator: (value: any, key?: string, obj?: T) => void,
+		object: Dictionary<T>,
+		iterator: ObjectIterator<T, void>,
 		context?: any): void;
 
 	/**
 	* @see _.each
 	**/
 	export function forEach<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => void,
+		list: List<T>,
+		iterator: ListIterator<T, void >,
 		context?: any): void;
+
 	/**
 	* @see _.each
 	**/
 	export function forEach<T extends {}>(
-		obj: T,
-		iterator: (value: any, key?: string, obj?: T) => void,
+		object: Dictionary<T>,
+		iterator: ObjectIterator<T, void >,
 		context?: any): void;
 
 	/**
@@ -111,34 +121,36 @@ declare module _ {
 	* @return The mapped array result.
 	**/
 	export function map<T, TResult>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => TResult,
+		list: List<T>,
+		iterator: ListIterator<T, TResult>,
 		context?: any): TResult[];
+
 	/**
 	* @see _.map
-	* @param obj Maps the properties of this object.
+	* @param object Maps the properties of this object.
 	* @param iterator Map iterator function for each property on `obj`.
 	* @param context `this` object in `iterator`, optional.
 	* @return The mapped object result.
 	**/
 	export function map<T extends {}, TResult>(
-		obj: T,
-		iterator: (value: any, key?: string, object?: Object) => TResult,
+		object: Dictionary<T>,
+		iterator: ObjectIterator<T, TResult>,
 		context?: any): TResult[];
 
 	/**
 	* @see _.map
 	**/
 	export function collect<T, TResult>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => TResult,
+		list: List<T>, iterator:
+		ListIterator<T, TResult>,
 		context?: any): TResult[];
+
 	/**
 	* @see _.map
 	**/
 	export function collect<T extends {}, TResult>(
-		obj: T,
-		iterator: (value: any, key?: string, object?: Object) => TResult,
+		object: Dictionary<T>,
+		iterator: ObjectIterator<T, TResult>,
 		context?: any): TResult[];
 
 	/**
@@ -153,8 +165,8 @@ declare module _ {
 	* @return Reduced object result.
 	**/
 	export function reduce<T, TResult>(
-		list: T[],
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
+		list: Collection<T>,
+		iterator: MemoIterator<T, TResult>,
 		memo: TResult,
 		context?: any): TResult;
 
@@ -162,8 +174,8 @@ declare module _ {
 	* @see _.reduce
 	**/
 	export function inject<T, TResult>(
-		list: T[],
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
+		list: Collection<T>,
+		iterator: MemoIterator<T, TResult>,
 		memo: TResult,
 		context?: any): TResult;
 
@@ -171,8 +183,8 @@ declare module _ {
 	* @see _.reduce
 	**/
 	export function foldl<T, TResult>(
-		list: T[],
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
+		list: Collection<T>,
+		iterator: MemoIterator<T, TResult>,
 		memo: TResult,
 		context?: any): TResult;
 
@@ -187,8 +199,8 @@ declare module _ {
 	* @return Reduced object result.
 	**/
 	export function reduceRight<T, TResult>(
-		list: T[],
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
+		list: Collection<T>,
+		iterator: MemoIterator<T, TResult>,
 		memo: TResult,
 		context?: any): TResult;
 
@@ -196,8 +208,8 @@ declare module _ {
 	* @see _.reduceRight
 	**/
 	export function foldr<T, TResult>(
-		list: T[],
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
+		list: Collection<T>,
+		iterator: MemoIterator<T, TResult>,
 		memo: TResult,
 		context?: any): TResult;
 
@@ -211,16 +223,16 @@ declare module _ {
 	* @return The first acceptable found element in `list`, if nothing is found undefined/null is returned.
 	**/
 	export function find<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => bool,
+		list: Collection<T>,
+		iterator: ListIterator<T, boolean>,
 		context?: any): T;
 
 	/**
 	* @see _.find
 	**/
 	export function detect<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => bool,
+		list: Collection<T>,
+		iterator: ListIterator<T, boolean>,
 		context?: any): T;
 
 	/**
@@ -232,16 +244,16 @@ declare module _ {
 	* @return The filtered list of elements.
 	**/
 	export function filter<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => bool,
+		list: Collection<T>,
+		iterator: ListIterator<T, boolean>,
 		context?: any): T[];
 
 	/**
 	* @see _.filter
 	**/
 	export function select<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => bool,
+		list: Collection<T>,
+		iterator: ListIterator<T, boolean>,
 		context?: any): T[];
 
 	/**
@@ -251,7 +263,9 @@ declare module _ {
 	* @param properties The properties to check for on each element within `list`.
 	* @return The elements within `list` that contain the required `properties`.
 	**/
-	export function where<T, U extends {}>(list: T[], properties: U): T[];
+	export function where<T, U extends {}>(
+		list: Collection<T>,
+		properties: U): T[];
 
 	/**
 	* Looks through the list and returns the first value that matches all of the key-value pairs listed in properties.
@@ -259,7 +273,9 @@ declare module _ {
 	* @param properties Properties to look for on the elements within `list`.
 	* @return The first element in `list` that has all `properties`.
 	**/
-	export function findWhere<T, U extends {}>(list: T[], properties: U): T;
+	export function findWhere<T, U extends {}>(
+		list: List<T>,
+		properties: U): T;
 
 	/**
 	* Returns the values in list without the elements that the truth test (iterator) passes.
@@ -271,8 +287,8 @@ declare module _ {
 	* @return The rejected list of elements.
 	**/
 	export function reject<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => bool,
+		list: Collection<T>,
+		iterator: ListIterator<T, boolean>,
 		context?: any): T[];
 
 	/**
@@ -284,17 +300,17 @@ declare module _ {
 	* @return True if all elements passed the truth test, otherwise false.
 	**/
 	export function all<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+		list: Collection<T>,
+		iterator: ListIterator<T, boolean>,
+		context?: any): boolean;
 
 	/**
 	* @see _.all
 	**/
 	export function every<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+		list: Collection<T>,
+		iterator: ListIterator<T, boolean>,
+		context?: any): boolean;
 
 	/**
 	* Returns true if any of the values in the list pass the iterator truth test. Short-circuits and
@@ -305,17 +321,17 @@ declare module _ {
 	* @return True if any elements passed the truth test, otherwise false.
 	**/
 	export function any<T>(
-		list: T[],
-		iterator?: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+		list: Collection<T>,
+		iterator?: ListIterator<T, boolean>,
+		context?: any): boolean;
 
 	/**
 	* @see _.any
 	**/
 	export function some<T>(
-		list: T[],
-		iterator?: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+		list: Collection<T>,
+		iterator?: ListIterator<T, boolean>,
+		context?: any): boolean;
 
 	/**
 	* Returns true if the value is present in the list. Uses indexOf internally,
@@ -324,12 +340,16 @@ declare module _ {
 	* @param value The value to check for within `list`.
 	* @return True if `value` is present in `list`, otherwise false.
 	**/
-	export function contains<T>(list: T[], value: T): bool;
+	export function contains<T>(
+		list: Collection<T>,
+		value: T): boolean;
 
 	/**
 	* @see _.contains
 	**/
-	export function include<T>(list: T[], value: T): bool;
+	export function include<T>(
+		list: Collection<T>,
+		value: T): boolean;
 
 	/**
 	* Calls the method named by methodName on each value in the list. Any extra arguments passed to
@@ -338,23 +358,29 @@ declare module _ {
 	* @param methodName The method's name to call on each element within `list`.
 	* @param arguments Additional arguments to pass to the method `methodName`.
 	**/
-	export function invoke<T extends {}>(list: T[], methodName: string, ...arguments: any[]): void;
+	export function invoke<T extends {}>(
+		list: Collection<T>,
+		methodName: string,
+		...arguments: any[]): any;
 
 	/**
 	* A convenient version of what is perhaps the most common use-case for map: extracting a list of
 	* property values.
 	* @param list The list to pluck elements out of that have the property `propertyName`.
 	* @param propertyName The property to look for on each element within `list`.
-	* @return The list of elements within `list` that have the property `propertyName`.
+	* @return The list of values for `propertyName` for each element within `list`
 	**/
-	export function pluck<T extends {}>(list: T[], propertyName: string): T[];
+	export function pluck<T extends {}>(
+		list: Collection<T>,
+		propertyName: string): any[];
 
 	/**
 	* Returns the maximum value in list.
 	* @param list Finds the maximum value in this list.
 	* @return Maximum value in `list`.
 	**/
-	export function max(list: number[]): number;
+	export function max(list: List<number>): number;
+
 	/**
 	* Returns the maximum value in list. If iterator is passed, it will be used on each value to generate
 	* the criterion by which the value is ranked.
@@ -364,8 +390,8 @@ declare module _ {
 	* @return The maximum element within `list`.
 	**/
 	export function max<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => number,
+		list: Collection<T>,
+		iterator?: ListIterator<T, any>,
 		context?: any): T;
 
 	/**
@@ -373,7 +399,8 @@ declare module _ {
 	* @param list Finds the minimum value in this list.
 	* @return Minimum value in `list`.
 	**/
-	export function min(list: number[]): number;
+	export function min(list: List<number>): number;
+
 	/**
 	* Returns the minimum value in list. If iterator is passed, it will be used on each value to generate
 	* the criterion by which the value is ranked.
@@ -383,8 +410,8 @@ declare module _ {
 	* @return The minimum element within `list`.
 	**/
 	export function min<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => number,
+		list: Collection<T>,
+		iterator?: ListIterator<T, any>,
 		context?: any): T;
 
 	/**
@@ -396,15 +423,16 @@ declare module _ {
 	* @return A sorted copy of `list`.
 	**/
 	export function sortBy<T, TSort>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => TSort,
+		list: List<T>,
+		iterator?: ListIterator<T, TSort>,
 		context?: any): T[];
+
 	/**
 	* @see _.sortBy
 	* @param iterator Sort iterator for each element within `list`.
 	**/
 	export function sortBy<T>(
-		list: T[],
+		list: List<T>,
 		iterator: string,
 		context?: any): T[];
 
@@ -418,20 +446,18 @@ declare module _ {
 	* @return An object with the group names as properties where each property contains the grouped elements from `list`.
 	**/
 	export function groupBy<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => string,
-		context?: any): { [key: string]: any[]; };
-	// todo: return should be { [key: string]: T[]; };
+		list: List<T>,
+		iterator?: ListIterator<T, any>,
+		context?: any): Dictionary<T[]>;
 
 	/**
 	* @see _.groupBy
 	* @param iterator Group iterator for each element within `list`, return the key to group the element by.
 	**/
 	export function groupBy<T>(
-		list: T[],
+		list: List<T>,
 		iterator: string,
-		context?: any): { [key: string]: any[]; };
-	// todo: return should be { [key: string]: T[]; };
+		context?: any): Dictionary<T[]>;
 
 	/**
 	* Sorts a list into groups and returns a count for the number of objects in each group. Similar
@@ -443,29 +469,25 @@ declare module _ {
 	* @return An object with the group names as properties where each property contains the number of elements in that group.
 	**/
 	export function countBy<T>(
-		list: T[],
-		iterator: (element: T, index?: number, list?: T[]) => string,
-		context?: any): { [key: string]: number; };
+		list: Collection<T>,
+		iterator?: ListIterator<T, any>,
+		context?: any): Dictionary<number[]>;
+
 	/**
-	* Sorts a list into groups and returns a count for the number of objects in each group. Similar
-	* to groupBy, but instead of returning a list of values, returns a count for the number of values
-	* in that group.
-	* @param list Group elements in this list and then count the number of elements in each group.
-	* @param iterator Group iterator for each element within `list`, return the key to group the element by.
-	* @param context `this` object in `iterator`, optional.
-	* @return An object with the group names as properties where each property contains the number of elements in that group.
+	* @see _.countBy
+	* @param iterator Function name
 	**/
 	export function countBy<T>(
-		list: T[],
+		list: Collection<T>,
 		iterator: string,
-		context?: any): { [key: string]: number; };
+		context?: any): Dictionary<number[]>;
 
 	/**
 	* Returns a shuffled copy of the list, using a version of the Fisher-Yates shuffle.
 	* @param list List to shuffle.
 	* @return Shuffled copy of `list`.
 	**/
-	export function shuffle<T>(list: T[]): T[];
+	export function shuffle<T>(list: Collection<T>): T[];
 
 	/**
 	* Converts the list (anything that can be iterated over), into a real Array. Useful for transmuting
@@ -473,14 +495,14 @@ declare module _ {
 	* @param list object to transform into an array.
 	* @return `list` as an array.
 	**/
-	export function toArray(list: any): any[];
+	export function toArray<T>(list: Collection<T>): T[];
 
 	/**
 	* Return the number of values in the list.
 	* @param list Count the number of values/elements in this list.
 	* @return Number of values in `list`.
 	**/
-	export function size(list: any): number;
+	export function size<T>(list: Collection<T>): number;
 
 	/*********
 	* Arrays *
@@ -491,30 +513,39 @@ declare module _ {
 	* @param array Retrieves the first element of this array.
 	* @return Returns the first element of `array`.
 	**/
-	export function first<T>(array: T[]): T;
+	export function first<T>(array: List<T>): T;
+
 	/**
 	* @see _.first
 	* @param n Return more than one element from `array`.
 	**/
-	export function first<T>(array: T[], n: number): T[];
+	export function first<T>(
+		array: List<T>,
+		n: number): T[];
 
 	/**
 	* @see _.first
 	**/
-	export function head<T>(array: T[]): T;
-	/**
-	* @see _.first
-	**/
-	export function head<T>(array: T[], n: number): T[];
+	export function head<T>(array: List<T>): T;
 
 	/**
 	* @see _.first
 	**/
-	export function take<T>(array: T[]): T;
+	export function head<T>(
+		array: List<T>,
+		n: number): T[];
+
 	/**
 	* @see _.first
 	**/
-	export function take<T>(array: T[], n: number): T[];
+	export function take<T>(array: List<T>): T;
+
+	/**
+	* @see _.first
+	**/
+	export function take<T>(
+		array: List<T>,
+		n: number): T[];
 
 	/**
 	* Returns everything but the last entry of the array. Especially useful on the arguments object.
@@ -523,38 +554,49 @@ declare module _ {
 	* @param n Leaves this many elements behind, optional.
 	* @return Returns everything but the last `n` elements of `array`.
 	**/
-	export function initial<T>(array: T[], n?: number): T[];
+	export function initial<T>(
+		array: List<T>,
+		n?: number): T[];
 
 	/**
 	* Returns the last element of an array. Passing n will return the last n elements of the array.
 	* @param array Retrieves the last element of this array.
 	* @return Returns the last element of `array`.
 	**/
-	export function last<T>(array: T[]): T;
+	export function last<T>(array: List<T>): T;
+
 	/**
 	* @see _.last
 	* @param n Return more than one element from `array`.
 	**/
-	export function last<T>(array: T[], n: number): T[];
+	export function last<T>(
+		array: List<T>,
+		n: number): T[];
 
 	/**
 	* Returns the rest of the elements in an array. Pass an index to return the values of the array
 	* from that index onward.
 	* @param array The array to retrieve all but the first `index` elements.
-	* @param index The index to start retrieving elements forward from, optional, default = 1.
+	* @param n The index to start retrieving elements forward from, optional, default = 1.
 	* @return Returns the elements of `array` from `index` to the end of `array`.
 	**/
-	export function rest<T>(array: T[], index?: number): T[];
+	export function rest<T>(
+		array: List<T>,
+		n?: number): T[];
 
 	/**
 	* @see _.rest
 	**/
-	export function tail<T>(array: T[], index?: number): T[];
+	export function tail<T>(
+		array: List<T>,
+		n?: number): T[];
 
 	/**
 	* @see _.rest
 	**/
-	export function drop<T>(array: T[], index?: number): T[];
+	export function drop<T>(
+		array: List<T>,
+		n?: number): T[];
 
 	/**
 	* Returns a copy of the array with all falsy values removed. In JavaScript, false, null, 0, "",
@@ -562,7 +604,7 @@ declare module _ {
 	* @param array Array to compact.
 	* @return Copy of `array` without false values.
 	**/
-	export function compact<T>(array: T[]): T[];
+	export function compact<T>(array: List<T>): T[];
 
 	/**
 	* Flattens a nested array (the nesting can be to any depth). If you pass shallow, the array will
@@ -571,7 +613,9 @@ declare module _ {
 	* @param shallow If true then only flatten one level, optional, default = false.
 	* @return `array` flattened.
 	**/
-	export function flatten(array: any, shallow?: bool): any;
+	export function flatten(
+		array: List<any>,
+		shallow?: boolean): any[];
 
 	/**
 	* Returns a copy of the array with all instances of the values removed.
@@ -579,7 +623,9 @@ declare module _ {
 	* @param values The values to remove from `array`.
 	* @return Copy of `array` without `values`.
 	**/
-	export function without<T>(array: T[], ...values: T[]): T[];
+	export function without<T>(
+		array: List<T>,
+		...values: T[]): T[];
 
 	/**
 	* Computes the union of the passed-in arrays: the list of unique items, in order, that are
@@ -587,7 +633,7 @@ declare module _ {
 	* @param arrays Array of arrays to compute the union of.
 	* @return The union of elements within `arrays`.
 	**/
-	export function union<T>(...arrays: T[][]): T[];
+	export function union<T>(...arrays: List<T>[]): T[];
 
 	/**
 	* Computes the list of values that are the intersection of all the arrays. Each value in the result
@@ -595,7 +641,7 @@ declare module _ {
 	* @param arrays Array of arrays to compute the intersection of.
 	* @return The intersection of elements within `arrays`.
 	**/
-	export function intersection<T>(...arrays: T[][]): T[];
+	export function intersection<T>(...arrays: List<T>[]): T[];
 
 	/**
 	* Similar to without, but returns the values from array that are not present in the other arrays.
@@ -603,7 +649,9 @@ declare module _ {
 	* @param others The values to keep within `array`.
 	* @return Copy of `array` with only `others` values.
 	**/
-	export function difference<T>(array: T[], ...others: T[][]): T[];
+	export function difference<T>(
+		array: List<T>,
+		...others: List<T>[]): T[];
 
 	/**
 	* Produces a duplicate-free version of the array, using === to test object equality. If you know in
@@ -616,33 +664,36 @@ declare module _ {
 	* @return Copy of `array` where all elements are unique.
 	**/
 	export function uniq<T, TSort>(
-		array: T[],
-		isSorted?: bool,
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
+		array: List<T>,
+		isSorted?: boolean,
+		iterator?: ListIterator<T, TSort>,
 		context?: any): T[];
+
 	/**
-	* @see _.unq
+	* @see _.uniq
 	**/
 	export function uniq<T, TSort>(
-		array: T[],
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
+		array: List<T>,
+		iterator?: ListIterator<T, TSort>,
 		context?: any): T[];
 
 	/**
 	* @see _.uniq
 	**/
 	export function unique<T, TSort>(
-		array: T[],
-		isSorted?: bool,
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
+		array: List<T>,
+		iterator?: ListIterator<T, TSort>,
 		context?: any): T[];
+
 	/**
-	* @see _.unq
+	* @see _.uniq
 	**/
 	export function unique<T, TSort>(
-		array: T[],
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
+		array: List<T>,
+		isSorted?: boolean,
+		iterator?: ListIterator<T, TSort>,
 		context?: any): T[];
+
 
 	/**
 	* Merges together the values of each of the arrays with the values at the corresponding position.
@@ -654,13 +705,21 @@ declare module _ {
 	export function zip(...arrays: any[][]): any[][];
 
 	/**
+	* @see _.zip
+	**/
+	export function zip(...arrays: any[]): any[];
+
+	/**
 	* Converts arrays into objects. Pass either a single list of [key, value] pairs, or a
 	* list of keys, and a list of values.
 	* @param keys Key array.
 	* @param values Value array.
 	* @return An object containing the `keys` as properties and `values` as the property values.
 	**/
-	export function object<TResult extends {}>(keys: string[], values: any[]): TResult;
+	export function object<TResult extends {}>(
+		keys: List<string>,
+		values: List<any>): TResult;
+
 	/**
 	* Converts arrays into objects. Pass either a single list of [key, value] pairs, or a
 	* list of keys, and a list of values.
@@ -668,6 +727,13 @@ declare module _ {
 	* @return An object containing the `keys` as properties and `values` as the property values.
 	**/
 	export function object<TResult extends {}>(...keyValuePairs: any[][]): TResult;
+
+	/**
+	* @see _.object
+	**/
+	export function object<TResult extends {}>(
+		list: List<any>,
+		values?: any): TResult;
 
 	/**
 	* Returns the index at which value can be found in the array, or -1 if value is not present in the array.
@@ -679,7 +745,18 @@ declare module _ {
 	* @param isSorted True if the array is already sorted, optional, default = false.
 	* @return The index of `value` within `array`.
 	**/
-	export function indexOf<T>(array: T[], value: T, isSorted?: bool): number;
+	export function indexOf<T>(
+		array: List<T>,
+		value: T,
+		isSorted?: boolean): number;
+
+	/**
+	* @see _indexof
+	**/
+	export function indexOf<T>(
+		array: List<T>,
+		value: T,
+		startFrom: number): number;
 
 	/**
 	* Returns the index of the last occurrence of value in the array, or -1 if value is not present. Uses the
@@ -689,7 +766,10 @@ declare module _ {
 	* @param from The starting index for the search, optional.
 	* @return The index of the last occurance of `value` within `array`.
 	**/
-	export function lastIndexOf<T>(array: T[], value: T, from?: number): number;
+	export function lastIndexOf<T>(
+		array: List<T>,
+		value: T,
+		from?: number): number;
 
 	/**
 	* Uses a binary search to determine the index at which the value should be inserted into the list in order
@@ -700,7 +780,10 @@ declare module _ {
 	* @param iterator Iterator to compute the sort ranking of each value, optional.
 	* @return The index where `value` should be inserted into `list`.
 	**/
-	export function sortedIndex<T>(list: T[], value: T, iterator?: (element: T) => number): number;
+	export function sortedIndex<T, TSort>(
+		list: List<T>,
+		value: T,
+		iterator?: (x: T) => TSort, context?: any): number;
 
 	/**
 	* A function to create flexibly-numbered lists of integers, handy for each and map loops. start, if omitted,
@@ -711,30 +794,36 @@ declare module _ {
 	* @param step The number to count up by each iteration, optional, default = 1.
 	* @return Array of numbers from `start` to `stop` with increments of `step`.
 	**/
-	export function range(start: number, stop: number, step?: number): number[];
+
+	export function range(
+		start: number,
+		stop: number,
+		step?: number): number[];
+	
 	/**
-	* A function to create flexibly-numbered lists of integers, handy for each and map loops. start, if omitted,
-	* defaults to 0; step defaults to 1. Returns a list of integers from start to stop, incremented (or decremented)
-	* by step, exclusive.
+	* @see _.range
 	* @param stop Stop here.
 	* @return Array of numbers from 0 to `stop` with increments of 1.
 	* @note If start is not specified the implementation will never pull the step (step = arguments[2] || 0)
 	**/
 	export function range(stop: number): number[];
 
-	/************
-	* Functions *
-	*************/
+	/*************
+	 * Functions *
+	 *************/
 
 	/**
 	* Bind a function to an object, meaning that whenever the function is called, the value of this will
 	* be the object. Optionally, bind arguments to the function to pre-fill them, also known as partial application.
-	* @param fn The function to bind `this` to `object`.
-	* @param object The `this` pointer whenever `fn` is called.
+	* @param func The function to bind `this` to `object`.
+	* @param context The `this` pointer whenever `fn` is called.
 	* @param arguments Additional arguments to pass to `fn` when called.
 	* @return `fn` with `this` bound to `object`.
 	**/
-	export function bind(fn: Function, object: any, ...arguments: any[]): Function;
+	export function bind(
+		func: (...as: any[]) => any,
+		context: any,
+		...arguments: any[]): () => any;
 
 	/**
 	* Binds a number of methods on the object, specified by methodNames, to be run in the context of that object
@@ -742,10 +831,12 @@ declare module _ {
 	* which would otherwise be invoked with a fairly useless this. If no methodNames are provided, all of the
 	* object's function properties will be bound to it.
 	* @param object The object to bind the methods `methodName` to.
-	* @param methodNames The methods to bind to `object`, optional and if not provided all of `object`'s 
-	*                    methods are bound.
+	* @param methodNames The methods to bind to `object`, optional and if not provided all of `object`'s
+	* methods are bound.
 	**/
-	export function bindAll(object: any, ...methodNames: string[]): void;
+	export function bindAll(
+		object: any,
+		...methodNames: string[]): any;
 
 	/**
 	* Partially apply a function by filling in any number of its arguments, without changing its dynamic this value.
@@ -754,7 +845,9 @@ declare module _ {
 	* @param arguments The partial arguments.
 	* @return `fn` with partially filled in arguments.
 	**/
-	export function partial(fn: Function, ...arguments: any[]): Function;
+	export function partial(
+		fn: Function,
+		...arguments: any[]): Function;
 
 	/**
 	* Memoizes a given function by caching the computed result. Useful for speeding up slow-running computations.
@@ -765,16 +858,28 @@ declare module _ {
 	* @param hashFn Hash function for storing the result of `fn`.
 	* @return Memoized version of `fn`.
 	**/
-	export function memoize(fn: Function, hashFn?: (n: any) => string): Function;
+	export function memoize(
+		fn: Function,
+		hashFn?: (...n: any[]) => string): Function;
 
 	/**
 	* Much like setTimeout, invokes function after wait milliseconds. If you pass the optional arguments,
 	* they will be forwarded on to the function when it is invoked.
 	* @param fn Function to delay `waitMS` amount of ms.
-	* @param waitMS The amount of milliseconds to delay `fn`.
+	* @param wait The amount of milliseconds to delay `fn`.
 	* @arguments Additional arguments to pass to `fn`.
 	**/
-	export function delay(fn: Function, waitMS: number, ...arguments: any[]): void;
+	export function delay(
+		func: Function,
+		wait: number,
+		...arguments: any[]): any;
+
+	/**
+	* @see _delay
+	**/
+	export function delay(
+		func: Function,
+		...arguments: any[]): any;
 
 	/**
 	* Defers invoking the function until the current call stack has cleared, similar to using setTimeout
@@ -784,17 +889,21 @@ declare module _ {
 	* @param fn The function to defer.
 	* @param arguments Additional arguments to pass to `fn`.
 	**/
-	export function defer(fn: Function, ...arguments: any[]): void;
+	export function defer(
+		fn: Function,
+		...arguments: any[]): void;
 
 	/**
 	* Creates and returns a new, throttled version of the passed function, that, when invoked repeatedly,
 	* will only actually call the original function at most once per every wait milliseconds. Useful for
 	* rate-limiting events that occur faster than you can keep up with.
 	* @param fn Function to throttle `waitMS` ms.
-	* @param waitMS The number of milliseconds to wait before `fn` can be invoked again.
-	* @return `fn` with a throttle of `waitMS`.
+	* @param wait The number of milliseconds to wait before `fn` can be invoked again.
+	* @return `fn` with a throttle of `wait`.
 	**/
-	export function throttle(fn: Function, waitMS: number): Function;
+	export function throttle(
+		func: any,
+		wait: number): Function;
 
 	/**
 	* Creates and returns a new debounced version of the passed function that will postpone its execution
@@ -806,11 +915,14 @@ declare module _ {
 	* of the trailing edge of the wait interval. Useful in circumstances like preventing accidental double
 	*-clicks on a "submit" button from firing a second time.
 	* @param fn Function to debounce `waitMS` ms.
-	* @param waitMS The number of milliseconds to wait before `fn` can be invoked again.
+	* @param wait The number of milliseconds to wait before `fn` can be invoked again.
 	* @param immediate True if `fn` should be invoked on the leading edge of `waitMS` instead of the trailing edge.
-	* @return Debounced version of `fn` that waits `waitMS` ms when invoked.
+	* @return Debounced version of `fn` that waits `wait` ms when invoked.
 	**/
-	export function debounce(fn: Function, waitMS: number, immediate?: bool): Function;
+	export function debounce(
+		fn: Function,
+		wait: number,
+		immediate?: boolean): Function;
 
 	/**
 	* Creates a version of the function that can only be called one time. Repeated calls to the modified
@@ -829,7 +941,9 @@ declare module _ {
 	* @fn The function to defer execution `count` times.
 	* @return Copy of `fn` that will not execute until it is invoked `count` times.
 	**/
-	export function after(count: number, fn: Function): Function;
+	export function after(
+		count: number,
+		fn: Function): Function;
 
 	/**
 	* Wraps the first function inside of the wrapper function, passing it as the first argument. This allows
@@ -839,7 +953,9 @@ declare module _ {
 	* @param wrapper The function that will wrap `fn`.
 	* @return Wrapped version of `fn.
 	**/
-	export function wrap(fn: Function, wrapper: (fn: Function, ...args: any[]) => any): Function;
+	export function wrap(
+		fn: Function,
+		wrapper: (fn: Function, ...args: any[]) => any): Function;
 
 	/**
 	* Returns the composition of a list of functions, where each function consumes the return value of the
@@ -858,21 +974,21 @@ declare module _ {
 	* @param object Retreive the key or property names from this object.
 	* @return List of all the property names on `object`.
 	**/
-	export function keys<T extends {}>(object: T): string[];
+	export function keys(object: any): string[];
 
 	/**
 	* Return all of the values of the object's properties.
 	* @param object Retreive the values of all the properties on this object.
 	* @return List of all the values on `object`.
 	**/
-	export function values<T extends {}>(object: T): any[];
+	export function values(object: any): any[];
 
 	/**
 	* Convert an object into a list of [key, value] pairs.
 	* @param object Convert this object to a list of [key, value] pairs.
 	* @return List of [key, value] pairs on `object`.
 	**/
-	export function pairs<T extends {}>(object: T): any[][];
+	export function pairs(object: any): any[][];
 
 	/**
 	* Returns a copy of the object where the keys have become the values and the values the keys.
@@ -880,7 +996,7 @@ declare module _ {
 	* @param object Object to invert key/value pairs.
 	* @return An inverted key/value paired version of `object`.
 	**/
-	export function invert<T extends {}, TResult extends {}>(object: T): TResult;
+	export function invert(object: any): any;
 
 	/**
 	* Returns a sorted list of the names of every method in an object - that is to say,
@@ -888,7 +1004,12 @@ declare module _ {
 	* @param object Object to pluck all function property names from.
 	* @return List of all the function names on `object`.
 	**/
-	export function functions<T extends {}>(object: T): string[];
+	export function functions(object: any): string[];
+
+	/**
+	* @see _functions
+	**/
+	export function methods(object: any): string[];
 
 	/**
 	* Copy all of the properties in the source objects over to the destination object, and return
@@ -898,7 +1019,9 @@ declare module _ {
 	* @param sources Extends `destination` with all properties from these source objects.
 	* @return `destination` extended with all the properties from the `sources` objects.
 	**/
-	export function extend(destination: any, ...sources: any[]): any;
+	export function extend(
+		destination: any,
+		...sources: any[]): any;
 
 	/**
 	* Return a copy of the object, filtered to only have values for the whitelisted keys
@@ -907,7 +1030,9 @@ declare module _ {
 	* @keys The key/value pairs to keep on `object`.
 	* @return Copy of `object` with only the `keys` properties.
 	**/
-	export function pick<T extends {}, TResult extends {}>(object: T, ...keys: string[]): TResult;
+	export function pick(
+		object: any,
+		...keys: string[]): any;
 
 	/**
 	* Return a copy of the object, filtered to omit the blacklisted keys (or array of keys).
@@ -915,7 +1040,8 @@ declare module _ {
 	* @param keys The key/value pairs to remove on `object`.
 	* @return Copy of `object` without the `keys` properties.
 	**/
-	export function omit<T extends {}, TResult extends {}>(object: T, ...keys: string[]): TResult;
+	export function omit(object: any, ...keys: string[]): any;
+	export function omit(object: any, keys: string[]): any;
 
 	/**
 	* Fill in null and undefined properties in object with values from the defaults objects,
@@ -924,7 +1050,9 @@ declare module _ {
 	* @param defaults The default values to add to `object`.
 	* @return `object` with added `defaults` values.
 	**/
-	export function defaults(object: any, ...defaults: any[]): any;
+	export function defaults(
+		object: any,
+		...defaults: any[]): any;
 
 	/**
 	* Create a shallow-copied clone of the object.
@@ -932,13 +1060,7 @@ declare module _ {
 	* @param object Object to clone.
 	* @return Copy of `object`.
 	**/
-	export function clone<T extends {}>(object: T): T;
-	/**
-	* @see _.clone
-	* @param list List to clone.
-	* @return Copy of `list`.
-	**/
-	export function clone<T>(list: T[]): T[];
+	export function clone<T>(object: T): T;
 
 	/**
 	* Invokes interceptor with the object, and then returns object. The primary purpose of this method
@@ -956,7 +1078,7 @@ declare module _ {
 	* @param key The key to check for on `object`.
 	* @return True if `key` is a property on `object`, otherwise false.
 	**/
-	export function has<T extends {}>(object: T, key: string): bool;
+	export function has(object: any, key: string): boolean;
 
 	/**
 	* Performs an optimized deep comparison between the two objects,
@@ -965,34 +1087,28 @@ declare module _ {
 	* @param other Compare to `object`.
 	* @return True if `object` is equal to `other`.
 	**/
-	export function isEqual(object: any, other: any): bool;
+	export function isEqual(object: any, other: any): boolean;
 
 	/**
 	* Returns true if object contains no values.
 	* @param object Check if this object has no properties or values.
 	* @return True if `object` is empty.
 	**/
-	export function isEmpty(object: any): bool;
-	/**
-	* Returns true if the list contains no values.
-	* @param object Check if this list has no elements.
-	* @return True if `list` is empty.
-	**/
-	export function isEmpty(list: any[]): bool;
+	export function isEmpty(object: any): boolean;
 
 	/**
 	* Returns true if object is a DOM element.
 	* @param object Check if this object is a DOM element.
 	* @return True if `object` is a DOM element, otherwise false.
 	**/
-	export function isElement(object: any): bool;
+	export function isElement(object: any): boolean;
 
 	/**
 	* Returns true if object is an Array.
 	* @param object Check if this object is an Array.
 	* @return True if `object` is an Array, otherwise false.
 	**/
-	export function isArray(object: any): bool;
+	export function isArray(object: any): boolean;
 
 	/**
 	* Returns true if value is an Object. Note that JavaScript arrays and functions are objects,
@@ -1000,63 +1116,63 @@ declare module _ {
 	* @param object Check if this object is an Object.
 	* @return True of `object` is an Object, otherwise false.
 	**/
-	export function isObject(object: any): bool;
+	export function isObject(object: any): boolean;
 
 	/**
 	* Returns true if object is an Arguments object.
 	* @param object Check if this object is an Arguments object.
 	* @return True if `object` is an Arguments object, otherwise false.
 	**/
-	export function isArguments(object: any): bool;
+	export function isArguments(object: any): boolean;
 
 	/**
 	* Returns true if object is a Function.
 	* @param object Check if this object is a Function.
 	* @return True if `object` is a Function, otherwise false.
 	**/
-	export function isFunction(object: any): bool;
+	export function isFunction(object: any): boolean;
 
 	/**
 	* Returns true if object is a String.
 	* @param object Check if this object is a String.
 	* @return True if `object` is a String, otherwise false.
 	**/
-	export function isString(object: any): bool;
+	export function isString(object: any): boolean;
 
 	/**
 	* Returns true if object is a Number (including NaN).
 	* @param object Check if this object is a Number.
 	* @return True if `object` is a Number, otherwise false.
 	**/
-	export function isNumber(object: any): bool;
+	export function isNumber(object: any): boolean;
 
 	/**
 	* Returns true if object is a finite Number.
 	* @param object Check if this object is a finite Number.
 	* @return True if `object` is a finite Number.
 	**/
-	export function isFinite(object: any): bool;
+	export function isFinite(object: any): boolean;
 
 	/**
 	* Returns true if object is either true or false.
 	* @param object Check if this object is a bool.
-	* @return True if `object` is a bool, otherwise false.
+	* @return True if `object` is a boolean, otherwise false.
 	**/
-	export function isBoolean(object: any): bool;
+	export function isBoolean(object: any): boolean;
 
 	/**
 	* Returns true if object is a Date.
 	* @param object Check if this object is a Date.
 	* @return True if `object` is a Date, otherwise false.
 	**/
-	export function isDate(object: any): bool;
+	export function isDate(object: any): boolean;
 
 	/**
 	* Returns true if object is a RegExp.
 	* @param object Check if this object is a RegExp.
 	* @return True if `object` is a RegExp, otherwise false.
 	**/
-	export function isRegExp(object: any): bool;
+	export function isRegExp(object: any): boolean;
 
 	/**
 	* Returns true if object is NaN.
@@ -1065,25 +1181,25 @@ declare module _ {
 	* @param object Check if this object is NaN.
 	* @return True if `object` is NaN, otherwise false.
 	**/
-	export function isNaN(object: any): bool;
+	export function isNaN(object: any): boolean;
 
 	/**
 	* Returns true if the value of object is null.
 	* @param object Check if this object is null.
 	* @return True if `object` is null, otherwise false.
 	**/
-	export function isNull(object: any): bool;
+	export function isNull(object: any): boolean;
 
 	/**
 	* Returns true if value is undefined.
 	* @param object Check if this object is undefined.
 	* @return True if `object` is undefined, otherwise false.
 	**/
-	export function isUndefined(object: any): bool;
+	export function isUndefined(value: any): boolean;
 
-	/**********
-	* Utility *
-	***********/
+	/* *********
+	 * Utility *
+	********** */
 
 	/**
 	* Give control of the "_" variable back to its previous owner.
@@ -1099,7 +1215,7 @@ declare module _ {
 	* @return `value`.
 	**/
 	export function identity<T>(value: T): T;
-	
+
 	/**
 	* Invokes the given iterator function n times.
 	* Each invocation of iterator is called with an index argument
@@ -1107,7 +1223,7 @@ declare module _ {
 	* @param iterator Function iterator to invoke `n` times.
 	* @param context `this` object in `iterator`, optional.
 	**/
-	export function times<TResult>(n: number, iterator: (n: number) => TResult , context?: any): TResult[];
+	export function times<TResult>(n: number, iterator: (n: number) => TResult, context?: any): TResult[];
 
 	/**
 	* Returns a random integer between min and max, inclusive. If you only pass one argument,
@@ -1116,11 +1232,10 @@ declare module _ {
 	* @return A random number between 0 and `max`.
 	**/
 	export function random(max: number): number;
+
 	/**
-	* Returns a random integer between min and max, inclusive. If you only pass one argument,
-	* it will return a number between 0 and that number.
+	* @see _.random
 	* @param min The minimum random number.
-	* @param max The maximum random number.
 	* @return A random number between `min` and `max`.
 	**/
 	export function random(min: number, max: number): number;
@@ -1136,16 +1251,15 @@ declare module _ {
 	/**
 	* Generate a globally-unique id for client-side models or DOM elements that need one.
 	* If prefix is passed, the id will be appended to it. Without prefix, returns an integer.
-	* @return Unique number ID.
-	**/
-	export function uniqueId(): number;
-	/**
-	* Generate a globally-unique id for client-side models or DOM elements that need one.
-	* If prefix is passed, the id will be appended to it. Without prefix, returns an integer.
 	* @param prefix A prefix string to start the unique ID with.
 	* @return Unique string ID beginning with `prefix`.
 	**/
 	export function uniqueId(prefix: string): string;
+
+	/**
+	* @see _.uniqueId
+	**/
+	export function uniqueId(): number;
 
 	/**
 	* Escapes a string for insertion into HTML, replacing &, <, >, ", ', and / characters.
@@ -1177,17 +1291,17 @@ declare module _ {
 	* @param settings Settings to use while compiling.
 	* @return Returns the compiled Underscore HTML template.
 	**/
-	export function template(templateString: string, data?: any, settings?: _TemplateSettings): any;
+	export function template(templateString: string, data?: any, settings?: TemplateSettings): (...data: any[]) => string;
 
 	/**
 	* By default, Underscore uses ERB-style template delimiters, change the
 	* following template settings to use alternative delimiters.
 	**/
-	export var templateSettings: _TemplateSettings;
+	export var templateSettings: TemplateSettings;
 
-	/***********
-	* Chaining *
-	************/
+	/* **********
+	 * Chaining *
+	*********** */
 
 	/**
 	* Returns a wrapped object. Calling methods on this object will continue to return wrapped objects
@@ -1195,7 +1309,7 @@ declare module _ {
 	* @param obj Object to chain.
 	* @return Wrapped `obj`.
 	**/
-	export function chain(obj: any): _Chain;
+	export function chain(obj: any): _Chain<any>;
 
 	/**
 	* Extracts the value of a wrapped object.
@@ -1207,135 +1321,101 @@ declare module _ {
 
 declare class _<T> {
 
-	/**************
-	* Collections *
-	**************/
+	/* *************
+	 * Collections *
+	 ************* */
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.each
 	**/
-	each(
-		iterator: (element: T, index?: number, list?: T[]) => void,
-		context?: any): void;
-	/**
-	* @see _.each
-	**/
-	each(
-		iterator: (value: any, key?: string, object?: T) => void,
-		context?: any): void;
+	each(iterator: _.ListIterator<T, void>, context?: any): void;
 
 	/**
 	* @see _.each
 	**/
-	forEach(
-		iterator: (element: T, index?: number, list?: T[]) => void ,
-		context?: any): void;
+	each(iterator: _.ObjectIterator<T, void>, context?: any): void;
+
 	/**
 	* @see _.each
 	**/
-	forEach(
-		iterator: (value: any, key?: string, object?: T) => any,
-		context?: any): void;
+	forEach(iterator: _.ListIterator<T, void>, context?: any): void;
+
+	/**
+	* @see _.each
+	**/
+	forEach(iterator: _.ObjectIterator<T, void>, context?: any): void;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.map
 	**/
-	map<TResult>(
-		iterator: (element: T, index?: number, list?: T[]) => TResult,
-		context?: any): TResult[];
+	map<TResult>(iterator: _.ListIterator<T, TResult>, context?: any): TResult[];
+
 	/**
+	* Wrapped type `any[]`.
 	* @see _.map
 	**/
-	map<TResult>(
-		iterator: (value: any, key?: string, object?: T) => TResult,
-		context?: any): TResult[];
+	map<TResult>(iterator: _.ObjectIterator<T, TResult>, context?: any): TResult[];
 
 	/**
 	* @see _.map
 	**/
-	collect<TResult>(
-		iterator: (element: T, index?: number, list?: T[]) => TResult,
-		context?: any): TResult[];
+	collect<TResult>(iterator: _.ListIterator<T, TResult>, context?: any): TResult[];
+
 	/**
 	* @see _.map
 	**/
-	collect<TResult>(
-		iterator: (value: any, key?: string, object?: T) => TResult,
-		context?: any): TResult[];
+	collect<TResult>(iterator: _.ObjectIterator<T, TResult>, context?: any): TResult[];
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.reduce
 	**/
-	reduce<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): TResult;
+	reduce<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): TResult;
 
 	/**
 	* @see _.reduce
 	**/
-	inject<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): TResult;
+	inject<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): TResult;
 
 	/**
 	* @see _.reduce
 	**/
-	foldl<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): TResult;
+	foldl<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): TResult;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.reduceRight
 	**/
-	reduceRight<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): TResult;
+	reduceRight<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): TResult;
 
 	/**
 	* @see _.reduceRight
 	**/
-	foldr<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): TResult;
+	foldr<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): TResult;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.find
 	**/
-	find(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): T;
+	find(iterator: _.ListIterator<T, boolean>, context?: any): T;
 
 	/**
 	* @see _.find
 	**/
-	detect(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): T;
+	detect(iterator: _.ListIterator<T, boolean>, context?: any): T;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.filter
 	**/
-	filter(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): T[];
+	filter(iterator: _.ListIterator<T, boolean>, context?: any): T[];
 
 	/**
 	* @see _.filter
 	**/
-	select(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): T[];
+	select(iterator: _.ListIterator<T, boolean>, context?: any): T[];
 
 	/**
 	* Wrapped type `any[]`.
@@ -1353,57 +1433,47 @@ declare class _<T> {
 	* Wrapped type `any[]`.
 	* @see _.reject
 	**/
-	reject(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): T[];
+	reject(iterator: _.ListIterator<T, boolean>, context?: any): T[];
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.all
 	**/
-	all(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+	all(iterator: _.ListIterator<T, boolean>, context?: any): boolean;
 
 	/**
 	* @see _.all
 	**/
-	every(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+	every(iterator: _.ListIterator<T, boolean>, context?: any): boolean;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.any
 	**/
-	any(
-		iterator?: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+	any(iterator?: _.ListIterator<T, boolean>, context?: any): boolean;
 
 	/**
 	* @see _.any
 	**/
-	some(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): bool;
+	some(iterator?: _.ListIterator<T, boolean>, context?: any): boolean;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.contains
 	**/
-	contains(value: any): bool;
+	contains(value: T): boolean;
 
 	/**
 	* Alias for 'contains'.
 	* @see contains
 	**/
-	include(value: any): bool;
+	include(value: T): boolean;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.invoke
 	**/
-	invoke(methodName: string, ...arguments: any[]): void;
+	invoke(methodName: string, ...arguments: any[]): any;
 
 	/**
 	* Wrapped type `any[]`.
@@ -1416,72 +1486,72 @@ declare class _<T> {
 	* @see _.max
 	**/
 	max(): number;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.max
 	**/
-	max(
-		iterator: (element: T, index?: number, list?: T[]) => number,
-		context?: any): T;
+	max(iterator: _.ListIterator<T, number>, context?: any): T;
+
+	/**
+	* Wrapped type `any[]`.
+	* @see _.max
+	**/
+	max(iterator?: _.ListIterator<T, any>, context?: any): T;
 
 	/**
 	* Wrapped type `number[]`.
 	* @see _.min
 	**/
 	min(): number;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.min
 	**/
-	min(
-		iterator: (element: T, index?: number, list?: T[]) => number,
-		context?: any): T;
+	min(iterator: _.ListIterator<T, number>, context?: any): T;
+
+	/**
+	* Wrapped type `any[]`.
+	* @see _.min
+	**/
+	min(iterator?: _.ListIterator<T, any>, context?: any): T;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.sortBy
 	**/
-	sortBy<TSort>(
-		iterator: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): T[];
+	sortBy(iterator?: _.ListIterator<T, any>, context?: any): T[];
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.sortBy
 	**/
-	sortBy(
-		iterator: string,
-		context?: any): T[];
+	sortBy(iterator: string, context?: any): T[];
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.groupBy
 	**/
-	groupBy<TSort>(
-		iterator: (element: any, index?: number, list?: any[]) => TSort,
-		context?: any): { [key: string]: T[]; };
+	groupBy(iterator?: _.ListIterator<T, any>, context?: any): _.Dictionary<_.List<T>>;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.groupBy
 	**/
-	groupBy(
-		iterator: string,
-		context?: any): { [key: string]: T[]; };
+	groupBy(iterator: string, context?: any): _.Dictionary<T[]>;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.countBy
 	**/
-	countBy(
-		iterator: (element: T, index?: number, list?: T[]) => string,
-		context?: any): { [key: string]: number; };
+	countBy(iterator?: _.ListIterator<T, any>, context?: any): _.Dictionary<number[]>;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.countBy
 	**/
-	countBy(
-		iterator: string,
-		context?: any): { [key: string]: number; };
+	countBy(iterator: string, context?: any): _.Dictionary<number[]>;
 
 	/**
 	* Wrapped type `any[]`.
@@ -1510,6 +1580,7 @@ declare class _<T> {
 	* @see _.first
 	**/
 	first(): T;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.first
@@ -1520,6 +1591,7 @@ declare class _<T> {
 	* @see _.first
 	**/
 	head(): T;
+
 	/**
 	* @see _.first
 	**/
@@ -1529,6 +1601,7 @@ declare class _<T> {
 	* @see _.first
 	**/
 	take(): T;
+
 	/**
 	* @see _.first
 	**/
@@ -1545,6 +1618,7 @@ declare class _<T> {
 	* @see _.last
 	**/
 	last(): T;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.last
@@ -1555,17 +1629,17 @@ declare class _<T> {
 	* Wrapped type `any[]`.
 	* @see _.rest
 	**/
-	rest(index?: number): T[];
+	rest(n?: number): T[];
 
 	/**
 	* @see _.rest
 	**/
-	tail(index?: number): T[];
+	tail(n?: number): T[];
 
 	/**
 	* @see _.rest
 	**/
-	drop(index?: number): T[];
+	drop(n?: number): T[];
 
 	/**
 	* Wrapped type `any[]`.
@@ -1577,7 +1651,7 @@ declare class _<T> {
 	* Wrapped type `any`.
 	* @see _.flatten
 	**/
-	flatten(shallow?: bool): any;
+	flatten(shallow?: boolean): any[];
 
 	/**
 	* Wrapped type `any[]`.
@@ -1589,49 +1663,41 @@ declare class _<T> {
 	* Wrapped type `any[][]`.
 	* @see _.union
 	**/
-	union(...arrays: T[][]): T[];
+	union(...arrays: _.List<T>[]): T[];
 
 	/**
 	* Wrapped type `any[][]`.
 	* @see _.intersection
 	**/
-	intersection(...arrays: T[][]): T[];
+	intersection(...arrays: _.List<T>[]): T[];
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.difference
 	**/
-	difference(...others: T[][]): T[];
+	difference(...others: _.List<T>[]): T[];
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.uniq
 	**/
-	uniq<TSort>(
-		isSorted?: bool,
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): T[];
+	uniq(isSorted?: boolean, iterator?: _.ListIterator<T, any>): T[];
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.uniq
 	**/
-	uniq<TSort>(
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): T[];
+	uniq<TSort>(iterator?: _.ListIterator<T, TSort>, context?: any): T[];
 
 	/**
 	* @see _.uniq
 	**/
-	unique<TSort>(
-		isSorted?: bool,
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): T[];
+	unique<TSort>(isSorted?: boolean, iterator?: _.ListIterator<T, TSort>): T[];
+
 	/**
 	* @see _.uniq
 	**/
-	unique<TSort>(
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): T[];
+	unique<TSort>(iterator?: _.ListIterator<T, TSort>, context?: any): T[];
 
 	/**
 	* Wrapped type `any[][]`.
@@ -1646,10 +1712,20 @@ declare class _<T> {
 	object(...keyValuePairs: any[][]): any;
 
 	/**
+	* @see _.object
+	**/
+	object(values?: any): any;
+
+	/**
 	* Wrapped type `any[]`.
 	* @see _.indexOf
 	**/
-	indexOf(value: T, isSorted?: bool): number;
+	indexOf(value: T, isSorted?: boolean): number;
+
+	/**
+	* @see _.indexOf
+	**/
+	indexOf(value: T, startFrom: number): number;
 
 	/**
 	* Wrapped type `any[]`.
@@ -1661,22 +1737,23 @@ declare class _<T> {
 	* Wrapped type `any[]`.
 	* @see _.sortedIndex
 	**/
-	sortedIndex(value: T, iterator?: (element: T) => number): number;
+	sortedIndex(value: T, iterator?: (x: T) => any, context?: any): number;
 
 	/**
 	* Wrapped type `number`.
 	* @see _.range
 	**/
 	range(stop: number, step?: number): number[];
+
 	/**
 	* Wrapped type `number`.
 	* @see _.range
 	**/
 	range(): number[];
 
-	/************
-	* Functions *
-	*************/
+	/* ***********
+	 * Functions *
+	************ */
 
 	/**
 	* Wrapped type `Function`.
@@ -1684,12 +1761,11 @@ declare class _<T> {
 	**/
 	bind(object: any, ...arguments: any[]): Function;
 
-
 	/**
 	* Wrapped type `object`.
 	* @see _.bindAll
 	**/
-	bindAll(...methodNames: string[]): void;
+	bindAll(...methodNames: string[]): any;
 
 	/**
 	* Wrapped type `Function`.
@@ -1701,13 +1777,7 @@ declare class _<T> {
 	* Wrapped type `Function`.
 	* @see _.memoize
 	**/
-	memoize(hashFn?: (n: any) => string): Function;
-
-	/**
-	* Wrapped type `Function`.
-	* @see _.delay
-	**/
-	delay(waitMS: number, ...arguments: any[]): void;
+	memoize(hashFn?: (...n: any[]) => string): Function;
 
 	/**
 	* Wrapped type `Function`.
@@ -1717,15 +1787,26 @@ declare class _<T> {
 
 	/**
 	* Wrapped type `Function`.
+	* @see _.delay
+	**/
+	delay(wait: number, ...arguments: any[]): any;
+
+	/**
+	* @see _.delay
+	**/
+	delay(...arguments: any[]): any;
+
+	/**
+	* Wrapped type `Function`.
 	* @see _.throttle
 	**/
-	throttle(waitMS: number): Function;
+	throttle(wait: number): Function;
 
 	/**
 	* Wrapped type `Function`.
 	* @see _.debounce
 	**/
-	debounce(waitMS: number, immediate?: bool): Function;
+	debounce(wait: number, immediate?: boolean): Function;
 
 	/**
 	* Wrapped type `Function`.
@@ -1737,13 +1818,13 @@ declare class _<T> {
 	* Wrapped type `number`.
 	* @see _.after
 	**/
-	after(fn: Function): Function;
+	after(func: Function): Function;
 
 	/**
 	* Wrapped type `Function`.
 	* @see _.wrap
 	**/
-	wrap(wrapper: (fn: Function, ...args: any[]) => any): Function;
+	wrap(wrapper: Function): () => Function;
 
 	/**
 	* Wrapped type `Function[]`.
@@ -1751,9 +1832,9 @@ declare class _<T> {
 	**/
 	compose(...functions: Function[]): Function;
 
-	/**********
-	* Objects *
-	***********/
+	/********* *
+	 * Objects *
+	********** */
 
 	/**
 	* Wrapped type `object`.
@@ -1765,7 +1846,7 @@ declare class _<T> {
 	* Wrapped type `object`.
 	* @see _.values
 	**/
-	values(): any[];
+	values(): T[];
 
 	/**
 	* Wrapped type `object`.
@@ -1786,6 +1867,11 @@ declare class _<T> {
 	functions(): string[];
 
 	/**
+	* @see _.functions
+	**/
+	methods(): string[];
+
+	/**
 	* Wrapped type `object`.
 	* @see _.extend
 	**/
@@ -1796,12 +1882,14 @@ declare class _<T> {
 	* @see _.pick
 	**/
 	pick(...keys: string[]): any;
+	pick(keys: string[]): any;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.omit
 	**/
 	omit(...keys: string[]): any;
+	omit(keys: string[]): any;
 
 	/**
 	* Wrapped type `object`.
@@ -1810,132 +1898,122 @@ declare class _<T> {
 	defaults(...defaults: any[]): any;
 
 	/**
-	* Wrapped type `object`.
-	* @see _.clone
-	**/
-	clone(object: T): T;
-	/**
 	* Wrapped type `any[]`.
 	* @see _.clone
 	**/
-	clone(list: T[]): T[];
+	clone(): T;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.tap
 	**/
-	tap(intercepter: Function): any;
+	tap(interceptor: (...as: any[]) => any): any;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.has
 	**/
-	has(key: string): bool;
+	has(key: string): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isEqual
 	**/
-	isEqual(other: any): bool;
+	isEqual(other: any): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isEmpty
 	**/
-	isEmpty(object: any): bool;
-	/**
-	* Wrapped type `any[]`.
-	* @see _.isEmpty
-	**/
-	isEmpty(): bool;
+	isEmpty(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isElement
 	**/
-	isElement(): bool;
+	isElement(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isArray
 	**/
-	isArray(): bool;
+	isArray(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isObject
 	**/
-	isObject(): bool;
+	isObject(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isArguments
 	**/
-	isArguments(): bool;
+	isArguments(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isFunction
 	**/
-	isFunction(): bool;
+	isFunction(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isString
 	**/
-	isString(): bool;
+	isString(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isNumber
 	**/
-	isNumber(): bool;
+	isNumber(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isFinite
 	**/
-	isFinite(): bool;
+	isFinite(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isBoolean
 	**/
-	isBoolean(): bool;
+	isBoolean(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isDate
 	**/
-	isDate(): bool;
+	isDate(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isRegExp
 	**/
-	isRegExp(): bool;
+	isRegExp(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isNaN
 	**/
-	isNaN(): bool;
+	isNaN(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isNull
 	**/
-	isNull(): bool;
+	isNull(): boolean;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.isUndefined
 	**/
-	isUndefined(): bool;
+	isUndefined(): boolean;
 
-	/**********
-	* Utility *
-	***********/
+	/********* *
+	 * Utility *
+	********** */
 
 	/**
 	* Wrapped type `any`.
@@ -1988,17 +2066,17 @@ declare class _<T> {
 	* Wrapped type `string`.
 	* @see _.template
 	**/
-	template(data?: any, settings?: _._TemplateSettings): any;
+	template(data?: any, settings?: _.TemplateSettings): (...data: any[]) => string;
 
-	/***********
-	* Chaining *
-	************/
+	/********** *
+	 * Chaining *
+	*********** */
 
 	/**
 	* Wrapped type `any`.
 	* @see _.chain
 	**/
-	chain(): _Chain;
+	chain(): _Chain<any>;
 
 	/**
 	* Wrapped type `any`.
@@ -2009,135 +2087,101 @@ declare class _<T> {
 
 interface _Chain<T> {
 
-	/**************
-	* Collections *
-	**************/
+	/* *************
+	 * Collections *
+	 ************* */
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.each
 	**/
-	each(
-		iterator: (element: T, index?: number, list?: T[]) => void ,
-		context?: any): _Chain;
-	/**
-	* @see _.each
-	**/
-	each(
-		iterator: (value: any, key?: string, object?: T) => void ,
-		context?: any): _Chain;
+	each(iterator: _.ListIterator<T, void >, context?: any): _Chain<any>;
 
 	/**
 	* @see _.each
 	**/
-	forEach(
-		iterator: (element: T, index?: number, list?: T[]) => void ,
-		context?: any): _Chain;
+	each(iterator: _.ObjectIterator<T, void >, context?: any): _Chain;
+
 	/**
 	* @see _.each
 	**/
-	forEach(
-		iterator: (value: any, key?: string, object?: T) => any,
-		context?: any): _Chain;
+	forEach(iterator: _.ListIterator<T, void >, context?: any): _Chain;
+
+	/**
+	* @see _.each
+	**/
+	forEach(iterator: _.ObjectIterator<T, void >, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.map
 	**/
-	map<TResult>(
-		iterator: (element: T, index?: number, list?: T[]) => TResult,
-		context?: any): _Chain;
+	map<TResult>(iterator: _.ListIterator<T, TResult>, context?: any): _Chain;
+
 	/**
+	* Wrapped type `any[]`.
 	* @see _.map
 	**/
-	map<TResult>(
-		iterator: (value: any, key?: string, object?: T) => TResult,
-		context?: any): _Chain;
+	map<TResult>(iterator: _.ObjectIterator<T, TResult>, context?: any): _Chain;
 
 	/**
 	* @see _.map
 	**/
-	collect<TResult>(
-		iterator: (element: T, index?: number, list?: T[]) => TResult,
-		context?: any): _Chain;
+	collect<TResult>(iterator: _.ListIterator<T, TResult>, context?: any): _Chain;
+
 	/**
 	* @see _.map
 	**/
-	collect<TResult>(
-		iterator: (value: any, key?: string, object?: T) => TResult,
-		context?: any): _Chain;
+	collect<TResult>(iterator: _.ObjectIterator<T, TResult>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.reduce
 	**/
-	reduce<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): _Chain;
+	reduce<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): _Chain;
 
 	/**
 	* @see _.reduce
 	**/
-	inject<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): _Chain;
+	inject<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): _Chain;
 
 	/**
 	* @see _.reduce
 	**/
-	foldl<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): _Chain;
+	foldl<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.reduceRight
 	**/
-	reduceRight<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): _Chain;
+	reduceRight<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): _Chain;
 
 	/**
 	* @see _.reduceRight
 	**/
-	foldr<TResult>(
-		iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult,
-		memo: TResult,
-		context?: any): _Chain;
+	foldr<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.find
 	**/
-	find(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	find(iterator: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* @see _.find
 	**/
-	detect(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	detect(iterator: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.filter
 	**/
-	filter(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	filter(iterator: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* @see _.filter
 	**/
-	select(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	select(iterator: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
@@ -2155,51 +2199,41 @@ interface _Chain<T> {
 	* Wrapped type `any[]`.
 	* @see _.reject
 	**/
-	reject(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	reject(iterator: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.all
 	**/
-	all(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	all(iterator: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* @see _.all
 	**/
-	every(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	every(iterator: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.any
 	**/
-	any(
-		iterator?: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	any(iterator?: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* @see _.any
 	**/
-	some(
-		iterator: (element: T, index?: number, list?: T[]) => bool,
-		context?: any): _Chain;
+	some(iterator?: _.ListIterator<T, boolean>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.contains
 	**/
-	contains(value: any): _Chain;
+	contains(value: T): _Chain;
 
 	/**
 	* Alias for 'contains'.
 	* @see contains
 	**/
-	include(value: any): _Chain;
+	include(value: T): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
@@ -2218,72 +2252,72 @@ interface _Chain<T> {
 	* @see _.max
 	**/
 	max(): _Chain;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.max
 	**/
-	max(
-		iterator: (element: T, index?: number, list?: T[]) => number,
-		context?: any): _Chain;
+	max(iterator: _.ListIterator<T, number>, context?: any): _Chain;
+
+	/**
+	* Wrapped type `any[]`.
+	* @see _.max
+	**/
+	max(iterator?: _.ListIterator<T, any>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `number[]`.
 	* @see _.min
 	**/
 	min(): _Chain;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.min
 	**/
-	min(
-		iterator: (element: T, index?: number, list?: T[]) => number,
-		context?: any): _Chain;
+	min(iterator: _.ListIterator<T, number>, context?: any): _Chain;
+
+	/**
+	* Wrapped type `any[]`.
+	* @see _.min
+	**/
+	min(iterator?: _.ListIterator<T, any>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.sortBy
 	**/
-	sortBy<TSort>(
-		iterator: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): _Chain;
+	sortBy(iterator?: _.ListIterator<T, any>, context?: any): _Chain;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.sortBy
 	**/
-	sortBy(
-		iterator: string,
-		context?: any): _Chain;
+	sortBy(iterator: string, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.groupBy
 	**/
-	groupBy<TSort>(
-		iterator: (element: any, index?: number, list?: any[]) => TSort,
-		context?: any): _Chain;
+	groupBy(iterator?: _.ListIterator<T, any>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.groupBy
 	**/
-	groupBy(
-		iterator: string,
-		context?: any): _Chain;
+	groupBy(iterator: string, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.countBy
 	**/
-	countBy(
-		iterator: (element: T, index?: number, list?: T[]) => string,
-		context?: any): _Chain;
+	countBy(iterator?: _.ListIterator<T, any>, context?: any): _Chain;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.countBy
 	**/
-	countBy(
-		iterator: string,
-		context?: any): _Chain;
+	countBy(iterator: string, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
@@ -2312,6 +2346,7 @@ interface _Chain<T> {
 	* @see _.first
 	**/
 	first(): _Chain;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.first
@@ -2322,6 +2357,7 @@ interface _Chain<T> {
 	* @see _.first
 	**/
 	head(): _Chain;
+
 	/**
 	* @see _.first
 	**/
@@ -2331,6 +2367,7 @@ interface _Chain<T> {
 	* @see _.first
 	**/
 	take(): _Chain;
+
 	/**
 	* @see _.first
 	**/
@@ -2347,6 +2384,7 @@ interface _Chain<T> {
 	* @see _.last
 	**/
 	last(): _Chain;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.last
@@ -2357,17 +2395,17 @@ interface _Chain<T> {
 	* Wrapped type `any[]`.
 	* @see _.rest
 	**/
-	rest(index?: number): _Chain;
+	rest(n?: number): _Chain;
 
 	/**
 	* @see _.rest
 	**/
-	tail(index?: number): _Chain;
+	tail(n?: number): _Chain;
 
 	/**
 	* @see _.rest
 	**/
-	drop(index?: number): _Chain;
+	drop(n?: number): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
@@ -2379,7 +2417,7 @@ interface _Chain<T> {
 	* Wrapped type `any`.
 	* @see _.flatten
 	**/
-	flatten(shallow?: bool): _Chain;
+	flatten(shallow?: boolean): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
@@ -2391,49 +2429,41 @@ interface _Chain<T> {
 	* Wrapped type `any[][]`.
 	* @see _.union
 	**/
-	union(...arrays: T[][]): _Chain;
+	union(...arrays: _.List<T>[]): _Chain;
 
 	/**
 	* Wrapped type `any[][]`.
 	* @see _.intersection
 	**/
-	intersection(...arrays: T[][]): _Chain;
+	intersection(...arrays: _.List<T>[]): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.difference
 	**/
-	difference(...others: T[][]): _Chain;
+	difference(...others: _.List<T>[]): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
 	* @see _.uniq
 	**/
-	uniq<TSort>(
-		isSorted?: bool,
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): _Chain;
+	uniq(isSorted?: boolean, iterator?: _.ListIterator<T, any>): _Chain;
+
 	/**
 	* Wrapped type `any[]`.
 	* @see _.uniq
 	**/
-	uniq<TSort>(
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): _Chain;
+	uniq<TSort>(iterator?: _.ListIterator<T, TSort>, context?: any): _Chain;
 
 	/**
 	* @see _.uniq
 	**/
-	unique<TSort>(
-		isSorted?: bool,
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): _Chain;
+	unique<TSort>(isSorted?: boolean, iterator?: _.ListIterator<T, TSort>): _Chain;
+
 	/**
 	* @see _.uniq
 	**/
-	unique<TSort>(
-		iterator?: (element: T, index?: number, list?: T[]) => TSort,
-		context?: any): _Chain;
+	unique<TSort>(iterator?: _.ListIterator<T, TSort>, context?: any): _Chain;
 
 	/**
 	* Wrapped type `any[][]`.
@@ -2448,10 +2478,20 @@ interface _Chain<T> {
 	object(...keyValuePairs: any[][]): _Chain;
 
 	/**
+	* @see _.object
+	**/
+	object(values?: any): _Chain;
+
+	/**
 	* Wrapped type `any[]`.
 	* @see _.indexOf
 	**/
-	indexOf(value: T, isSorted?: bool): _Chain;
+	indexOf(value: T, isSorted?: boolean): _Chain;
+
+	/**
+	* @see _.indexOf
+	**/
+	indexOf(value: T, startFrom: number): _Chain;
 
 	/**
 	* Wrapped type `any[]`.
@@ -2463,29 +2503,29 @@ interface _Chain<T> {
 	* Wrapped type `any[]`.
 	* @see _.sortedIndex
 	**/
-	sortedIndex(value: T, iterator?: (element: T) => number): _Chain;
+	sortedIndex(value: T, iterator?: (x: T) => any, context?: any): _Chain;
 
 	/**
 	* Wrapped type `number`.
 	* @see _.range
 	**/
 	range(stop: number, step?: number): _Chain;
+
 	/**
 	* Wrapped type `number`.
 	* @see _.range
 	**/
 	range(): _Chain;
 
-	/************
-	* Functions *
-	*************/
+	/* ***********
+	 * Functions *
+	************ */
 
 	/**
 	* Wrapped type `Function`.
 	* @see _.bind
 	**/
 	bind(object: any, ...arguments: any[]): _Chain;
-
 
 	/**
 	* Wrapped type `object`.
@@ -2503,13 +2543,7 @@ interface _Chain<T> {
 	* Wrapped type `Function`.
 	* @see _.memoize
 	**/
-	memoize(hashFn?: (n: any) => string): _Chain;
-
-	/**
-	* Wrapped type `Function`.
-	* @see _.delay
-	**/
-	delay(waitMS: number, ...arguments: any[]): _Chain;
+	memoize(hashFn?: (...n: any[]) => string): _Chain;
 
 	/**
 	* Wrapped type `Function`.
@@ -2519,15 +2553,26 @@ interface _Chain<T> {
 
 	/**
 	* Wrapped type `Function`.
+	* @see _.delay
+	**/
+	delay(wait: number, ...arguments: any[]): _Chain;
+
+	/**
+	* @see _.delay
+	**/
+	delay(...arguments: any[]): _Chain;
+
+	/**
+	* Wrapped type `Function`.
 	* @see _.throttle
 	**/
-	throttle(waitMS: number): _Chain;
+	throttle(wait: number): _Chain;
 
 	/**
 	* Wrapped type `Function`.
 	* @see _.debounce
 	**/
-	debounce(waitMS: number, immediate?: bool): _Chain;
+	debounce(wait: number, immediate?: boolean): _Chain;
 
 	/**
 	* Wrapped type `Function`.
@@ -2539,13 +2584,13 @@ interface _Chain<T> {
 	* Wrapped type `number`.
 	* @see _.after
 	**/
-	after(fn: Function): _Chain;
+	after(func: Function): _Chain;
 
 	/**
 	* Wrapped type `Function`.
 	* @see _.wrap
 	**/
-	wrap(wrapper: (fn: Function, ...args: any[]) => any): _Chain;
+	wrap(wrapper: Function): () => _Chain;
 
 	/**
 	* Wrapped type `Function[]`.
@@ -2553,9 +2598,9 @@ interface _Chain<T> {
 	**/
 	compose(...functions: Function[]): _Chain;
 
-	/**********
-	* Objects *
-	***********/
+	/********* *
+	 * Objects *
+	********** */
 
 	/**
 	* Wrapped type `object`.
@@ -2588,6 +2633,11 @@ interface _Chain<T> {
 	functions(): _Chain;
 
 	/**
+	* @see _.functions
+	**/
+	methods(): _Chain;
+
+	/**
 	* Wrapped type `object`.
 	* @see _.extend
 	**/
@@ -2604,6 +2654,7 @@ interface _Chain<T> {
 	* @see _.omit
 	**/
 	omit(...keys: string[]): _Chain;
+	omit(keys: string[]): _Chain;
 
 	/**
 	* Wrapped type `object`.
@@ -2612,21 +2663,16 @@ interface _Chain<T> {
 	defaults(...defaults: any[]): _Chain;
 
 	/**
-	* Wrapped type `object`.
-	* @see _.clone
-	**/
-	clone(object: T): _Chain;
-	/**
 	* Wrapped type `any[]`.
 	* @see _.clone
 	**/
-	clone(list: T[]): _Chain;
+	clone(): _Chain;
 
 	/**
 	* Wrapped type `object`.
 	* @see _.tap
 	**/
-	tap(intercepter: Function): _Chain;
+	tap(interceptor: (...as: any[]) => any): _Chain;
 
 	/**
 	* Wrapped type `object`.
@@ -2642,11 +2688,6 @@ interface _Chain<T> {
 
 	/**
 	* Wrapped type `object`.
-	* @see _.isEmpty
-	**/
-	isEmpty(object: any): _Chain;
-	/**
-	* Wrapped type `any[]`.
 	* @see _.isEmpty
 	**/
 	isEmpty(): _Chain;
@@ -2735,9 +2776,9 @@ interface _Chain<T> {
 	**/
 	isUndefined(): _Chain;
 
-	/**********
-	* Utility *
-	***********/
+	/********* *
+	 * Utility *
+	********** */
 
 	/**
 	* Wrapped type `any`.
@@ -2790,11 +2831,11 @@ interface _Chain<T> {
 	* Wrapped type `string`.
 	* @see _.template
 	**/
-	template(data?: any, settings?: _._TemplateSettings): _Chain;
+	template(data?: any, settings?: _.TemplateSettings): (...data: any[]) => _Chain;
 
-	/***********
-	* Chaining *
-	************/
+	/********** *
+	 * Chaining *
+	*********** */
 
 	/**
 	* Wrapped type `any`.
@@ -2806,7 +2847,7 @@ interface _Chain<T> {
 	* Wrapped type `any`.
 	* @see _.value
 	**/
-	value<TResult>(): TResult;
+	value<TResult>(): _Chain;
 }
 
 declare module "underscore" {

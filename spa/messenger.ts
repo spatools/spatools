@@ -58,7 +58,7 @@ export function unsubscribe (topic, callback) {
         return;
 
     var index = -1;
-    _.find(subscriptions[topic], function (subscription, i?:number) {
+    _.find(subscriptions[topic], (subscription, i?:number) => {
         index = i;
         return subscription.callback === callback;
     });

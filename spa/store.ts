@@ -27,7 +27,7 @@ class MemoryStorage implements ISimpleStorage {
     };
 
     key = function (index: any): any {
-        return _.find(_.values(this.memory), function (val, i?: number) { return i === index; });
+        return _.find(_.values(this.memory), (val, i?: number) => i === index);
     };
 
     getItem = function (key: any): any {
@@ -48,7 +48,7 @@ class MemoryStorage implements ISimpleStorage {
 createFromIStorage("memory", new MemoryStorage());
 
 
-_.each(["localStorage", "sessionStorage"], function (storageType) {
+_.each(["localStorage", "sessionStorage"], function (storageType: string): void {
     try {
         if (window[storageType] && window[storageType].getItem) {
             createFromIStorage(storageType, window[storageType]);

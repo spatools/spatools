@@ -51,6 +51,11 @@ interface KnockoutBindingHandlers {
         init(element: HTMLElement, valueAccessor: () => any): void;
         update(element: HTMLElement, valueAccessor: () => any): void;
     };
+
+    editor: {
+        init(element: HTMLElement, valueAccessor: () => any): void;
+        update(element: HTMLElement, valueAccessor: () => any): void;
+    };
 }
 
 interface KnockoutTemplateEngine {
@@ -67,7 +72,6 @@ interface KnockoutTemplateSourcesDomElement {
 
 interface KnockoutStatic {
     requireTemplateEngine: any;
-    selectExtensions: any;
 }
 
 interface OperationOptions {
