@@ -17,7 +17,7 @@ export function publish(topic: string, ...args: any[]): boolean {
     
     while (index !== -1)
     {
-        index = _.index(subscriptions[topic], function (s) { return s.once; });
+        index = _.index(subscriptions[topic], s => s.once);
         if (index !== -1)
             subscriptions[topic].splice(index, 1);
     } 
@@ -58,7 +58,7 @@ export function unsubscribe (topic, callback) {
         return;
 
     var index = -1;
-    _.find(subscriptions[topic], (subscription, i?:number) => {
+    _.find(subscriptions[topic], (subscription, i:number) => {
         index = i;
         return subscription.callback === callback;
     });

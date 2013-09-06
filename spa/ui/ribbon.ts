@@ -215,8 +215,8 @@ export interface RibbonItem {}
 
 export class RibbonGroup {
     public title: KnockoutObservable<string>;
-    public priority: KnockoutObservable<string>;
-    public isCollapsed: KnockoutObservable<string>;
+    public priority: KnockoutObservable<number>;
+    public isCollapsed: KnockoutObservable<boolean>;
     public icon: KnockoutObservable<string>;
     public content: KnockoutObservableArray<RibbonItem>;
 

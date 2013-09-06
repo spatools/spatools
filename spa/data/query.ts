@@ -256,8 +256,8 @@ export class Ordering {
     public ascending: KnockoutObservable<boolean>;
     
     constructor(field: any, ascending: any) {
-        this.field = utils.createObservable(field);
-        this.ascending = utils.createObservable(ascending, true);
+        this.field = utils.createObservable<string>(field);
+        this.ascending = utils.createObservable<boolean>(ascending, true);
     }
 
     /** Creates a String acceptable for odata Query String $orderby */
@@ -296,8 +296,8 @@ export class ODataQuery {
         this.pageSize = utils.createObservable(options.pageSize);
         this.ordersby = utils.createObservableArray(options.ordersBy);
         this.filters = utils.createObservableArray(options.filters);
-        this.total = utils.createObservable(options.total, false);
-        this.includeDeleted = utils.createObservable(options.includeDeleted, false);
+        this.total = utils.createObservable<boolean>(options.total, false);
+        this.includeDeleted = utils.createObservable<boolean>(options.includeDeleted, false);
     }
 
     public addFilter(field: any, type: any, value: any): ODataQuery {

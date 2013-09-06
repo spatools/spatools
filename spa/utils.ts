@@ -30,7 +30,7 @@ export function createAccessor<T>(value: T): () => T {
 }
 
 /** Return an observable from value (or _default if undefined). If value is subscribable, returns value directly. */
-export function createObservable<T>(value: any, _default?: any): KnockoutObservable<T> {
+export function createObservable<T>(value: any, _default?: T): KnockoutObservable<T> {
     if (_.isUndefined(value) || _.isNull(value))
         return ko.observable(_default);
 
@@ -41,7 +41,7 @@ export function createObservable<T>(value: any, _default?: any): KnockoutObserva
 }
 
 /** Return an observable from value (or _default if undefined). If value is subscribable, returns value directly. */
-export function createObservableArray(value: any, mapFunction?: (obj: any) => any, context?: any): KnockoutObservableArray {
+export function createObservableArray(value: any, mapFunction?: (obj: any) => any, context?: any): KnockoutObservableArray<any> {
     if (typeof value === "undefined")
         return ko.observableArray();
 

@@ -143,7 +143,7 @@ var downloadFileAsDataURL = function(url: string) : JQueryDeferred<string> {
 
             dfd.resolve(text);
         };
-        xhr.onerror = dfd.fail;
+        xhr.onerror = dfd.reject;
 
         xhr.send();
     });

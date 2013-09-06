@@ -230,7 +230,7 @@ export function getDirectoryName(path: string): string {
 export function combine(...paths: string[]): string {
     var result = "";
 
-    _.each(paths, function (path, index?) {
+    _.each(paths, (path: string, index: number) => {
         result += path;
 
         if (index < paths.length)

@@ -27,7 +27,7 @@ class MemoryStorage implements ISimpleStorage {
     };
 
     key = function (index: any): any {
-        return _.find(_.values(this.memory), (val, i?: number) => i === index);
+        return _.find(_.values(this.memory), (val, i: number) => i === index);
     };
 
     getItem = function (key: any): any {
