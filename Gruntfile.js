@@ -36,6 +36,13 @@
                     declaration: false
                 }
             },
+            ui: {
+                src: "spa/ui/**/*.ts",
+                dest: "<%= paths.output %>/",
+                options: {
+                    declaration: false
+                }
+            },
             samples: {
                 src: "samples/**/*.ts",
                 dest: "<%= paths.output %>/",
@@ -53,7 +60,11 @@
             samples: {
                 src: "samples/**/*.html",
                 dest: "<%= paths.output %>/"
-            }
+            },
+            assets: {
+                src: "assets/**/*.*",
+                dest: "<%= paths.output %>/"
+            },
         },
 
         uglify: {
@@ -96,9 +107,10 @@
     grunt.registerTask("build_base", ["typescript:base", "uglify:base"]);
     grunt.registerTask("build_modules", ["typescript:modules", "copy:modules"]);
     grunt.registerTask("build_samples", ["typescript:samples", "copy:samples"]);
-    grunt.registerTask("build_ui", ["less"]);
+    grunt.registerTask("build_assets", ["copy:assets"])
+    grunt.registerTask("build_ui", ["typescript:ui", "less"]);
 
 
     // Buildset Tasks
-    grunt.registerTask("default", ["build_base", "build_modules", "build_samples", "build_ui"]);
+    grunt.registerTask("default", ["build_base", "build_modules", "build_samples", "build_assets", "build_ui"]);
 };
