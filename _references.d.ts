@@ -62,14 +62,6 @@ interface MSEventObj {
     eventType: string;
 }
 
-interface KnockoutObservableFunctions {
-    equalityComparer: (a: any, b: any) => bool;
-}
-
-interface KnockoutSubscribableFunctions {
-    notifySubscribers: (value: any, event?: string) => void;
-}
-
 interface Function {
     result: any;
 }
