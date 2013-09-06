@@ -63,7 +63,7 @@ function createEditorPopup(editor: Editor, callback: (HTMLElement) => any): void
     var popup = doc.createElement("div");
     doc.body.appendChild(popup);
 
-    ko.renderTemplate("editorTemplate", editor, { afterRender: elements => callback(elements[0]) }, popup, "replaceNode");
+    ko.renderTemplate("text!editor-template.html", editor, { afterRender: elements => callback(elements[0]), templateEngine: engine.defaultInstance }, popup, "replaceNode");
 }
 function removeEditorPopup(editor: Editor): void {
     var $popup = $(editor.popup);
@@ -1132,8 +1132,8 @@ export class EditorButton extends EditorItem implements IEditorParent {
     public template: string = "text!editor-button-template.html";
 
     public buttons: KnockoutObservableArray<EditorButton>;
-    public isEnabled: KnockoutObservable<boolean>;
-    public isActive: KnockoutObservable<boolean>;
+    public isEnabled: KnockoutSubscribable<boolean>;
+    public isActive: KnockoutSubscribable<boolean>;
     public isSubActive: KnockoutObservable<boolean> = ko.observable(false);
     public hasSubMenu: KnockoutComputed<boolean>;
 
@@ -1180,7 +1180,7 @@ export class EditorButton extends EditorItem implements IEditorParent {
             this.isActive = utils.createObservable(options.isActive, false);
         }
 
-        this.hasSubMenu = ko.computed(() => this.buttons._count() > 0);
+        this.hasSubMenu = ko.computed(() => this.buttons._size() > 0);
     }
 
     public executeCommand(editor: Editor, e: Event): boolean {
@@ -1358,7 +1358,7 @@ ko.bindingHandlers.editor = {
                 event.stopPropagation(e);
                 return false;
             })
-            .bind('blur keyup paste', (e: JQueryEventObject) => {
+            .bind('blur keyup paste', function(e: JQueryEventObject) {
                 if (!editor.isEnabled())
                     return;
 
