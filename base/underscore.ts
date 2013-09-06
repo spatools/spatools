@@ -178,7 +178,7 @@ interface KnockoutUnderscoreArrayFunctions {
     _lastIndexOf<T>(value: T, from?: number): number;
 }
 
-interface KnockoutObservableArrayFunctions extends KnockoutUnderscoreArrayFunctions {
+interface KnockoutObservableArrayFunctions<T> extends KnockoutUnderscoreArrayFunctions {
     indexOf<T>(value: T, isSorted?: boolean): KnockoutComputed<number>;
     lastIndexOf<T>(value: T, from?: number): KnockoutComputed<number>;
 }

@@ -29,18 +29,19 @@ interface KnockoutHistoryObservableStatic {
     <T>(initialValue: T): KnockoutHistoryObservable<T>;
 }
 
-interface KnockoutSubscribableFunctions {
+interface KnockoutSubscribableFunctions<T> {
     errors?: KnockoutValidationErrors;
 }
 
 interface KnockoutValidationErrors {
-    subscribe(callback: (newValue: string[]) => void , target?: any, topic?: string): KnockoutSubscription;
+    subscribe(callback: (newValue: string[]) => void , target?: any, topic?: string): KnockoutSubscription<string[]>;
 }
+
 module spa {
     ko._validatedObservable = function <T>(initialValue: T): KnockoutObservable<T> {
         var obsv = ko.observable<T>(initialValue),
             isValid = ko.observable(true),
-            subscription: KnockoutSubscription;
+            subscription: KnockoutSubscription<string[]>;
 
         obsv.subscribe(function (newValue) {
             obsv.errors = ko.validation.group(newValue || {});
@@ -55,7 +56,7 @@ module spa {
         
         obsv.isValid = ko.computed(() => isValid());
         subscription = obsv.errors.subscribe((errors: string[]) => isValid(errors.length === 0));
-
+        
         return obsv;
     };
 
