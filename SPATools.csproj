@@ -59,6 +59,7 @@
     <Content Include="css\mixins.css">
       <DependentUpon>mixins.less</DependentUpon>
     </Content>
+    <Content Include="css\qunit-1.12.0.css" />
     <Content Include="css\ui-contextmenu.css">
       <DependentUpon>ui-contextmenu.less</DependentUpon>
     </Content>
@@ -75,6 +76,8 @@
       <DependentUpon>variables.less</DependentUpon>
     </Content>
     <Content Include="samples\contextmenu.html" />
+    <Content Include="Scripts\qunit-1.12.0.js" />
+    <Content Include="Scripts\typings\qunit\qunit.d.ts" />
     <Content Include="spa\ui\editor.ts" />
     <Content Include="spa\ui\tree.ts" />
     <Content Include="spa\ui\ribbon.ts" />
@@ -157,6 +160,10 @@
     <Content Include="spa\ui\templateEngine.ts" />
     <Content Include="spa\ui\contextmenu.ts" />
     <Content Include="spa\utils.ts" />
+    <Content Include="tests\all.html" />
+    <Content Include="tests\all.ts" />
+    <Content Include="tests\base64.ts" />
+    <Content Include="tests\changeTracker.ts" />
     <Content Include="_references.d.ts" />
   </ItemGroup>
   <ItemGroup>
