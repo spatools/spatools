@@ -19,6 +19,7 @@ var modules = [
     "base64",
     "changeTracker",
     "commands",
+    "messenger",
 ];
 
 require(modules, function () {

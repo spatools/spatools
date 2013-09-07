@@ -165,6 +165,7 @@
     <Content Include="tests\base64.ts" />
     <Content Include="tests\changeTracker.ts" />
     <Content Include="tests\commands.ts" />
+    <Content Include="tests\messenger.ts" />
     <Content Include="_references.d.ts" />
   </ItemGroup>
   <ItemGroup>

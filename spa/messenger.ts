@@ -3,6 +3,12 @@
 var priority: number = 1,
     subscriptions = {};
 
+export interface SubscribeOptions {
+    context?: any;
+    priority?: number;
+    once?: boolean;
+}
+
 /** Publish message with specified options in the given topic */
 export function publish(topic: string, ...args: any[]): boolean {
     if (!subscriptions[topic]) {
@@ -26,7 +32,7 @@ export function publish(topic: string, ...args: any[]): boolean {
 }
 
 /** Publish message with specified options in the given topic */
-export function subscribe(topic: string, callback: () => any, options?: any): void {
+export function subscribe(topic: string, callback: () => void, options?: SubscribeOptions): void {
     if (!topic || !callback)
         throw new Error("missing topic or callback argument");
 
@@ -47,7 +53,7 @@ export function subscribe(topic: string, callback: () => any, options?: any): vo
 }
 
 /** Subscribe for the next iteration of the specified topic with given callback and options */
-export function subscribeNext (topic: string, callback: () => any, options: any): void {
+export function subscribeNext(topic: string, callback: () => void, options?: SubscribeOptions): void {
     var _options = ko.utils.extend({ once: true }, options);
     subscribe(topic, callback, _options);
 }
