@@ -16,7 +16,7 @@ export class Timer {
      */
     constructor(
         private interval: number,
-        private callback: () => any,
+        private callback: () => void,
         private callBackContext: any = null,
         private enabled: boolean = false,
         private callOnFirstStart: boolean = false) {
@@ -41,7 +41,7 @@ export class Timer {
     }
 
     /** Set a new callback to be called when timer ticks. */
-    setCallback(callback: () => any): void {
+    setCallback(callback: () => void): void {
         this.callback = callback;
     }
 
@@ -80,7 +80,7 @@ export class Timer {
     //#region Private Methods
 
     private setTimeout(): void {
-        this.timeout = setTimeout(function () {
+        this.timeout = setTimeout(() => {
             this.onTimerTick.apply(this, arguments);
         }, this.interval);
     }
@@ -113,7 +113,7 @@ export class AsyncTimer {
      */
     constructor(
         private interval: number,
-        private callback: () => any,
+        private callback: (complete: () => void) => void,
         private callBackContext: any = null,
         private enabled: boolean = false,
         private callOnFirstStart: boolean = false) {
@@ -138,7 +138,7 @@ export class AsyncTimer {
     }
 
     /** Set a new callback to be called when timer ticks. */
-    setCallback(callback: () => any): void {
+    setCallback(callback: (complete: () => void ) => void): void {
         this.callback = callback;
     }
 
@@ -155,6 +155,8 @@ export class AsyncTimer {
 
         if (callOnFirstStart || this.callOnFirstStart)
             this.callback.call(this.callBackContext, this.completeCallback);
+        else
+            this.setTimeout();
     }
 
     /** Stop current timer. */
@@ -175,14 +177,14 @@ export class AsyncTimer {
     //#region Private Methods
 
     private setTimeout(): void {
-        this.timeout = setTimeout(function () {
+        this.timeout = setTimeout(() => {
             this.onTimerTick.apply(this, arguments);
         }, this.interval);
     }
 
     private onTimerTick(): void {
         this.tickCount += this.interval;
-        this.callback.call(this.callBackContext, this.completeCallback);
+        this.callback.call(this.callBackContext, _.bind(this.completeCallback, this));
     }
 
     private completeCallback(): void {

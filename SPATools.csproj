@@ -168,6 +168,7 @@
     <Content Include="tests\messenger.ts" />
     <Content Include="tests\path.ts" />
     <Content Include="tests\store.ts" />
+    <Content Include="tests\timers.ts" />
     <Content Include="_references.d.ts" />
   </ItemGroup>
   <ItemGroup>
