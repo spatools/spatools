@@ -17,7 +17,8 @@ requirejs.config({
 
 var modules = [
     "base64",
-    "changeTracker"
+    "changeTracker",
+    "commands",
 ];
 
 require(modules, function () {
