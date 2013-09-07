@@ -21,6 +21,7 @@ var modules = [
     "commands",
     "messenger",
     "path",
+    "store"
 ];
 
 require(modules, function () {

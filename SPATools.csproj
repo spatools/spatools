@@ -167,6 +167,7 @@
     <Content Include="tests\commands.ts" />
     <Content Include="tests\messenger.ts" />
     <Content Include="tests\path.ts" />
+    <Content Include="tests\store.ts" />
     <Content Include="_references.d.ts" />
   </ItemGroup>
   <ItemGroup>
