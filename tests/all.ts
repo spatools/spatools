@@ -23,6 +23,7 @@ var modules = [
     "path",
     "store",
     "timers",
+    "utils"
 ];
 
 require(modules, function () {

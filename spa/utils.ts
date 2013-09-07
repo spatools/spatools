@@ -78,7 +78,7 @@ export function isNullOrWhiteSpace(value: string): boolean {
 //#region Utility Methods
 
 /** Copy all properties from all object passed in arguments in the first object passed in arguments. */
-export function extend(target: Object, ...objs: Object[]): Object {
+export function extend(target: any, ...objs: any[]): any {
     if (objs.length === 0) {
         return target;
     }
@@ -170,7 +170,7 @@ export function getQueryString(key: string): any {
 }
 
 /** Load specified modules using RequireJS under a promise. */
-export function load(...modules: string[]): JQueryPromise {
+export function load(...modules: string[]): JQueryPromise<any> {
     return $.Deferred(function (dfd) {
         var args = _.flatten(modules, true);
 
@@ -196,7 +196,6 @@ export function str_pad(text: string, length: number, char: string, right: boole
 
     return str;
 }
-
 
 //#endregion
 
