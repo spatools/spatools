@@ -20,6 +20,7 @@ var modules = [
     "changeTracker",
     "commands",
     "messenger",
+    "path",
 ];
 
 require(modules, function () {

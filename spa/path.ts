@@ -233,7 +233,7 @@ export function combine(...paths: string[]): string {
     _.each(paths, (path: string, index: number) => {
         result += path;
 
-        if (index < paths.length)
+        if (index < paths.length - 1)
             result += separator;
     });
 
