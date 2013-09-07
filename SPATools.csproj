@@ -162,6 +162,7 @@
     <Content Include="spa\utils.ts" />
     <Content Include="tests\all.html" />
     <Content Include="tests\all.ts" />
+    <Content Include="tests\base.ts" />
     <Content Include="tests\base64.ts" />
     <Content Include="tests\changeTracker.ts" />
     <Content Include="tests\commands.ts" />
