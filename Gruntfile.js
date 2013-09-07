@@ -49,6 +49,13 @@
                 options: {
                     declaration: false
                 }
+            },
+            tests: {
+                src: "tests/**/*.ts",
+                dest: "<%= paths.output %>/",
+                options: {
+                    declaration: false
+                }
             }
         },
 
@@ -59,6 +66,10 @@
             },
             samples: {
                 src: "samples/**/*.html",
+                dest: "<%= paths.output %>/"
+            },
+            tests: {
+                src: "tests/**/*.html",
                 dest: "<%= paths.output %>/"
             },
             assets: {
@@ -95,6 +106,10 @@
                     "<%= paths.output %>/css/ui-tree.css": "css/ui-tree.less",
                 }
             }
+        },
+
+        qunit: {
+            tests: ["<%= paths.output %>/tests/all.html"]
         }
     });
 
@@ -109,8 +124,10 @@
     grunt.registerTask("build_samples", ["typescript:samples", "copy:samples"]);
     grunt.registerTask("build_assets", ["copy:assets"])
     grunt.registerTask("build_ui", ["typescript:ui", "less"]);
+    grunt.registerTask("build_tests", ["typescript:tests", "copy:tests"]);
+    grunt.registerTask("run_tests", ["qunit:tests"]);
 
 
     // Buildset Tasks
-    grunt.registerTask("default", ["build_base", "build_modules", "build_samples", "build_assets", "build_ui"]);
+    grunt.registerTask("default", ["build_base", "build_modules", "build_samples", "build_assets", "build_ui", "build_tests", "run_tests"]);
 };
