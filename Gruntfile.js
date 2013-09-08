@@ -110,12 +110,30 @@
 
         qunit: {
             tests: ["<%= paths.output %>/tests/all.html"]
+        },
+
+        nugetpack: {
+            all: {
+                src: "nuget/**/*.nuspec",
+                dest: "nuget/",
+
+                options: {
+                    version: "<%= pkg.version %>"
+                }
+            }
+        },
+
+        nugetpush: {
+            all: {
+                src: "nuget/**/*.<%= pkg.version %>.nupkg"
+            }
         }
     });
 
     // Load plugins
     grunt.loadNpmTasks('grunt-contrib');
     grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-nuget');
 
 
     // Build Steps

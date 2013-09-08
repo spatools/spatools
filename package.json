@@ -8,6 +8,7 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-typescript": "~0.2.2",
-    "grunt-contrib": "~0.7.0"
+    "grunt-contrib": "~0.7.0",
+    "grunt-nuget": "~0.1.1"
   }
 }
