@@ -240,16 +240,19 @@ export interface RibbonFlyoutOptions {
     title?: any;
     icon?: any;
     content?: any;
+    selected?: any;
 }
 
 export class RibbonFlyout extends RibbonItem {
     public title: KnockoutObservable<string>;
     public icon: KnockoutObservable<string>;
+    public selected: KnockoutObservable<boolean>;
     public content: KnockoutObservableArray<RibbonItem>;
 
     constructor(options: RibbonFlyoutOptions) {
         this.title = utils.createObservable(options.title, "Flyout");
         this.icon = utils.createObservable(options.icon, "icon-base");
+        this.selected = utils.createObservable(options.selected, false);
         this.content = utils.createObservableArray(options.content, createRibbonItem);
 
         super();
