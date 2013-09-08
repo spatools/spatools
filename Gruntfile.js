@@ -147,5 +147,7 @@
 
 
     // Buildset Tasks
-    grunt.registerTask("default", ["build_base", "build_modules", "build_samples", "build_assets", "build_ui", "build_tests", "run_tests"]);
+    grunt.registerTask("tests", ["build_tests", "run_tests"]);
+    grunt.registerTask("default", ["build_base", "build_modules", "build_samples", "build_assets", "build_ui", "tests"]);
+    grunt.registerTask("publish", ["nugetpack", "nugetpush"]);
 };
