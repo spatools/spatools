@@ -27,7 +27,15 @@ export function run() {
     test("base64.createDataURI", () => {
         expect(1);
 
-        var result = base64.createDataURL("text/plain", baseText);
+        var result = base64.createDataURL("text/plain", expectedResult);
+        equal(result, "data:text/plain;base64,dGhpcyBpcyBhIHRlc3QgZm9yIHNwYSB0b29scyBiYXNlNjQgZW5jb2Rlcg==");
+    });
+
+
+    test("base64.encodeDataURI", () => {
+        expect(1);
+
+        var result = base64.encodeDataURL("text/plain", baseText);
         equal(result, "data:text/plain;base64,dGhpcyBpcyBhIHRlc3QgZm9yIHNwYSB0b29scyBiYXNlNjQgZW5jb2Rlcg==");
     });
 }

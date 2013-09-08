@@ -125,9 +125,14 @@ else {
     };
 }
 
-/** Create Data URL with specified mime type and context */
+/** Create Data URL with specified mime type and content */
 var createDataURL = function(mimeType: string, content: string): string {
-    return "data:" + mimeType + ";base64," + encode(content);
+    return "data:" + mimeType + ";base64," + content;
+}
+
+/** Create Data URL with specified mime type and context */
+var encodeDataURL = function (mimeType: string, text: string): string {
+    return "data:" + mimeType + ";base64," + encode(text);
 }
 
 /** Download a file and encode it as Data URL */
@@ -153,6 +158,7 @@ var result = {
     encode: encode,
     decode: decode,
     createDataURL: createDataURL,
+    encodeDataURL: encodeDataURL,
     downloadFileAsDataURL: downloadFileAsDataURL
 };
 
