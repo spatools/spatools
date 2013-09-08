@@ -346,6 +346,7 @@ export interface RibbonInputOptions {
     icon?: any;
     type?: any;
     value?: any;
+    options?: any;
 }
 
 export class RibbonInput extends RibbonItem {
@@ -353,12 +354,14 @@ export class RibbonInput extends RibbonItem {
     public icon: KnockoutObservable<string>;
     public type: KnockoutObservable<string>;
     public value: KnockoutObservable<any>;
+    public options: KnockoutObservable<any[]>;
 
     constructor(options: RibbonInputOptions) {
         this.label = utils.createObservable(options.label, "");
         this.icon = utils.createObservable(options.icon, "");
         this.type = utils.createObservable(options.type, "text");
         this.value = utils.createObservable(options.value);
+        this.options = utils.createObservable(options.options, []);
 
         super();
     }
