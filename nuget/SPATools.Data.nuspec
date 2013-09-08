@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>SPATools.Data</id>
+    <version>0.1.0</version>
+    <authors>SPA Tools</authors>
+    <owners>SPA Tools</owners>
+    <licenseUrl>https://github.com/spatools/spatools/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/spatools/spatools</projectUrl>
+    <iconUrl>http://www.gravatar.com/avatar/6ef2fbcb91a9299ffb3c918b50d038d4.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      SPA Tools is a set of tools and frameworks to help creating modern web apps.
+      This package contains an ORM framework optimized for KnockoutJS and REST / OData Web Services :
+      - OData querying
+      - Local filtering
+      - Change Tracking
+      - Data persistance
+      - Everything observable
+    </description>
+    <releaseNotes>
+      Initial Release
+    </releaseNotes>
+    <copyright>Copyright 2013 - SPA Tools</copyright>
+    <tags>
+      Knockout
+      jQuery
+      Underscore
+      Moment
+      RequireJS
+      ORM
+      OData
+      REST
+      Web Service
+      Webservice
+      Extension
+      Interaction
+      Tool
+      Framework
+      Javascript
+    </tags>
+    <dependencies>
+      <dependency id="SPATools.Base" version="0.1.0" />
+      <dependency id="SPATools.Modules.Base" version="0.1.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\build\spa\data\**\*.js" target="Content\App\spa\data" />
+  </files>
+</package>
