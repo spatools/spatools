@@ -775,7 +775,7 @@ ko.bindingHandlers.tree = {
     },
     update: function (element: HTMLElement, valueAccessor: () => any): void {
         var value = ko.utils.unwrapObservable(valueAccessor());
-        ko.renderTemplate("containerTemplate", value, {}, element);
+        ko.renderTemplate("text!ui-tree-container-template.html", value, { templateEngine: engine.defaultInstance }, element);
         value.recalculateSizes();
     }
 };
