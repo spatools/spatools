@@ -19,6 +19,9 @@ function mapToRibbonItem(array: any) {
 }
 
 function createRibbonItem(item: any): RibbonItem {
+    if (item instanceof RibbonItem)
+        return item;
+
     switch (item.__.toLowerCase()) {
         case "button":
             return new RibbonButton(item);
@@ -211,7 +214,7 @@ export interface RibbonGroupOptions {
     content?: any;
 }
 
-export interface RibbonItem {}
+export class RibbonItem {}
 
 export class RibbonGroup {
     public title: KnockoutObservable<string>;
@@ -239,7 +242,7 @@ export interface RibbonFlyoutOptions {
     content?: any;
 }
 
-export class RibbonFlyout implements RibbonItem {
+export class RibbonFlyout extends RibbonItem {
     public title: KnockoutObservable<string>;
     public icon: KnockoutObservable<string>;
     public content: KnockoutObservableArray<RibbonItem>;
@@ -248,6 +251,8 @@ export class RibbonFlyout implements RibbonItem {
         this.title = utils.createObservable(options.title, "Flyout");
         this.icon = utils.createObservable(options.icon, "icon-base");
         this.content = utils.createObservableArray(options.content, createRibbonItem);
+
+        super();
     }
 }
 
@@ -262,7 +267,7 @@ export interface RibbonButtonOptions {
     click?: () => any;
 }
 
-export class RibbonButton implements RibbonItem {
+export class RibbonButton extends RibbonItem {
     public title: KnockoutObservable<string>;
     public icon: KnockoutObservable<string>;
     public selected: KnockoutObservable<boolean>;
@@ -273,6 +278,8 @@ export class RibbonButton implements RibbonItem {
         this.icon = utils.createObservable(options.icon, "icon-base");
         this.selected = utils.createObservable(options.selected, false);
         this.click = options.click || function () { };
+
+        super();
     }
 }
 
@@ -280,11 +287,13 @@ export class RibbonButton implements RibbonItem {
 
 //#region Ribbon List 
 
-export class RibbonList implements RibbonItem {
+export class RibbonList extends RibbonItem {
     public items: KnockoutObservableArray<RibbonItem>;
 
     constructor(items: any) {
         this.items = utils.createObservableArray(items, createRibbonItem);
+
+        super();
     }
 }
 
@@ -294,7 +303,7 @@ export interface RibbonListItemOptions {
     click?: () => any;
 }
 
-export class RibbonListItem implements RibbonItem {
+export class RibbonListItem extends RibbonItem {
     public title: KnockoutObservable<string>;
     public icon: KnockoutObservable<string>;
     public click: () => any;
@@ -303,6 +312,8 @@ export class RibbonListItem implements RibbonItem {
         this.title = utils.createObservable(options.title, "List Item");
         this.icon = utils.createObservable(options.icon, "icon-list-base");
         this.click = options.click || function () { };
+
+        super();
     }
 }
 
@@ -315,13 +326,15 @@ export interface RibbonFormOptions {
     inline?: any;
 }
 
-export class RibbonForm implements RibbonItem {
+export class RibbonForm extends RibbonItem {
     public items: KnockoutObservableArray<RibbonItem>;
     public inline: KnockoutObservable<boolean>;
 
     constructor(items: any, inline?: any) {
         this.items = utils.createObservableArray(items, createRibbonItem);
         this.inline = utils.createObservable(inline, false);
+
+        super();
     }
 }
 
@@ -332,7 +345,7 @@ export interface RibbonInputOptions {
     value?: any;
 }
 
-export class RibbonInput implements RibbonItem {
+export class RibbonInput extends RibbonItem {
     public label: KnockoutObservable<string>;
     public icon: KnockoutObservable<string>;
     public type: KnockoutObservable<string>;
@@ -343,6 +356,8 @@ export class RibbonInput implements RibbonItem {
         this.icon = utils.createObservable(options.icon, "");
         this.type = utils.createObservable(options.type, "text");
         this.value = utils.createObservable(options.value);
+
+        super();
     }
 }
 
@@ -355,13 +370,15 @@ export interface RibbonCheckboxOptions {
     checked?: any;
 }
 
-export class RibbonCheckbox implements RibbonItem {
+export class RibbonCheckbox extends RibbonItem {
     public label: KnockoutObservable<string>;
     public checked: KnockoutObservable<boolean>;
 
     constructor(options: RibbonCheckboxOptions) {
         this.label = utils.createObservable(options.label, "Checkbox");
         this.checked = utils.createObservable(options.checked, false);
+
+        super();
     }
 }
 
@@ -378,7 +395,7 @@ export interface RibbonSliderOptions {
     value?: any;
 }
 
-export class RibbonSlider implements RibbonItem {
+export class RibbonSlider extends RibbonItem {
     public label: KnockoutObservable<string>;
     public icon: KnockoutObservable<string>;
     public min: KnockoutObservable<number>;
@@ -393,6 +410,8 @@ export class RibbonSlider implements RibbonItem {
         this.max = utils.createObservable(options.max, 1);
         this.step = utils.createObservable(options.step, 0.05);
         this.value = utils.createObservable(options.value);
+
+        super();
     }
 }
 
