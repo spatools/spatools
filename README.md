@@ -42,3 +42,7 @@ Javascript ORM to connect to REST / OData Web Service.
     * Fix issues in Tree widget
     * Fix issues in data/adapters
     * Fix issues in data/stores
+* 0.2.5
+	* Fix issues in Command binding handlers
+	* Fix issues in Ribbon widget
+	* Fix issues in base64 module
