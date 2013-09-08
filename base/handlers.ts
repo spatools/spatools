@@ -36,9 +36,9 @@ module spa {
 
             _.each(commands, function (command, event?) {
                 if (ko.bindingHandlers[event]) {
-                    bindings[event] = command.execute;
+                    bindings[event] = _.bind(command.execute, command);
                 } else {
-                    events[event] = command.execute;
+                    events[event] = _.bind(command.execute, command);
                 }
             }),
 
