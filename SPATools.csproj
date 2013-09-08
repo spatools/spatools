@@ -87,6 +87,12 @@
     <Content Include="nuget\SPATools.Modules.Advanced.nuspec" />
     <Content Include="nuget\SPATools.Modules.Interactions.nuspec" />
     <Content Include="nuget\SPATools.Data.nuspec" />
+    <Content Include="nuget\SPATools.UI.Base.nuspec" />
+    <Content Include="nuget\SPATools.UI.ContextMenu.nuspec" />
+    <Content Include="nuget\SPATools.UI.Tree.nuspec" />
+    <Content Include="nuget\SPATools.UI.Editor.nuspec" />
+    <Content Include="nuget\SPATools.UI.Draggable.nuspec" />
+    <Content Include="nuget\SPATools.UI.Ribbon.nuspec" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="samples\editor.html" />
     <Content Include="samples\editor.ts" />
