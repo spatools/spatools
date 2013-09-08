@@ -36,6 +36,13 @@
                     declaration: false
                 }
             },
+            data: {
+                src: "spa/data/**/*.ts",
+                dest: "<%= paths.output %>/",
+                options: {
+                    declaration: false
+                }
+            },
             ui: {
                 src: "spa/ui/**/*.ts",
                 dest: "<%= paths.output %>/",
@@ -142,6 +149,7 @@
     grunt.registerTask("build_samples", ["typescript:samples", "copy:samples"]);
     grunt.registerTask("build_assets", ["copy:assets"])
     grunt.registerTask("build_ui", ["typescript:ui", "less"]);
+    grunt.registerTask("build_data", ["typescript:data"]);
     grunt.registerTask("build_tests", ["typescript:tests", "copy:tests"]);
     grunt.registerTask("run_tests", ["qunit:tests"]);
 
