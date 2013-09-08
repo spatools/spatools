@@ -38,3 +38,7 @@ Javascript ORM to connect to REST / OData Web Service.
 * 0.1.0 Initial Release
 * 0.2.0 Append UI
 * 0.2.1 Fix some issues
+* 0.2.2 
+    * Fix issues in Tree widget
+    * Fix issues in data/adapters
+    * Fix issues in data/stores
