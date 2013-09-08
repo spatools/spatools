@@ -34,3 +34,7 @@ SPA Tools provides a lot of additionnal modules to add functionnalities to your 
 
 Javascript ORM to connect to REST / OData Web Service.
 
+## Release History
+* 0.1.0 Initial Release
+* 0.2.0 Append UI
+* 0.2.1 Fix some issues
