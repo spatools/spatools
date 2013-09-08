@@ -54,7 +54,7 @@ export function addAdapter(name: string, adapter: IAdapter): void {
 
 export function getAdapter(name: string): JQueryPromise<IAdapter> {
     if (!adapters[name]) {
-        return utils.load("./adapters/" + name).then(adapter => adapters[name]);
+        return utils.load("./data/adapters/" + name).then(adapter => adapters[name]);
     }
 
     return $.Deferred<IAdapter>().resolve(adapters[name]).promise();
