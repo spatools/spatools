@@ -59,7 +59,7 @@ export var type = {
 };
 
 export class Filter {
-    public field: KnockoutObservable<string>;
+    public field: KnockoutSubscribable<string>;
     public operator: KnockoutObservable<string>;
     public value: KnockoutObservable<any>;
 
@@ -164,7 +164,7 @@ export class FunctionFilter extends Filter {
     public fn: KnockoutObservable<string>;
     private _field: KnockoutObservable<string>;
     public args: KnockoutObservable<any>;
-    public field: KnockoutComputed<string>;
+    public field: KnockoutSubscribable<string>;
 
     constructor(fn: any, field: any, args?: any, operator?: any, value?: any) {
         this.fn = utils.createObservable(fn);
@@ -288,6 +288,8 @@ export class ODataQuery {
     public filters: KnockoutObservableArray<any>;
     public total: KnockoutObservable<boolean>;
     public includeDeleted: KnockoutObservable<boolean>;
+    public selects: KnockoutObservableArray<string>;
+    public expands: KnockoutObservableArray<string>;
 
     constructor(options?: any) {
         options = _.extend({ pageNum: 0, pageSize: 0, orderBy: [], filters: [], includeDeleted: false, total: false }, options || {});
@@ -296,6 +298,8 @@ export class ODataQuery {
         this.pageSize = utils.createObservable(options.pageSize);
         this.ordersby = utils.createObservableArray(options.ordersBy);
         this.filters = utils.createObservableArray(options.filters);
+        this.selects = utils.createObservableArray(options.selects);
+        this.expands = utils.createObservableArray(options.expands);
         this.total = utils.createObservable<boolean>(options.total, false);
         this.includeDeleted = utils.createObservable<boolean>(options.includeDeleted, false);
     }
@@ -307,6 +311,12 @@ export class ODataQuery {
         return this.orderby(field, ascending);
     }
 
+    public where(field: string): ODataQuery;
+    public where(field: string, operator: string, value: string): ODataQuery;
+    public where(fn: string, field: string): ODataQuery;
+    public where(fn: string, field: string, args: any[]): ODataQuery;
+    public where(fn: string, field: string, operator: string, value: string): ODataQuery;
+    public where(fn: string, field: string, args: any[], operator: string, value: string): ODataQuery;
     public where(...args): ODataQuery {
         /// <signature>
         ///     <summary>Add a simple filter to the query, field must be of Boolean Type</summary>
@@ -381,7 +391,8 @@ export class ODataQuery {
 
         return this;
     }
-    /** Order by specified field */
+  
+      /** Order by specified field */
     public orderby(field: any, ascending?: any): ODataQuery {
         var order = this.ordersby._find(function (o) { return o.field() === ko.utils.unwrapObservable(field); });
         if (order) {
@@ -391,6 +402,15 @@ export class ODataQuery {
         else
             this.ordersby.push(new Ordering(field, ascending));
 
+        return this;
+    }
+
+    public expand(...fields: string[]): ODataQuery {
+        this.expands.push.apply(this.expands, fields);
+        return this;
+    }
+    public select(...fields: string[]): ODataQuery {
+        this.selects.push.apply(this.selects, fields);
         return this;
     }
 
@@ -407,7 +427,8 @@ export class ODataQuery {
     public toQueryString(): string {
         var qstring = [], filters = [], orders,
             lastIsFilter = false, showTotal = this.total(),
-            pageNum = this.pageNum(), pageSize = this.pageSize();
+            pageNum = this.pageNum(), pageSize = this.pageSize(),
+            selects = this.selects(), expands = this.expands();
 
         if ((pageNum !== 0 || pageSize !== 0) && this.ordersby._size() == 0)
             throw "You must specify atleast 1 order function when using paging";
@@ -439,6 +460,12 @@ export class ODataQuery {
 
         if (filters.length)
             qstring.push("$filter=" + filters.join(" "));
+
+        if (selects.length)
+            qstring.push("$select=" + selects.join(","));
+
+        if (expands.length)
+            qstring.push("$expand=" + expands.join(","));
 
         if (pageNum) {
             qstring.push("$skip=" + (pageSize * (pageNum - 1)));
