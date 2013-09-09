@@ -18,7 +18,7 @@ export interface DataViewFunctions {
     /** Refresh the view from the server */
     refresh(): JQueryPromise<any>;
     /** Load a remote entity by key */
-    load(key: any): JQueryPromise<any>;
+    load(key: any, query?: _query.ODataQuery): JQueryPromise<any>;
 
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */
     add(entity: any): JQueryPromise<any>;
@@ -77,8 +77,8 @@ export var dataViewFunctions: DataViewFunctions = {
             });
     },
     /** Load a remote entity by key */
-    load: function (key: any): JQueryPromise<any> {
-        return this.set.load(key);
+    load: function (key: any, query?: _query.ODataQuery): JQueryPromise<any> {
+        return this.set.load(key, query);
     },
 
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */

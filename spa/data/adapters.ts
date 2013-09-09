@@ -4,15 +4,15 @@ import utils = require("../utils");
 import query = require("./query");
 
 export interface IAdapter {
-    getAll(controller: string, query?: query.ODataQuery): JQueryPromise;
-    getOne(controler: string, id: any): JQueryPromise;
-    getRelation? (controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise;
+    getAll(controller: string, query?: query.ODataQuery): JQueryPromise<any>;
+    getOne(controler: string, id: any, query?: query.ODataQuery): JQueryPromise<any>;
+    getRelation? (controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<any>;
 
-    post(controller: string, data: any): JQueryPromise;
-    put(controller: string, id: any, data: any): JQueryPromise;
-    remove(controller: string, id: any): JQueryPromise;
+    post(controller: string, data: any): JQueryPromise<any>;
+    put(controller: string, id: any, data: any): JQueryPromise<any>;
+    remove(controller: string, id: any): JQueryPromise<any>;
 
-    action? (controller: string, action: string, parameters: any, id?: any): JQueryPromise;
+    action? (controller: string, action: string, parameters: any, id?: any): JQueryPromise<any>;
 }
 
 var prefilterInitialized: boolean = false,

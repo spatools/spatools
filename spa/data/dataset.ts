@@ -37,7 +37,7 @@ export interface DataSetFunctions {
     /** Query server to refresh dataset */
     query(query?: query.ODataQuery, refresh?: boolean);
     /** Load an entity by id from the remote source */
-    load(key: any): JQueryPromise<any>;
+    load(key: any, query?: query.ODataQuery): JQueryPromise<any>;
     /** Execute action on remote source */
     executeAction(action: string, params?: any, entity?: any): JQueryPromise<any>;
 
@@ -189,10 +189,10 @@ var dataSetFunctions: DataSetFunctions = {
             });
     },
     /** Load an entity by id from the remote source */
-    load: function (key: any): JQueryPromise<any> {
+    load: function (key: any, query?: query.ODataQuery): JQueryPromise<any> {
         var self = this;
         return this.adapter
-            .getOne(this.setName, key)
+            .getOne(this.setName, key, query)
             .then(function (data) { return self.attachOrUpdate(data); });
     },
     /** Execute action on remote source */
