@@ -34,8 +34,7 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Base" version="0.1.0" />
-      <dependency id="SPATools.Modules.Base" version="0.1.0" />
+      <dependency id="SPATools.Modules.Base" version="0.3.0" />
     </dependencies>
   </metadata>
   <files>

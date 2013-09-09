@@ -36,13 +36,15 @@ Javascript ORM to connect to REST / OData Web Service.
 
 ## Release History
 * 0.1.0 Initial Release
-* 0.2.0 Append UI
-* 0.2.1 Fix some issues
-* 0.2.2 
+* 0.2.0 
+	* Append UI framework
     * Fix issues in Tree widget
     * Fix issues in data/adapters
     * Fix issues in data/stores
-* 0.2.5
 	* Fix issues in Command binding handlers
 	* Fix issues in Ribbon widget
 	* Fix issues in base64 module
+* 0.3.0
+	* Append $expand and $select options in data framework
+	* Add ODataQuery options in load operations in data framework
+
