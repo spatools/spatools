@@ -34,6 +34,11 @@ interface Window {
     rangy: any;
 }
 
+interface Element {
+    offsetWidth: number;
+    offsetHeight: number;
+}
+
 interface ViewCSS {
     getComputedStyle(element: Element, pseudoElt?: any): CSSStyleDeclaration;
     getComputedStyle(element: Node, pseudoElt?: any): CSSStyleDeclaration;
@@ -42,8 +47,7 @@ interface ViewCSS {
 interface Document {
     fullScreen: any;
     webkitIsFullScreen: any;
-    execCommand(command: string, useStyle?: number, value?: any);
-    execCommand(command: string, useStyle?: boolean, value?: any);
+    execCommand(command: string, useStyle?: any, value?: any);
 }
 
 interface EventTarget {

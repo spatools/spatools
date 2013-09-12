@@ -121,9 +121,9 @@ export function inherits(obj: any, base: any, prototype: any): any {
 /** Execute callback methods in a safe DOM modification environment. Usefull when creating HTML5 Application. */
 export function unsafe(callback: () => any): void {
     if (typeof MSApp === "undefined")
-        callback.call(null);
+        return callback.call(null);
     else
-        MSApp.execUnsafeLocalFunction(callback);
+        return MSApp.execUnsafeLocalFunction(callback);
 }
 
 /** Get current window size. */
