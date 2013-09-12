@@ -1,7 +1,14 @@
 /// <reference path="../_definitions.d.ts" />
 
+import utils = require("../utils");
+
 var sourceRegex = /^text!(.+)/,
     sources: { [key: string]: RequireSource } = {};
+
+function parseMarkup(markup: string): Element {
+    var allElements = $.parseHTML(markup);
+    return $(allElements).wrapAll('<div>').parent().get(0);
+}
 
 //#region Require Template Source
 
@@ -76,6 +83,21 @@ export class RequireSource {
         this.template.data[key] = value;
     }
 
+    public nodes(): Element;
+    public nodes(element: Element): void;
+    public nodes(element?: Element): any {
+        if (arguments.length == 0) {
+            if (!this.template.data["__NODES__"]) {
+                var markup = this.text();
+                this.template.data["__NODES__"] = utils.unsafe(() => parseMarkup(markup));
+            }
+
+            return this.template.data["__NODES__"];
+        }
+        else 
+            this.template.data["__NODES__"] = arguments[0];
+    }
+
     public loadTemplate(): void {
         if (this.isLoading)
             return;
@@ -86,6 +108,7 @@ export class RequireSource {
 
             this.isLoaded = true;
             this.isLoading = false;
+            this.template.data["__NODES__"] = null;
 
             this.template(template);
         });
