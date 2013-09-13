@@ -1,18 +1,10 @@
 ﻿/// <reference path="../_references.d.ts" />
-/// <reference path="../build/spatools.d.ts" />
 /// <reference path="../Scripts/typings/qunit/qunit.d.ts" />
 
 import utils = require("../spa/utils");
 
 export function run() {
     module("Base Tests");
-
-    test("base.format", () => {
-        expect(1);
-
-        var result = spa.format("{0} {1}", "Hello", "World");
-        equal(result, "Hello World", "The format '{0} {1}' with arguments 'Hello' and 'World' must result in 'Hello World'");
-    });
 
     asyncTest("base.extenders.delay", () => {
         expect(6);

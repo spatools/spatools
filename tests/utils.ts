@@ -1,5 +1,4 @@
 ﻿/// <reference path="../_references.d.ts" />
-/// <reference path="../build/spatools.d.ts" />
 /// <reference path="../Scripts/typings/qunit/qunit.d.ts" />
 
 import utils = require("../spa/utils");
@@ -145,6 +144,13 @@ export function run() {
 
             start();
         });
+    });
+
+    test("utils.format", () => {
+        expect(1);
+
+        var result = utils.format("{0} {1}", "Hello", "World");
+        equal(result, "Hello World", "The format '{0} {1}' with arguments 'Hello' and 'World' must result in 'Hello World'");
     });
 
     test("utils.str_pad", () => {

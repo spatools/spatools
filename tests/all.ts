@@ -1,5 +1,4 @@
 ﻿/// <reference path="../_references.d.ts" />
-/// <reference path="../build/spatools.d.ts" />
 /// <reference path="../Scripts/typings/qunit/qunit.d.ts" />
 
 //QUnit.log(details => {
@@ -9,6 +8,8 @@
 //});
 
 requirejs.config({
+    deps: ["../spa/main"],
+
     //jQuery: true,
     paths: {
         'text': '../../Scripts/text'
@@ -16,6 +17,7 @@ requirejs.config({
 });
 
 var modules = [
+    //"../spa/main",
     "base",
     "base64",
     "changeTracker",

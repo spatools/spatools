@@ -1,5 +1,4 @@
 ﻿/// <reference path="../_references.d.ts" />
-/// <reference path="../build/spatools.d.ts" />
 /// <reference path="../Scripts/typings/qunit/qunit.d.ts" />
 
 import timers = require("../spa/timers");
