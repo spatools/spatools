@@ -346,6 +346,7 @@ export interface RibbonInputOptions {
     icon?: any;
     type?: any;
     value?: any;
+    class?: any;
 
     options?: any;
     optionsText?: any;
@@ -360,6 +361,7 @@ export class RibbonInput extends RibbonItem {
     public icon: KnockoutObservable<string>;
     public type: KnockoutObservable<string>;
     public value: KnockoutObservable<any>;
+    public class: KnockoutObservable<any>;
 
     public options: any;
     public optionsText: any;
@@ -373,6 +375,7 @@ export class RibbonInput extends RibbonItem {
         this.icon = utils.createObservable(options.icon, "");
         this.type = utils.createObservable(options.type, "text");
         this.value = utils.createObservable(options.value);
+        this.class = utils.createObservable(options.class);
 
         options.options && (this.options = options.options);
         options.optionsText && (this.optionsText = options.optionsText);
@@ -571,7 +574,7 @@ ko.bindingHandlers.ribbonForm = {
             container = $("<div>");
 
         $(element).addClass("ribbon-form");
-        if (form.inline === true)
+        if (ko.unwrap(form.inline) === true)
             $(element).addClass("ribbon-form-inline");
 
         var ul = $("<ul>").addClass("ribbon-form-content").attr("data-bind", "foreach: items").appendTo(container);
@@ -744,6 +747,8 @@ ko.bindingHandlers.ribbonInput = {
         if (input.valueUpdate) {
             inputBinding += ", valueUpdate: valueUpdate";
         }
+
+        inputBinding += ", css: $data.class";
 
         inputElement.attr("data-bind", inputBinding);
         inputElement.appendTo(container);
