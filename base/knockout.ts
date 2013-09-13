@@ -45,7 +45,7 @@ module spa {
 
         obsv.subscribe(function (newValue) {
             obsv.errors = ko.validation.group(newValue || {});
-            isValid(obsv.errors().length === 0);App
+            isValid(obsv.errors().length === 0);
 
             subscription.dispose();
             subscription = obsv.errors.subscribe((errors: string[]) => isValid(errors.length === 0));
