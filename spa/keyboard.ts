@@ -13,7 +13,7 @@ export class KeyboardManager {
     public shortcuts = ko.observableArray<KeyboardShortcut>();
 
     private execShortcut(event: JQueryEventObject, isReleasing: boolean = false) {
-        var toExecute = this.shortcuts._filter((s: KeyboardShortcut) => {
+        var toExecute = this.shortcuts.filter(s => {
             var key = s.key();
             
             return s.onRelease === isReleasing

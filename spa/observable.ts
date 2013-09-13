@@ -30,7 +30,7 @@ function historyObservable<T>(initialValue: T): KnockoutHistoryObservable<T> {
     };
     $.extend(self, {
         canGoBack: ko.computed(function () { return self.selectedIndex() > 0; }),
-        canGoNext: ko.computed(function () { return self.selectedIndex() < self.latestValues._size() - 1; }),
+        canGoNext: ko.computed(function () { return self.selectedIndex() < self.latestValues.size() - 1; }),
     });
     var result = ko.computed({
         read: function () {
@@ -45,7 +45,7 @@ function historyObservable<T>(initialValue: T): KnockoutHistoryObservable<T> {
         write: function (value) {
             var index = self.selectedIndex();
             if (value !== self.latestValues()[index]) {
-                if (index !== self.latestValues._size() - 1) {
+                if (index !== self.latestValues.size() - 1) {
                     self.latestValues.splice(index + 1);
                 }
 
@@ -86,7 +86,7 @@ var historyFn = {
         if (!value)
             value = this();
 
-        this.latestValues.splice(0, this.latestValues._size(), value);
+        this.latestValues.splice(0, this.latestValues.size(), value);
         this.selectedIndex(0);
     }
 };
