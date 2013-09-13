@@ -133,6 +133,7 @@
     <Content Include="spa\animation.ts" />
     <Content Include="spa\cache.ts" />
     <Content Include="spa\commands.ts" />
+    <TypeScriptCompile Include="spa\observable.ts" />
     <Content Include="spa\_definitions.d.ts" />
     <Content Include="spa\data\adapters.ts" />
     <Content Include="spa\data\adapters\odata.ts" />
@@ -206,9 +207,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="base\extenders.ts" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="spa\historyObservable.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" />
 </Project>

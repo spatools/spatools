@@ -1,13 +1,18 @@
 ﻿/// <reference path="_definitions.d.ts" />
 
-interface KnockoutHistoryObservableFunctions<T> {
-    back(): KnockoutHistoryObservable<T>;
-    next(): KnockoutHistoryObservable<T>;
-    replace(value: any): void;
-    reset(value?: any): void;
+export interface KnockoutHistoryObservableStatic {
+    fn: KnockoutHistoryObservableFunctions<any>;
+    <T>(initialValue: T): KnockoutHistoryObservable<T>;
 }
 
-interface KnockoutHistoryObservable<T> extends KnockoutHistoryObservableFunctions<T> {
+export interface KnockoutHistoryObservableFunctions<T> {
+    back(): T;
+    next(): T;
+    replace(value: T): void;
+    reset(value?: T): void;
+}
+
+export interface KnockoutHistoryObservable<T> extends KnockoutHistoryObservableFunctions<T> {
     (): T;
     (value: T): KnockoutHistoryObservable<T>;
 
@@ -18,7 +23,7 @@ interface KnockoutHistoryObservable<T> extends KnockoutHistoryObservableFunction
     canGoForward: KnockoutComputed<boolean>;
 }
 
-var historyObservable: any = function historyObservable<T>(initialValue: T): KnockoutHistoryObservable<T> {
+function historyObservable<T>(initialValue: T): KnockoutHistoryObservable<T> {
     var self = {
         latestValues: ko.observableArray([initialValue]),
         selectedIndex: ko.observable(0)
@@ -51,11 +56,11 @@ var historyObservable: any = function historyObservable<T>(initialValue: T): Kno
     }).extend({ cnotify: "reference" });
 
     $.extend(result, self);
-    $.extend(result, ko.historyObservable.fn);
+    $.extend(result, history.fn);
 
     return result;
 };
-historyObservable.fn = {
+var historyFn = {
     back: function () {
         if (this.canGoBack()) {
             this.selectedIndex(this.selectedIndex() - 1);
@@ -68,7 +73,7 @@ historyObservable.fn = {
         }
         return this();
     },
-    replace: function (value) {
+    replace: function (value: any): void {
         var superNotify = _.bind(ko.subscribable.fn.notifySubscribers, this),
             oldValue = this();
 
@@ -77,7 +82,7 @@ historyObservable.fn = {
         this.latestValues()[index] = value;
         this.latestValues.valueHasMutated();
     },
-    reset: function (value) {
+    reset: function (value?: any): void {
         if (!value)
             value = this();
 
@@ -86,4 +91,26 @@ historyObservable.fn = {
     }
 };
 
-export = historyObservable;
+export var history: KnockoutHistoryObservableStatic = _.extend(historyObservable, { fn: historyFn });
+
+export function validated<T>(initialValue: T): KnockoutValidatedObservable<T> {
+    var obsv: any = ko.observable<T>(initialValue),
+        isValid = ko.observable(true),
+        subscription: KnockoutSubscription<string[]>;
+
+    obsv.subscribe(function (newValue) {
+        obsv.errors = ko.validation.group(newValue || {});
+        isValid(obsv.errors().length === 0);
+
+        subscription.dispose();
+        subscription = obsv.errors.subscribe((errors: string[]) => isValid(errors.length === 0));
+    });
+
+    obsv.errors = ko.validation.group(initialValue || {});
+    isValid(obsv.errors().length === 0);
+
+    obsv.isValid = ko.computed(() => isValid());
+    subscription = obsv.errors.subscribe((errors: string[]) => isValid(errors.length === 0));
+
+    return obsv;
+};

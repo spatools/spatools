@@ -39,13 +39,13 @@ interface KnockoutValidationErrors {
 
 module spa {
     ko._validatedObservable = function <T>(initialValue: T): KnockoutObservable<T> {
-        var obsv = ko.observable<T>(initialValue),
+        var obsv: any = ko.observable<T>(initialValue),
             isValid = ko.observable(true),
             subscription: KnockoutSubscription<string[]>;
 
         obsv.subscribe(function (newValue) {
             obsv.errors = ko.validation.group(newValue || {});
-            isValid(obsv.errors().length === 0);
+            isValid(obsv.errors().length === 0);App
 
             subscription.dispose();
             subscription = obsv.errors.subscribe((errors: string[]) => isValid(errors.length === 0));
