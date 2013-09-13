@@ -5,24 +5,24 @@
 var p = Array.prototype;
 
 _.mixin({
-    sum: function <T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number {
+    sum: function <T>(list: _.Collection<T>, iterator: _.ListIterator<T, number>, context?: any): number {
         /// <summary>Sum each item of given array by using specified iterator function</summary>
-        /// <param name="collection" type="Array">Array to sum in</param>
+        /// <param name="list" type="Array">Array to sum in</param>
         /// <param name="iterator" type="Function">Function which return operand for sum</param>
         /// <param name="context" type="Object" optional="true">Context to bind iterator function</param>
         /// <returns type="Number">Sum of result obtained by iterator method against each array element</returns>
 
         var result = 0;
 
-        _.each(collection, function (item, index?, list?) {
-            result += iterator.call(context, item, index, list);
+        _.each(list, () => {
+            result += iterator.apply(context, arguments);
         });
 
         return result;
     },
-    average: function <T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number {
+    average: function <T>(list: _.Collection<T>, iterator: _.ListIterator<T, number>, context?: any): number {
         /// <summary>Create average from each item of given array by using specified iterator function</summary>
-        /// <param name="collection" type="Array">Array to average items</param>
+        /// <param name="list" type="Array">Array to average items</param>
         /// <param name="iterator" type="Function">Function which return operand for average</param>
         /// <param name="context" type="Object" optional="true">Context to bind iterator function</param>
         /// <returns type="Number">Average of result obtained by iterator method against each array element</returns>
@@ -30,50 +30,50 @@ _.mixin({
         var sum = 0,
             count = 0;
 
-        _.each(collection, function (item, index?, list?) {
-            sum += iterator.call(context, item, index, list);
+        _.each(list, () => {
+            sum += iterator.apply(context, arguments);
             count++;
         });
 
         return sum / count;
     },
-    count: function <T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): number {
-        /// <summary>Count items in given collection filtered by given iterator function</summary>
-        /// <param name="collection" type="Array">Array to count items</param>
+    count: function <T>(list: _.Collection<T>, iterator?: _.ListIterator<T, boolean>, context?: any): number {
+        /// <summary>Count items in given list filtered by given iterator function</summary>
+        /// <param name="list" type="Array">Array to count items</param>
         /// <param name="iterator" type="Function">Function which filter array items</param>
         /// <param name="context" type="Object" optional="true">Context to bind iterator function</param>
         /// <returns type="Number">Items count</returns>
 
         if (!iterator)
-            return _.size(collection);
+            return _.size(list);
 
-        return _.filter(collection, iterator, context).length;
+        return _.filter(list, iterator, context).length;
     },
-    filterMap: function <T, TResult>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[] {
+    filterMap: function <T, TResult>(list: _.Collection<T>, iterator: _.ListIterator<T, TResult>, context?: any): TResult[] {
         /// <summary>Select is a mapping and filtering function, iterator can map or return false or undefined to filter items</summary>
-        /// <param name="collection" type="Array">Array to select items</param>
+        /// <param name="list" type="Array">Array to select items</param>
         /// <param name="iterator" type="Function">Function which filter and map items</param>
         /// <param name="context" type="Object" optional="true">Context to bind iterator function</param>
         /// <returns type="Array">Array of mapped and filtered items</returns>
 
         var result = [];
 
-        _.each(collection, function (item, index?, list?) {
-            var _item = iterator.call(context, item, index, list);
+        _.each(list, () => {
+            var _item = iterator.apply(context, arguments);
             if (_item) result.push(_item);
         });
 
         return result;
     },
-    index: function <T>(collection: T[], iterator?: (element: T, index?: number, list?: T[]) => boolean, context?: any): number {
+    index: function <T>(list: _.Collection<T>, iterator?: _.ListIterator<T, boolean>, context?: any): number {
         /// <summary>Get index of first item with which iterator function return true</summary>
-        /// <param name="collection" type="Array">Array to search</param>
+        /// <param name="list" type="Array">Array to search</param>
         /// <param name="iterator" type="Function">Function which filter items by returning true or false</param>
         /// <param name="context" type="Object" optional="true">Context to bind iterator function</param>
         /// <returns type="Number">Index of first element filtered by iterator methods</returns>
 
         var result = -1;
-        _.find(collection, function (value, index?): boolean {
+        _.find(list, (value, index) => {
             if (iterator.apply(context, arguments) === true) {
                 result = index;
                 return true;
@@ -99,37 +99,37 @@ export var objects: { [key: string]: Function } = {};
 export var collections: { [key: string]: Function } = {};
 
 _.each(["keys", "values", "clone", "isEmpty"], function (method: string) {
-    objects[method] = function () {
+    objects['_' + method] = function () {
         var args = arguments;
         return ko.computed(function () {
-            return this['_' + method].apply(this, args);
+            return this[method].apply(this, args);
         }, this);
-    },
-    objects['_' + method] = function () {
+    };
+    objects[method] = function () {
         p.unshift.call(arguments, this());
         return _[method].apply(_, arguments);
     };
 });
 _.each(["each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any", "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"], function (method: string) {
-    collections[method] = function () {
+    collections['_' + method] = function () {
         var args = arguments;
         return ko.computed(function () {
-            return this['_' + method].apply(this, args);
+            return this[method].apply(this, args);
         }, this);
     };
-    collections['_' + method] = function () {
+    collections[method] = function () {
         p.unshift.call(arguments, this());
         return _[method].apply(_, arguments);
     };
 });
 _.each(["first", "initial", "last", "rest", "compact", "flatten", "without", "union", "intersection", "difference", "uniq", "zip", "indexOf", "lastIndexOf"], function (method: string) {
-    collections[method] = function () {
+    collections['_' + method] = function () {
         var args = arguments;
         return ko.computed(function () {
-            return this['_' + method].apply(this, args);
+            return this[method].apply(this, args);
         }, this);
     };
-    collections['_' + method] = function () {
+    collections[method] = function () {
         var value = this();
         p.unshift.call(arguments, _.isArray(value) ? value : _.values(value));
         return _[method].apply(_, arguments);

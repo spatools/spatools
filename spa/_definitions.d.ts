@@ -100,102 +100,111 @@ interface KnockoutStatic {
 }
 
 declare module _ {
-    export function sum<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
-    export function average<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
-    export function count<T>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): number;
-    export function filterMap<T, TResult>(collection: { [key: string]: T }, iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
-    export function filterMap<T, TResult>(collection: T[], iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
-    export function index<T>(collection: T[], iterator?: (element: T, index?: number, list?: T[]) => boolean, context?: any): number;
+    export function sum<T>(list: _.List<T>, iterator: _.ListIterator<T, number>, context?: any): number;
+    export function sum<T>(object: _.Dictionary<T>, iterator: _.ObjectIterator<T, number>, context?: any): number;
+
+    export function average<T>(list: _.List<T>, iterator: _.ListIterator<T, number>, context?: any): number;
+    export function average<T>(object: _.Dictionary<T>, iterator: _.ObjectIterator<T, number>, context?: any): number;
+
+    export function count<T>(list: _.List<T>, iterator?: _.ListIterator<T, boolean>, context?: any): number;
+    export function count<T>(object: _.Dictionary<T>, iterator?: _.ObjectIterator<T, boolean>, context?: any): number;
+
+    export function filterMap<T, TResult>(list: _.List<T>, iterator: _.ListIterator<T, TResult>, context?: any): TResult[];
+    export function filterMap<T, TResult>(object: _.Dictionary<T>, iterator: _.ObjectIterator<T, TResult>, context?: any): TResult[];
+
+    export function index<T>(list: _.List<T>, iterator: _.ListIterator<T, boolean>, context?: any): number;
+    export function index<T>(object: _.Dictionary<T>, iterator: _.ObjectIterator<T, boolean>, context?: any): number;
+
     export function partialEnd<T>(func: () => T, ...args: any[]): () => T;
 }
 
-interface KnockoutUnderscoreArrayFunctions {
-    each<T>(iterator: (element: T, index?: number, list?: T[]) => void, context?: any): KnockoutComputed<void>;
-    map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
-    filterMap<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): KnockoutComputed<TResult[]>;
-    reduce<T, TResult>(iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult, memo: TResult, context?: any): KnockoutComputed<TResult>;
-    find<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T>;
-    filter<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T[]>;
-    reject<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<T[]>;
-    sum<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<number>;
-    average<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<number>;
-    all<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<boolean>;
-    any<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<boolean>;
-    contains<T>(value: T): boolean;
-    max<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<T>;
-    min<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): KnockoutComputed<T>;
-    sortBy<T, TSort>(iterator: (element: T, index?: number, list?: T[]) => TSort, context?: any): KnockoutComputed<T[]>;
-    groupBy<T>(iterator: (element: T, index?: number, list?: T[]) => string, context?: any): KnockoutComputed<{ [key: string]: any[]; }>;
+interface KnockoutUnderscoreArrayFunctions<T> {
+    each(iterator: _.ListIterator<T, void>, context?: any): void;
+    map<TResult>(iterator: _.ListIterator<T, TResult>, context?: any): TResult[];
+    filterMap<TResult>(iterator?: _.ListIterator<T, TResult>, context?: any): TResult[];
+    reduce<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): TResult;
+    find(iterator: _.ListIterator<T, boolean>, context?: any): T;
+    filter(iterator: _.ListIterator<T, boolean>, context?: any): T[];
+    reject(iterator: _.ListIterator<T, boolean>, context?: any): T[];
+    sum(iterator: _.ListIterator<T, number>, context?: any): number;
+    average(iterator: _.ListIterator<T, number>, context?: any): number;
+    all(iterator: _.ListIterator<T, boolean>, context?: any): boolean;
+    any(iterator: _.ListIterator<T, boolean>, context?: any): boolean;
+    contains(value: T): boolean;
+    max(iterator: _.ListIterator<T, number>, context?: any): T;
+    min(iterator: _.ListIterator<T, number>, context?: any): T;
+    sortBy<TSort>(iterator: _.ListIterator<T, TSort>, context?: any): T[];
+    groupBy(iterator: _.ListIterator<T, any>, context?: any): { [key: string]: any[]; };
     toArray(): any[];
-    count<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<number>;
-    index<T>(iterator?: (element: T, index?: number, list?: T[]) => boolean, context?: any): KnockoutComputed<number>;
-    size(): KnockoutComputed<number>;
-    first<T>(): KnockoutComputed<T>;
-    last<T>(): KnockoutComputed<T>;
-    initial<T>(n?: number): KnockoutComputed<T[]>;
-    rest<T>(index?: number): KnockoutComputed<T[]>;
-    compact<T>(): KnockoutComputed<T[]>;
-    flatten(shallow?: boolean): KnockoutComputed<any>;
-    without<T>(...values: T[]): KnockoutComputed<T[]>;
-    union<T>(...arrays: T[][]): KnockoutComputed<T[]>;
-    intersection<T>(...arrays: T[][]): KnockoutComputed<T[]>;
-    difference<T>(...others: T[][]): KnockoutComputed<T[]>;
-    uniq<T, TSort>(isSorted?: boolean, iterator?: (element: T, index?: number, list?: T[]) => TSort, context?: any): KnockoutComputed<T[]>;
-    zip(...arrays: any[][]): KnockoutComputed<any[][]>;
-    indexOf<T>(value: T, isSorted?: boolean): KnockoutComputed<number>;
-    lastIndexOf<T>(value: T, from?: number): KnockoutComputed<number>;
+    count(iterator: _.ListIterator<T, boolean>, context?: any): number;
+    index(iterator?: _.ListIterator<T, boolean>, context?: any): number;
+    size(): number;
+    first(): T;
+    last(): T;
+    initial(n?: number): T[];
+    rest(index?: number): T[];
+    compact(): T[];
+    flatten(shallow?: boolean): any;
+    without(...values: T[]): T[];
+    union(...arrays: T[][]): T[];
+    intersection(...arrays: T[][]): T[];
+    difference(...others: T[][]): T[];
+    uniq<TSort>(isSorted?: boolean, iterator?: _.ListIterator<T, TSort>, context?: any): T[];
+    zip(...arrays: any[][]): any[][];
+    indexOf(value: T, isSorted?: boolean): number;
+    lastIndexOf(value: T, from?: number): number;
 
-    _each<T>(iterator: (element: T, index?: number, list?: T[]) => void, context?: any): void;
-    _map<T, TResult>(iterator: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
-    _filterMap<T, TResult>(iterator?: (element: T, index?: number, list?: T[]) => TResult, context?: any): TResult[];
-    _reduce<T, TResult>(iterator: (memo: TResult, element: T, index?: number, list?: T[]) => TResult, memo: TResult, context?: any): TResult;
-    _find<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T;
-    _filter<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T[];
-    _reject<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): T[];
-    _sum<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
-    _average<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): number;
-    _all<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): boolean;
-    _any<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): boolean;
-    _contains<T>(value: T): boolean;
-    _max<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): T;
-    _min<T>(iterator: (element: T, index?: number, list?: T[]) => number, context?: any): T;
-    _sortBy<T, TSort>(iterator: (element: T, index?: number, list?: T[]) => TSort, context?: any): T[];
-    _groupBy<T>(iterator: (element: T, index?: number, list?: T[]) => string, context?: any): { [key: string]: any[]; };
+    _each(iterator: _.ListIterator<T, void>, context?: any): KnockoutComputed<void>;
+    _map<TResult>(iterator: _.ListIterator<T, TResult>, context?: any): KnockoutComputed<TResult[]>;
+    _filterMap<TResult>(iterator?: _.ListIterator<T, TResult>, context?: any): KnockoutComputed<TResult[]>;
+    _reduce<TResult>(iterator: _.MemoIterator<T, TResult>, memo: TResult, context?: any): KnockoutComputed<TResult>;
+    _find(iterator: _.ListIterator<T, boolean>, context?: any): KnockoutComputed<T>;
+    _filter(iterator: _.ListIterator<T, boolean>, context?: any): KnockoutComputed<T[]>;
+    _reject(iterator: _.ListIterator<T, boolean>, context?: any): KnockoutComputed<T[]>;
+    _sum(iterator: _.ListIterator<T, number>, context?: any): KnockoutComputed<number>;
+    _average(iterator: _.ListIterator<T, number>, context?: any): KnockoutComputed<number>;
+    _all(iterator: _.ListIterator<T, boolean>, context?: any): KnockoutComputed<boolean>;
+    _any(iterator: _.ListIterator<T, boolean>, context?: any): KnockoutComputed<boolean>;
+    _contains(value: T): boolean;
+    _max(iterator: _.ListIterator<T, number>, context?: any): KnockoutComputed<T>;
+    _min(iterator: _.ListIterator<T, number>, context?: any): KnockoutComputed<T>;
+    _sortBy<T, TSort>(iterator: _.ListIterator<T, TSort>, context?: any): KnockoutComputed<T[]>;
+    _groupBy(iterator: (element: T, index?: number, list?: T[]) => string, context?: any): KnockoutComputed<{ [key: string]: any[]; }>;
     _toArray(): any[];
-    _count<T>(iterator: (element: T, index?: number, list?: T[]) => boolean, context?: any): number;
-    _index<T>(iterator?: (element: T, index?: number, list?: T[]) => boolean, context?: any): number;
-    _size(): number;
-    _first<T>(): T;
-    _last<T>(): T;
-    _initial<T>(n?: number): T[];
-    _rest<T>(index?: number): T[];
-    _compact<T>(): T[];
-    _flatten(shallow?: boolean): any;
-    _without<T>(...values: T[]): T[];
-    _union<T>(...arrays: T[][]): T[];
-    _intersection<T>(...arrays: T[][]): T[];
-    _difference<T>(...others: T[][]): T[];
-    _uniq<T, TSort>(isSorted?: boolean, iterator?: (element: T, index?: number, list?: T[]) => TSort, context?: any): T[];
-    _zip(...arrays: any[][]): any[][];
-    _indexOf<T>(value: T, isSorted?: boolean): number;
-    _lastIndexOf<T>(value: T, from?: number): number;
+    _count(iterator: _.ListIterator<T, boolean>, context?: any): KnockoutComputed<number>;
+    _index(iterator?: _.ListIterator<T, boolean>, context?: any): KnockoutComputed<number>;
+    _size(): KnockoutComputed<number>;
+    _first(): KnockoutComputed<T>;
+    _last(): KnockoutComputed<T>;
+    _initial(n?: number): KnockoutComputed<T[]>;
+    _rest(index?: number): KnockoutComputed<T[]>;
+    _compact(): KnockoutComputed<T[]>;
+    _flatten(shallow?: boolean): KnockoutComputed<any>;
+    _without(...values: T[]): KnockoutComputed<T[]>;
+    _union(...arrays: T[][]): KnockoutComputed<T[]>;
+    _intersection(...arrays: T[][]): KnockoutComputed<T[]>;
+    _difference(...others: T[][]): KnockoutComputed<T[]>;
+    _uniq<TSort>(isSorted?: boolean, iterator?: _.ListIterator<T, TSort>, context?: any): KnockoutComputed<T[]>;
+    _zip(...arrays: any[][]): KnockoutComputed<any[][]>;
+    _indexOf(value: T, isSorted?: boolean): KnockoutComputed<number>;
+    _lastIndexOf(value: T, from?: number): KnockoutComputed<number>;
 }
 
-interface KnockoutUnderscoreObjectsFunctions {
-    keys(): KnockoutComputed<string[]>;
-    values(): KnockoutComputed<any[]>;
-    clone<T>(object: T): KnockoutComputed<T>;
-    isEmpty(object: any): KnockoutComputed<boolean>;
+interface KnockoutUnderscoreObjectsFunctions<T> {
+    keys(): string[];
+    values(): any[];
+    clone(object: T): T;
+    isEmpty(object: any): boolean;
 
-    _keys(): string[];
-    _values(): any[];
-    _clone<T>(object: T): T;
-    _isEmpty(object: any): boolean;
+    _keys(): KnockoutComputed<string[]>;
+    _values(): KnockoutComputed<any[]>;
+    _clone(object: T): KnockoutComputed<T>;
+    _isEmpty(object: any): KnockoutComputed<boolean>;
 }
 
-interface KnockoutObservableArrayFunctions<T> extends KnockoutUnderscoreArrayFunctions {
-    indexOf<T>(value: T, isSorted?: boolean): KnockoutComputed<number>;
-    lastIndexOf<T>(value: T, from?: number): KnockoutComputed<number>;
+interface KnockoutObservableArrayFunctions<T> extends KnockoutUnderscoreArrayFunctions<T> {
+    indexOf(value: T, isSorted?: boolean): number;
+    lastIndexOf(value: T, from?: number): number;
 }
 
 interface OperationOptions {
