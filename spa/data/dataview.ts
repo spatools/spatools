@@ -8,33 +8,34 @@ import _query = require("./query");
 
 //#region Interfaces 
 
-export interface DataView<T> extends KnockoutUnderscoreArrayFunctions, DataViewFunctions {
+export interface DataView<T, TKey> extends KnockoutUnderscoreArrayFunctions<T> {
     (): T[];
 
-    set: dataset.DataSet;
+    set: dataset.DataSet<T, TKey>;
     query: _query.ODataQuery;
     lastResult: KnockoutObservableArray<T>;
 }
+export interface DataView<T, TKey> extends DataViewFunctions<T, TKey> { }
 
-export interface DataViewFunctions {
+export interface DataViewFunctions<T, TKey> {
     /** Refresh the view from the server */
     refresh(): JQueryPromise<any>;
     /** Load a remote entity by key */
-    load(key: any, query?: _query.ODataQuery): JQueryPromise<any>;
+    load(key: TKey, query?: _query.ODataQuery): JQueryPromise<any>;
 
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */
-    add(entity: any): JQueryPromise<any>;
+    add(entity: T): JQueryPromise<any>;
     /** Update entity on view, if buffer is false, entity will be instantly put on the server */
-    update(entity: any): void;
+    update(entity: T): void;
     /** Remove entity from dataset, if buffer is false, entity will be instantly deleted on the server */
-    remove(entity: any): void;
+    remove(entity: T): void;
 
-    findByKey(key: any): any;
+    findByKey(key: TKey): any;
 
     /** Save changes of an entity to the server */
-    saveEntity(entity: any): JQueryPromise<any>;
+    saveEntity(entity: T): JQueryPromise<T>;
     /** Reset entity to its original state */
-    resetEntity(entity: any): void;
+    resetEntity(entity: T): void;
 
     /** Get a report of changes in the dataview */
     getChanges(): any;
@@ -47,7 +48,7 @@ export interface DataViewFunctions {
 //#region Model
 
 /** Creates a data view for the given data set */
-export function create<T>(dataSet: dataset.DataSet, query?: _query.ODataQuery): DataView<T> {
+export function create<T, TKey>(dataSet: dataset.DataSet<T, TKey>, query?: _query.ODataQuery): DataView<T, TKey> {
     var self = {
         query: query || new _query.ODataQuery(),
         set: dataSet,
@@ -55,10 +56,10 @@ export function create<T>(dataSet: dataset.DataSet, query?: _query.ODataQuery): 
     };
 
     var result = ko.computed(function () {
-        if (self.query.pageSize() > 0 && !self.set.isSynchronized() && self.lastResult._size() > 0)
+        if (self.query.pageSize() > 0 && !self.set.isSynchronized() && self.lastResult.size() > 0)
             return self.lastResult();
 
-        return self.query.apply(self.set._toArray(), true);
+        return self.query.apply(self.set.toArray(), true);
     }).extend({ cnotify: utils.arrayEquals, deferEvaluation: true });
 
     ko.utils.extend(result, self);
@@ -67,16 +68,14 @@ export function create<T>(dataSet: dataset.DataSet, query?: _query.ODataQuery): 
     return result;
 }
 
-export var dataViewFunctions: DataViewFunctions = {
+export var dataViewFunctions: DataViewFunctions<any, any> = {
     /** Refresh the view from the server */
     refresh: function (): JQueryPromise<any> {
         var self = this;
-        return this.set
-            .query(this.query, true)
-            .done(function (data) {
-                if (self.query.pageSize() > 0)
-                    self.lastResult(data);
-            });
+        return this.set.query(this.query, true).done(function (data) {
+            if (self.query.pageSize() > 0)
+                self.lastResult(data);
+        });
     },
     /** Load a remote entity by key */
     load: function (key: any, query?: _query.ODataQuery): JQueryPromise<any> {
@@ -111,7 +110,7 @@ export var dataViewFunctions: DataViewFunctions = {
 
     /** Get a report of changes in the dataview */
     getChanges: function (): any {
-        return _.groupBy(this(), function (e) { return e.EntityState(); });
+        return _.groupBy(this(), e => e.EntityState());
     },
     /** Commits all Pending Operations (PUT, DELETE, POST) */
     saveChanges: function (): JQueryPromise<any> {

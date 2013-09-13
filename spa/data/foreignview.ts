@@ -7,31 +7,31 @@ import _query = require("./query");
 
 //#region Interfaces 
 
-export interface ForeignView<T> extends ForeignViewFunctions {
+export interface ForeignView<T, TKey, TForeign, TForeignKey> extends ForeignViewFunctions<T, TKey, TForeign, TForeignKey> {
     (): T;
 
     propertyName: string;
     parent: any;
 
-    localSet: dataset.DataSet;
-    foreignSet: dataset.DataSet;
+    localSet: dataset.DataSet<T, TKey>;
+    foreignSet: dataset.DataSet<TForeign, TForeignKey>;
 
     localId: string;
     foreignId: string;
     
-    view: dataview.DataView<T>;
+    view: dataview.DataView<TForeign, TForeignKey>;
     ensureRemote: boolean;
 }
 
-export interface ForeignViewFunctions {
+export interface ForeignViewFunctions<T, TKey, TForeign, TForeignKey> {
     /** Refresh the foreign entity from the server */
-    refresh(): JQueryPromise<any>;
+    refresh(): JQueryPromise<TForeign[]>;
     /** Update entity into dataSet, if buffer is false, changes will be instantly committed to the server */
     update(): void;
     /** Change actual related entity with new one and delete if specified */
-    change(newEntity: any, deleteOld?: boolean): JQueryPromise<any>;
+    change(newEntity: TForeign, deleteOld?: boolean): JQueryPromise<any>;
     /** Save changes of foreign entity to the server */
-    save(): JQueryPromise<any>;
+    save(): JQueryPromise<TForeign>;
 }
 
 //#endregion
@@ -39,7 +39,7 @@ export interface ForeignViewFunctions {
 //#region Model
 
 /** Create an observable relation to one item */
-export function create<T>(propertyName: string, localSet: dataset.DataSet, parent: any, foreignSet: dataset.DataSet, localId: string, ensureRemote: boolean): ForeignView<T> {
+export function create<T, TKey, TForeign, TForeignKey>(propertyName: string, localSet: dataset.DataSet<T, TKey>, parent: any, foreignSet: dataset.DataSet<TForeign, TForeignKey>, localId: string, ensureRemote: boolean): ForeignView<T, TKey, TForeign, TForeignKey> {
     var self = {
         propertyName: propertyName,
         parent: parent,
@@ -51,7 +51,7 @@ export function create<T>(propertyName: string, localSet: dataset.DataSet, paren
         ensureRemote: ensureRemote
     };
 
-    var result: any = self.view.first(),
+    var result: any = self.view._first(),
         foreign = result(),
         subscription = null;
 
@@ -79,7 +79,7 @@ export function create<T>(propertyName: string, localSet: dataset.DataSet, paren
     return result;
 }
 
-var foreignViewFunctions: ForeignViewFunctions = {
+var foreignViewFunctions: ForeignViewFunctions<any, any, any, any> = {
     /** Refresh the foreign entity from the server */
     refresh: function (): JQueryPromise<any> {
         if (this.ensureRemote) {

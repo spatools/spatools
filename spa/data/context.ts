@@ -6,7 +6,7 @@ import adapters = require("./adapters");
 import dataset = require("./dataset");
 
 export class DataContext {
-    private sets: {[key: string]: dataset.DataSet} = {};
+    private sets: {[key: string]: dataset.DataSet<any, any>} = {};
 
     public store: stores.IDataStore;
     public adapter: adapters.IAdapter;
@@ -27,17 +27,17 @@ export class DataContext {
     }
 
     /** Get all sets defined in current context */
-    public getSets(): dataset.DataSet[]{
+    public getSets(): dataset.DataSet<any, any>[]{
         return _.toArray(this.sets);
     }
     /** Get set from name */
-    public getSet(name: string): dataset.DataSet {
+    public getSet<T, TKey>(name: string): dataset.DataSet<T, TKey> {
         return this.sets[name];
     }
     /** Add a new Data Set to the Data Context */
-    public addSet(name: string, keyProperty: string, defaultType: string): dataset.DataSet {
+    public addSet<T, TKey>(name: string, keyProperty: string, defaultType: string): dataset.DataSet<T, TKey> {
         if (!this.sets[name])
-            this[name] = this.sets[name] = dataset.create(name, keyProperty, defaultType, this);
+            this[name] = this.sets[name] = dataset.create<T, TKey>(name, keyProperty, defaultType, this);
 
         return this.sets[name];
     }

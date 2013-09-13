@@ -120,7 +120,7 @@ function constructEntity(type: any) {
 function getEntityType(entity: {}) {
     return entity["$type"] || entity["odata.type"];
 }
-function getMappingConfiguration(entity: {}, dataSet: dataset.DataSet): Configuration {
+function getMappingConfiguration<T, TKey>(entity: {}, dataSet: dataset.DataSet<T, TKey>): Configuration {
     var type = getEntityType(entity) || dataSet.defaultType;
     return (type && dataSet.context.getMappingConfiguration(type)) || new Configuration(type);
 }
@@ -130,7 +130,7 @@ function getMappingConfiguration(entity: {}, dataSet: dataset.DataSet): Configur
 //#region Public Methods
 
 /** Add mapping properties to an entity */
-export function addMappingProperties<T>(model: any, dataSet: dataset.DataSet, config?: Configuration, initialState: entityStates = entityStates.unchanged, data: any = null): any {
+export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataSet<T, TKey>, config?: Configuration, initialState: entityStates = entityStates.unchanged, data: any = null): any {
     if (model.EntityState)
         throw "Model already has mapping properties";
 
@@ -211,7 +211,7 @@ export function addMappingProperties<T>(model: any, dataSet: dataset.DataSet, co
 }
 
 /** Refresh all entity relations */
-export function refreshRelations(entity: any, dataSet: dataset.DataSet) {
+export function refreshRelations<T, TKey>(entity: T, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<any> {
     var config = getMappingConfiguration(entity, dataSet),
         deferreds = [], prop;
 
@@ -226,7 +226,7 @@ export function refreshRelations(entity: any, dataSet: dataset.DataSet) {
 }
 
 /** Duplicate specified entity and return copy */
-export function duplicateEntity<T>(entity: T, dataSet: dataset.DataSet): T {
+export function duplicateEntity<T, TKey>(entity: T, dataSet: dataset.DataSet<T, TKey>): T {
     var config = getMappingConfiguration(entity, dataSet),
         mappingRules = config.rules;
 
@@ -242,7 +242,7 @@ export function duplicateEntity<T>(entity: T, dataSet: dataset.DataSet): T {
 }
 
 /** Update specified entity with specified data */
-export function updateEntity(entity: any, data: any, commit: boolean, dataSet: dataset.DataSet): any {
+export function updateEntity<T, TKey>(entity: any, data: any, commit: boolean, dataSet: dataset.DataSet<T, TKey>): any {
     if (!data) {
         if (!commit) {
             entity.EntityState(entityStates.unchanged);
@@ -284,7 +284,7 @@ export function updateEntity(entity: any, data: any, commit: boolean, dataSet: d
 }
 
 /** Reset specified entity with last remote data */
-export function resetEntity(entity: any, dataSet: dataset.DataSet): void {
+export function resetEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TKey>): void {
     var config = getMappingConfiguration(entity, dataSet),
         mappingRules = config.rules;
 
@@ -302,7 +302,7 @@ export function resetEntity(entity: any, dataSet: dataset.DataSet): void {
 
 //#region Mapping Methods
 
-export function mapEntityFromJS<T>(data: any, initialState: entityStates, dataSet: dataset.DataSet): T {
+export function mapEntityFromJS<T, TKey>(data: any, initialState: entityStates, dataSet: dataset.DataSet<T, TKey>): T {
     var config = getMappingConfiguration(data, dataSet),
         model = config.object ? constructEntity(config.object) : {};
 
@@ -312,7 +312,7 @@ export function mapEntityFromJS<T>(data: any, initialState: entityStates, dataSe
     return model;
 }
 
-export function mapEntityToJS(entity: any, keepState: boolean, dataSet: dataset.DataSet): any {
+export function mapEntityToJS<T, TKey>(entity: any, keepState: boolean, dataSet: dataset.DataSet<T, TKey>): any {
     var config = getMappingConfiguration(entity, dataSet),
         mappingRules = config.rules;
 
@@ -335,12 +335,12 @@ export function mapEntityToJS(entity: any, keepState: boolean, dataSet: dataset.
     return data;
 }
 
-export function mapEntityFromJSON<T>(json: string, initialState: entityStates, dataSet: dataset.DataSet): T {
+export function mapEntityFromJSON<T, TKey>(json: string, initialState: entityStates, dataSet: dataset.DataSet<T, TKey>): T {
     var obj = ko.utils.parseJson(json);
     return mapEntityFromJS(obj, initialState, dataSet);
 }
 
-export function mapEntityToJSON(entity: any, keepstate: boolean, dataSet: dataset.DataSet): string {
+export function mapEntityToJSON<T, TKey>(entity: any, keepstate: boolean, dataSet: dataset.DataSet<T, TKey>): string {
     var obj = mapEntityToJS(entity, keepstate, dataSet);
     return ko.utils.stringifyJson.call(null, obj);
 }

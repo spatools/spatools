@@ -394,7 +394,7 @@ export class ODataQuery {
   
       /** Order by specified field */
     public orderby(field: any, ascending?: any): ODataQuery {
-        var order = this.ordersby._find(function (o) { return o.field() === ko.utils.unwrapObservable(field); });
+        var order = this.ordersby.find(order => order.field() === ko.utils.unwrapObservable(field));
         if (order) {
             if (order.ascending() !== ascending)
                 order.ascending(ascending);
@@ -430,7 +430,7 @@ export class ODataQuery {
             pageNum = this.pageNum(), pageSize = this.pageSize(),
             selects = this.selects(), expands = this.expands();
 
-        if ((pageNum !== 0 || pageSize !== 0) && this.ordersby._size() == 0)
+        if ((pageNum !== 0 || pageSize !== 0) && this.ordersby.size() === 0)
             throw "You must specify atleast 1 order function when using paging";
 
         if (pageNum !== 0 && pageSize === 0)
@@ -476,7 +476,7 @@ export class ODataQuery {
             showTotal = true;
         }
 
-        orders = _.map(this.ordersby(), function (order) { return order.toQueryString(); });
+        orders = this.ordersby.map(order => order.toQueryString());
 
         if (orders.length)
             qstring.push("$orderby=" + orders.join(", "));
@@ -496,7 +496,7 @@ export class ODataQuery {
             filters.push(operator.and);
         }
 
-        _.each(this.filters(), function (filter) {
+        this.filters.each((filter: any) => {
             if (_.isObject(filter)) {
                 if (lastIsFilter)
                     filters.push(operator.and);
@@ -532,7 +532,7 @@ export class ODataQuery {
     }
     /** Returns a function for local sorting */
     public toLocalSorting(): (item1, item2) => number {
-        var orders = _.map(this.ordersby(), (order) => order.toSortFunction());
+        var orders = this.ordersby.map(order => order.toSortFunction());
         if (orders.length) {
             return function (item1, item2) {
                 var result = 0, i = 0;

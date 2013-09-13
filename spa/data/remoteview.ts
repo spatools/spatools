@@ -4,23 +4,23 @@ import dataset = require("./dataset");
 
 //#region Interfaces 
 
-export interface RemoteView<T> extends KnockoutObservableArray<T>, RemoteViewFunctions {
+export interface RemoteView<T, TKey, TForeign, TForeignKey> extends KnockoutObservableArray<TForeign>, RemoteViewFunctions<T, TKey, TForeign, TForeignKey> {
     propertyName: string;
     parent: any;
     localId: string;
-    localSet: dataset.DataSet;
-    foreignSet: dataset.DataSet;
+    localSet: dataset.DataSet<T, TKey>;
+    foreignSet: dataset.DataSet<TForeign, TForeignKey>;
 }
 
-export interface RemoteViewFunctions {
+export interface RemoteViewFunctions<T, TKey, TForeign, TForeignKey> {
     /** Refresh foreign entities from the server */
-    refresh(): JQueryPromise<any>;
+    refresh(): JQueryPromise<TForeign[]>;
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */
-    add(entity: any): JQueryPromise<any>;
+    add(entity: TForeign): JQueryPromise<TForeign>;
     /** Update entity on view, if buffer is false, entity will be instantly put on the server */
-    update(entity: any): JQueryPromise<any>;
+    update(entity: TForeign): JQueryPromise<any>;
     /** Remove entity from dataset, if buffer is false, entity will be instantly deleted on the server */
-    remove(entity: any): JQueryPromise<any>;
+    remove(entity: TForeign): JQueryPromise<any>;
 }
 
 //#endregion
@@ -28,7 +28,7 @@ export interface RemoteViewFunctions {
 //#region Model
 
 /** Create an observable relation to many entities */
-export function create<T>(propertyName: string, localSet: dataset.DataSet, parent: any, foreignSet: dataset.DataSet, localId: string): RemoteView<T> {
+export function create<T, TKey, TForeign, TForeignKey>(propertyName: string, localSet: dataset.DataSet<T, TKey>, parent: any, foreignSet: dataset.DataSet<TForeign, TForeignKey>, localId: string): RemoteView<T, TKey, TForeign, TForeignKey> {
     var self = {
         propertyName: propertyName,
         parent: parent,
@@ -45,7 +45,7 @@ export function create<T>(propertyName: string, localSet: dataset.DataSet, paren
     return result;
 }
 
-export var remoteViewFunctions: RemoteViewFunctions = {
+export var remoteViewFunctions: RemoteViewFunctions<any, any, any, any> = {
     /** Refresh foreign entities from the server */
     refresh: function (): JQueryPromise<any> {
         var foreignSet = this.foreignSet,

@@ -7,12 +7,12 @@ import _query = require("./query");
 
 //#region Interfaces 
 
-export interface RelationView<T> extends dataview.DataView<T> {
+export interface RelationView<T, TKey, TForeign, TForeignKey> extends dataview.DataView<TForeign, TForeignKey> {
     propertyName: string;
     parent: any;
 
-    localSet: dataset.DataSet;
-    foreignSet: dataset.DataSet;
+    localSet: dataset.DataSet<T, TKey>;
+    foreignSet: dataset.DataSet<TForeign, TForeignKey>;
 
     localId: string;
     localIdValue: any;
@@ -26,7 +26,7 @@ export interface RelationView<T> extends dataview.DataView<T> {
 //#region Model
 
 /** Create an observable relation to many entities */
-export function create<T>(propertyName: string, localSet: dataset.DataSet, parent: any, foreignSet: dataset.DataSet, localId: string, foreignId: string, ensureRemote: boolean): RelationView<T> {
+export function create<T, TKey, TForeign, TForeignKey>(propertyName: string, localSet: dataset.DataSet<T, TKey>, parent: any, foreignSet: dataset.DataSet<TForeign, TForeignKey>, localId: string, foreignId: string, ensureRemote: boolean): RelationView<T, TKey, TForeign, TForeignKey> {
     var self = {
         propertyName: propertyName,
         parent: parent,
@@ -41,7 +41,7 @@ export function create<T>(propertyName: string, localSet: dataset.DataSet, paren
     
     self.parent[self.localId].subscribe(function (newId) {
         if (self.localIdValue !== newId) {
-            var foreigns = foreignSet._filter(function (e) { return e[self.foreignId]() === self.localIdValue; });// result();
+            var foreigns = foreignSet.filter(function (e) { return e[self.foreignId]() === self.localIdValue; });// result();
             _.each(foreigns, function (foreign) {
                 foreign[self.foreignId](newId);
             });
@@ -86,7 +86,7 @@ var relationViewFunctions = {
                     return data;
                 })
                 .then(function (data) {
-                    var existings = self._map(function (entity) { return foreignSet.getKey(entity); }),
+                    var existings = self.map(function (entity) { return foreignSet.getKey(entity); }),
                         news = _.map(data, function (entity) { return foreignSet.getKey(entity); }),
                         filter, args, hasToDelete, toDelete;
 

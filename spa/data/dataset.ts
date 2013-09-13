@@ -12,7 +12,9 @@ import utils = require("../utils");
 
 //#region Interfaces 
 
-export interface DataSet extends KnockoutUnderscoreArrayFunctions, KnockoutUnderscoreObjectsFunctions, DataSetFunctions {
+export interface DataSet<T, TKey> extends KnockoutUnderscoreArrayFunctions<T> { }
+export interface DataSet<T, TKey> extends KnockoutUnderscoreObjectsFunctions<T> { }
+export interface DataSet<T, TKey> extends DataSetFunctions<T, TKey> {
     (): {};
 
     setName: string;
@@ -29,69 +31,69 @@ export interface DataSet extends KnockoutUnderscoreArrayFunctions, KnockoutUnder
     isSynchronized: KnockoutComputed<boolean>;
 }
 
-export interface DataSetFunctions {
+export interface DataSetFunctions<T, TKey> {
     /** Create a new view of the current set with specified query */
-    createView<T>(query?: query.ODataQuery): dataview.DataView<T>;
+    createView(query?: query.ODataQuery): dataview.DataView<T, TKey>;
 
     /** Refresh dataset from remote source */
-    refresh(): JQueryPromise<any>;
+    refresh(): JQueryPromise<T[]>;
     /** Query server to refresh dataset */
     query(query?: query.ODataQuery, refresh?: boolean);
     /** Load an entity by id from the remote source */
-    load(key: any, query?: query.ODataQuery): JQueryPromise<any>;
+    load(key: TKey, query?: query.ODataQuery): JQueryPromise<T>;
     /** Execute action on remote source */
-    executeAction(action: string, params?: any, entity?: any): JQueryPromise<any>;
+    executeAction(action: string, params?: any, entity?: T): JQueryPromise<any>;
 
     /** Add entity to dataset, if buffer is false, entity will be instantly post on the server */
-    add(entity: any): JQueryPromise<any>;
+    add(entity: T): JQueryPromise<T>;
     /** Add entities to dataset, if buffer is false, entities will be instantly post on the server */
-    addRange(entities: any[]): JQueryPromise<any>;
+    addRange(entities: T[]): JQueryPromise<T[]>;
     /** Update entity on dataset, if buffer is false, entity will be instantly put on the server */
-    update(entity: any): void;
+    update(entity: T): void;
     /** Remove entity from dataset, if buffer is false, entity will be instantly deleted on the server */
-    remove(entity: any): void;
+    remove(entity: T): void;
 
     /** Reset entity to its original state */
-    resetEntity(entity: any): void;
+    resetEntity(entity: T): void;
     /** Dispose and clean entity */
-    disposeEntity(entity: any): void;
+    disposeEntity(entity: T): void;
 
     /** Get whether entity is attached or not */
-    isAttached(entity: any): boolean;
+    isAttached(entity: T): boolean;
     /** Attach an entity to the dataSet (commits immediately if buffer is false) */
-    attach(entity: any): JQueryPromise<any>;
+    attach(entity: T): JQueryPromise<T>;
     /** Attach an Array of entities to the dataSet */
-    attachRange(entities: any[]): JQueryPromise<any>;
+    attachRange(entities: T[]): JQueryPromise<T[]>;
     /** Stop an entity from being tracked by the dataSet */
-    detach(entity: any): void;
+    detach(entity: T): void;
     /** Stop an array of entities from being tracked by the dataSet */
-    detachRange(entityKeys: any[]): void;
+    detachRange(entityKeys: TKey[]): void;
     /** Attach or update entity if existing with current data and commit changes if commit is set to true */
-    attachOrUpdate(data: any, commit?: boolean): JQueryPromise<any>;
+    attachOrUpdate(data: any, commit?: boolean): JQueryPromise<T>;
     /** Attach or update entities if existing with current data and commit changes if commit is set to true */
-    attachOrUpdateRange(data: any[], commit?: boolean): JQueryPromise<any[]>;
+    attachOrUpdateRange(data: any[], commit?: boolean): JQueryPromise<T[]>;
 
     /** Gets the key associated with an entity */
-    getKey(entity: any): any;
+    getKey(entity: T): TKey;
     /** Finds a matching entity in the set (by key) */
-    findByEntity(entity: any): any;
+    findByEntity(entity: T): T;
     /** Finds a matching entity in the set (by key) */
-    findByKey(key: any): any;
+    findByKey(key: TKey): T;
 
     /** Create a JS object from given entity */
-    toJS(entity: any, keepstate?: boolean): any;
+    toJS(entity: T, keepstate?: boolean): any;
     /** Serialize given entity to JSON */
-    toJSON(entity: any, keepstate?: boolean): string;
+    toJSON(entity: T, keepstate?: boolean): string;
 
     /** Instanciate an entity from a JS object */
-    fromJS(data: any, state?: mapping.entityStates): any;
+    fromJS(data: any, state?: mapping.entityStates): T;
     /** Instanciate an entity from a JSON string */
-    fromJSON(json: string, state?: mapping.entityStates): any;
+    fromJSON(json: string, state?: mapping.entityStates): T;
 
     /** Get a report of changes in the dataSet */
     getChanges(): any;
     /** Save changes of an entity to the server */
-    saveEntity(entity): JQueryPromise<any>;
+    saveEntity(entity: T): JQueryPromise<T>;
     /** Commits all Pending Operations (PUT, DELETE, POST) */
     saveChanges(): JQueryPromise<any>;
 
@@ -109,7 +111,7 @@ export interface DataSetFunctions {
 
 //#region Model
 
-export function create(setName: string, keyPropertyName: string, defaultType: string, dataContext: context.DataContext): DataSet {
+export function create<T, TKey>(setName: string, keyPropertyName: string, defaultType: string, dataContext: context.DataContext): DataSet<T, TKey> {
     var result = ko.observable(dataContext.store.getMemorySet(setName)).extend({ notify: "reference" });
 
     result.setName = setName;
@@ -121,7 +123,7 @@ export function create(setName: string, keyPropertyName: string, defaultType: st
 
     ko.utils.extend(result, dataSetFunctions);
 
-    result.localCount = result.size();
+    result.localCount = result._size();
     result.remoteCount = ko.observable(-1);
     result.count = ko.computed(() => result.remoteCount() === -1 ? result.localCount() : result.remoteCount());
 
@@ -130,10 +132,10 @@ export function create(setName: string, keyPropertyName: string, defaultType: st
     return result;
 }
 
-var dataSetFunctions: DataSetFunctions = {
+var dataSetFunctions: DataSetFunctions<any, any> = {
     /** Create a new view of the current set with specified query */
-    createView: function <T>(query?: query.ODataQuery): dataview.DataView<T> {
-        return dataview.create<T>(this, query);
+    createView: function (query?: query.ODataQuery): dataview.DataView<any, any> {
+        return dataview.create(this, query);
     },
     
     /** Refresh dataset from remote source */
@@ -172,7 +174,7 @@ var dataSetFunctions: DataSetFunctions = {
             .then(function (data) {
                 if (refresh === true) {
                     if (query && query.pageSize() === 0) {
-                        var actual = query.applyFilters(self._toArray()),
+                        var actual = query.applyFilters(self.toArray()),
                             report = utils.arrayCompare(actual, data);
 
                         self.detachRange(report.removed);
@@ -192,9 +194,7 @@ var dataSetFunctions: DataSetFunctions = {
     /** Load an entity by id from the remote source */
     load: function (key: any, query?: query.ODataQuery): JQueryPromise<any> {
         var self = this;
-        return this.adapter
-            .getOne(this.setName, key, query)
-            .then(function (data) { return self.attachOrUpdate(data); });
+        return this.adapter.getOne(this.setName, key, query).then(data => self.attachOrUpdate(data));
     },
     /** Execute action on remote source */
     executeAction: function (action: string, params?: any, entity?: any): JQueryPromise<any> {
@@ -289,8 +289,8 @@ var dataSetFunctions: DataSetFunctions = {
         }
 
         return $.when(deferred || entity)
-            .then(() => self.valueHasMutated())
-            .then(() => entity);
+                .then(() => self.valueHasMutated())
+                .then(() => entity);
     },
     /** Attach an Array of entities to the dataSet */
     attachRange: function (entities: any[]): JQueryPromise<any> {
@@ -506,7 +506,7 @@ var dataSetFunctions: DataSetFunctions = {
                         if (self.context.autoLazyLoading === true)
                             return mapping.refreshRelations(entity, self);
                     })
-                    .then(function () { return entity; })
+                    .then(() => entity)
                     .always(function () { entity.IsSubmitting(false); });
             }
         }
