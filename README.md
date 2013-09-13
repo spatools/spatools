@@ -55,4 +55,5 @@ Javascript ORM to connect to REST / OData Web Service.
 * 0.3.1
     * Fix missing return value in utils.unsafe
     * Fix issues in templateEngine for Windows 8
+	* Fix issue in Tree binding handler
 

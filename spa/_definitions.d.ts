@@ -48,7 +48,7 @@ interface KnockoutBindingHandlers {
         update(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
     };
     tree: {
-        init(element: HTMLElement, valueAccessor: () => any): void;
+        init(element: HTMLElement, valueAccessor: () => any): any;
         update(element: HTMLElement, valueAccessor: () => any): void;
     };
 

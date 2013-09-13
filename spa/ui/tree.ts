@@ -768,10 +768,12 @@ ko.bindingHandlers.treenoderename = {
 };
 
 ko.bindingHandlers.tree = {
-    init: function (element: HTMLElement, valueAccessor: () => any): void {
+    init: function (element: HTMLElement, valueAccessor: () => any): any {
         var value = ko.utils.unwrapObservable(valueAccessor());
         value.tree = element; // needed to recalculate node sizes when multiple trees
         console.log('Initialize tree ' + value.children().length + ' root nodes found');
+
+        return { controlsDescendantBindings: true };
     },
     update: function (element: HTMLElement, valueAccessor: () => any): void {
         var value = ko.utils.unwrapObservable(valueAccessor());
