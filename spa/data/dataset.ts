@@ -454,10 +454,11 @@ var dataSetFunctions: DataSetFunctions = {
     /** Commits all Pending Operations (PUT, DELETE, POST) */
     saveChanges: function (): JQueryPromise<any> {
         var changes = this.getChanges(),
+            states = mapping.entityStates,
             deferreds = _.union(
-                _.map(changes[mapping.entityStates.added], e => this._remoteCreate(e)),
-                _.map(changes[mapping.entityStates.modified], e => this._remoteUpdate(e)),
-                _.map(changes[mapping.entityStates.removed], e => this._remoteRemove(e))
+                _.map(changes[states.added], e => this._remoteCreate(e)),
+                _.map(changes[states.modified], e => this._remoteUpdate(e)),
+                _.map(changes[states.removed], e => this._remoteRemove(e))
             );
 
         return $.when.apply($, deferreds);
