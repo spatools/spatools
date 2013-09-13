@@ -1,14 +1,4 @@
-/// <reference path="../_references.d.ts" />
-/// <reference path="base.d.ts" />
-
-interface KnockoutExtenders {
-    moment: (target: any, options: Object) => any;
-    momentDuration: (target: any, options: any) => any;
-    delay: (target: any, delay: number) => any;
-    cnotify: (target: any, notifyWhen: any) => any;
-    cthrottle: (target: any, timeout: number) => any;
-    //notify: (target: any, notifyWhen: string, customEqualityComparer: (v1: any, v2: any) => number) => any;
-}
+/// <reference path="_definitions.d.ts" />
 
 ko.extenders.delay = function (target: any, delay: number): any {
     var value = target();
@@ -105,3 +95,6 @@ ko.extenders.cthrottle = function (target: any, timeout: number): any {
     target['throttleEvaluation'] = timeout;
     return target;
 };
+
+var result = true;
+export = result;

@@ -79,9 +79,18 @@ interface KnockoutBindingHandlers {
     };
 }
 
-interface KnockoutTemplateEngine {
-    addTemplate(id: string, template: string): void;
+interface KnockoutExtenders {
+    moment: (target: any, options: Object) => any;
+    momentDuration: (target: any, options: any) => any;
+    delay: (target: any, delay: number) => any;
+    cnotify: (target: any, notifyWhen: any) => any;
+    cthrottle: (target: any, timeout: number) => any;
+    //notify: (target: any, notifyWhen: string, customEqualityComparer: (v1: any, v2: any) => number) => any;
 }
+
+//interface KnockoutTemplateEngine {
+//    addTemplate(id: string, template: string): void;
+//}
 
 interface KnockoutTemplateSources {
     require: KnockoutPrototypeStatic<KnockoutTemplateSource>;

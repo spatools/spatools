@@ -152,7 +152,7 @@
     <Content Include="spa\data\stores\localstorage.ts" />
     <Content Include="spa\data\stores\indexeddb.ts" />
     <Content Include="spa\event.ts" />
-    <Content Include="base\extenders.ts" />
+    <Content Include="spa\extenders.ts" />
     <Content Include="base\handlers.ts" />
     <Content Include="spa\fullscreen.ts" />
     <Content Include="spa\keyboard.ts" />
@@ -200,6 +200,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spa\ui\handlers.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" />
 </Project>
