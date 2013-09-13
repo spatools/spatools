@@ -32,16 +32,14 @@ interface Window {
     msIDBKeyRange: IDBKeyRange;
 
     rangy: any;
+
+    getComputedStyle(element: Element, pseudoElt?: any): CSSStyleDeclaration;
+    getComputedStyle(element: Node, pseudoElt?: any): CSSStyleDeclaration;
 }
 
 interface Element {
     offsetWidth: number;
     offsetHeight: number;
-}
-
-interface ViewCSS {
-    getComputedStyle(element: Element, pseudoElt?: any): CSSStyleDeclaration;
-    getComputedStyle(element: Node, pseudoElt?: any): CSSStyleDeclaration;
 }
 
 interface Document {

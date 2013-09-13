@@ -116,7 +116,7 @@ export class Ribbon {
         }
         else if (_.isString(page)) {
             var title = page;
-            page = this.pages._find(p => ko.utils.unwrapObservable(p.title) === title);
+            page = this.pages.find(p => ko.utils.unwrapObservable(p.title) === title);
         }
 
         if (page && page instanceof RibbonPage) {
@@ -144,7 +144,7 @@ export class Ribbon {
         var isSelected = false,
             selected = this.selectedPage();
 
-        var toremove = this.pages._filterMap<RibbonPage, number>((p, i?) => {
+        var toremove = this.pages.filterMap((p, i) => {
             if (p === selected)
                 isSelected = true;
 

@@ -156,7 +156,7 @@ export class Tree implements TreeContainer {
     public findNode(id: string): TreeNode {
         var result: TreeNode;
 
-        this.children._find<TreeNode>(node => {
+        this.children.find(node => {
             if (node.id() === id) {
                 result = node;
                 return true;
@@ -171,7 +171,7 @@ export class Tree implements TreeContainer {
     public selectNode(id: string, root?: TreeContainer): boolean {
         var level = root || this;
 
-        var result = level.children._find<TreeNode>(node => {
+        var result = level.children.find(node => {
             if (node.id() === id) {
                 node.selectNode();
                 return true;
@@ -240,7 +240,7 @@ export class Tree implements TreeContainer {
         node && node.deleteSelf(action);
     }
     public deleteAll(): void {
-        this.children._each<TreeNode>(node => node.deleteSelf());
+        this.children.each(node => node.deleteSelf());
     }
     public clear(): void {
         this.children([]);
@@ -385,7 +385,7 @@ export class TreeNode implements TreeContainer {
                 childRenaming = false,
                 typeDefault = typeValueOrDefault('isDraggable', this.type(), this.viewModel);
 
-            this.children._find<TreeNode>(child => (childRenaming = child.isRenaming()));
+            this.children.find(child => (childRenaming = child.isRenaming()));
 
             return !this.isRenaming() && !childRenaming && typeDefault;
         });
@@ -405,7 +405,7 @@ export class TreeNode implements TreeContainer {
     }
 
     public hasChildren(): boolean {
-        return this.children._size() > 0;
+        return this.children.size() > 0;
     }
     public hasContext(): boolean {
         return !!this.contextMenu;
@@ -426,7 +426,7 @@ export class TreeNode implements TreeContainer {
         }
     }
     public setViewModel(viewModel: any): void {
-        this.children._each(child => child.setViewModel(viewModel));
+        this.children.each(child => child.setViewModel(viewModel));
 
         this.viewModel = viewModel;
         this.contextMenu = viewModel.contextMenu;
@@ -435,7 +435,7 @@ export class TreeNode implements TreeContainer {
     public findNode(id: string): TreeNode {
         var result: TreeNode;
 
-        this.children._find<TreeNode>(node => {
+        this.children.find(node => {
             if (node.id() === id) {
                 result = node;
                 return true;
@@ -529,14 +529,14 @@ export class TreeNode implements TreeContainer {
         this.viewModel.handlers.deleteNode(this, action, () => {
             var parent = this.parent();
 
-            this.children._each<TreeNode>(child => child.deleteSelf(action + " child"));
+            this.children.each(child => child.deleteSelf(action + " child"));
 
             if (parent !== undefined) {
                 parent.children.remove(this);
 
                 if (!action || action.indexOf("child") === -1) {
                     var _index = this.index();
-                    parent.children._each(child => {
+                    parent.children.each(child => {
                         var index = child.index();
                         (index > _index) && child.index(index - 1);
                     });
@@ -550,13 +550,13 @@ export class TreeNode implements TreeContainer {
     public move(node: TreeNode, parent?: TreeContainer, index?: number): void {
         var newParent = parent || this,
             oldParent = node.parent(),
-            newIndex = typeof index === "undefined" ? newParent.children._size() : index,
+            newIndex = typeof index === "undefined" ? newParent.children.size() : index,
             oldIndex = node.index();
 
         this.viewModel.handlers.moveNode(node, newParent, newIndex, () => {
             oldParent.children.remove(node);
 
-            oldParent.children._each<TreeNode>(child => {
+            oldParent.children.each(child => {
                 var index = child.index();
                 (index > oldIndex) && child.index(index - 1);
             });
@@ -564,7 +564,7 @@ export class TreeNode implements TreeContainer {
             node.index(newIndex);
             node.parent(newParent);
 
-            oldParent.children._each<TreeNode>(child => {
+            oldParent.children.each(child => {
                 var index = child.index();
                 (index >= newIndex) && child.index(index + 1);
             });

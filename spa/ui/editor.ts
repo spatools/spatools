@@ -1005,10 +1005,10 @@ export class EditorGroup {
         this.rows = utils.createObservableArray(options.rows, this.createRow, this);
 
         this.isFirst = ko.computed(function () {
-            return this.editor.groups._indexOf(this) === 0;
+            return this.editor.groups.indexOf(this) === 0;
         }, this, { deferEvaluation: true });
         this.isLast = ko.computed(function () {
-            return this.editor.groups._indexOf(this) === this.editor.groups._count() - 1;
+            return this.editor.groups.indexOf(this) === this.editor.groups.count() - 1;
         }, this, { deferEvaluation: true });
     }
 
@@ -1180,7 +1180,7 @@ export class EditorButton extends EditorItem implements IEditorParent {
             this.isActive = utils.createObservable(options.isActive, false);
         }
 
-        this.hasSubMenu = ko.computed(() => this.buttons._size() > 0);
+        this.hasSubMenu = ko.computed(() => this.buttons.size() > 0);
     }
 
     public executeCommand(editor: Editor, e: Event): boolean {
