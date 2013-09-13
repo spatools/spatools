@@ -38,13 +38,21 @@ Javascript ORM to connect to REST / OData Web Service.
 * 0.1.0 Initial Release
 * 0.2.0 
 	* Append UI framework
+* 0.2.1
     * Fix issues in Tree widget
+* 0.2.2
     * Fix issues in data/adapters
     * Fix issues in data/stores
+* 0.2.3
 	* Fix issues in Command binding handlers
+* 0.2.4
 	* Fix issues in Ribbon widget
+* 0.2.5
 	* Fix issues in base64 module
 * 0.3.0
 	* Append $expand and $select options in data framework
 	* Add ODataQuery options in load operations in data framework
+* 0.3.1
+    * Fix missing return value in utils.unsafe
+    * Fix issues in templateEngine for Windows 8
 
