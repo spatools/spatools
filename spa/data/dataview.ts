@@ -2,6 +2,7 @@
 
 import utils = require("../utils");
 import dataset = require("./dataset");
+import mapping = require("./mapping");
 import _query = require("./query");
 
 //#region Interfaces 
@@ -117,11 +118,12 @@ export var dataViewFunctions: DataViewFunctions = {
         /// <returnss type="$.Deffered">return a deffered object for async operations</returnss>
         var changes = this.getChanges(),
             set = this.set,
-            deferreds = [];
-
-        _.each(changes.added, function (e) { deferreds.push(set._remoteCreate(e)); });
-        _.each(changes.modified, function (e) { deferreds.push(set._remoteUpdate(e)); });
-        _.each(changes.deleted, function (e) { deferreds.push(set._remoteRemove(e)); });
+            states = mapping.entityStates,
+            deferreds = _.union(
+                _.map(changes[states.added], e => set._remoteCreate(e)),
+                _.map(changes[states.modified], e => set._remoteUpdate(e)),
+                _.map(changes[states.removed], e => set._remoteRemove(e))
+            );
 
         return $.when.apply($, deferreds);
     }
