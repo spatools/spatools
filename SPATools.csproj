@@ -204,5 +204,11 @@
   <ItemGroup>
     <Content Include="spa\ui\handlers.ts" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="base\extenders.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="spa\historyObservable.ts" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" />
 </Project>
