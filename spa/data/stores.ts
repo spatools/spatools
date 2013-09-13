@@ -10,7 +10,7 @@ export interface IDataStore {
 
     constructor(context: context.DataContext);
 
-    init(force?: boolean): JQueryPromise;
+    init(force?: boolean): JQueryPromise<any>;
 
     getKey(setName: string, item: any): any;
     getMemorySet(setName: string): {};
@@ -33,7 +33,7 @@ export function addStoreType(name: string, store: any): void {
 export function getStore(name: string, context: context.DataContext): JQueryPromise<IDataStore> {
     var dfd: JQueryPromise<IDataStore> = (!stores[name]) ?
                 utils.load("./data/stores/" + name).then(() => new stores[name](context)) : 
-                $.Deferred<IDataStore>().resolve(new stores[name](context));
+                $.when(new stores[name](context));
 
     return dfd.then(store => store.init(true).then(() => store));
 }

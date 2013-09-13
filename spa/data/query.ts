@@ -176,7 +176,7 @@ export class FunctionFilter extends Filter {
         this.field = ko.computed(this.formatField, this);
     }
 
-    private getItemField(item: any, field: string): any {
+    public getItemField(item: any, field: string): any {
         var _itemField = super.getItemField(item, field),
             args = ko.toJS(this.args),
             _itemFieldString = (_itemField || "").toString(),
