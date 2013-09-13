@@ -87,8 +87,8 @@ export class RequireSource {
     public nodes(element: Element): void;
     public nodes(element?: Element): any {
         if (arguments.length == 0) {
+            var markup = this.text(); // to register dependency
             if (!this.template.data["__NODES__"]) {
-                var markup = this.text();
                 this.template.data["__NODES__"] = utils.unsafe(() => parseMarkup(markup));
             }
 
