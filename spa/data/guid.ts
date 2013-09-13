@@ -5,6 +5,8 @@ var lastEmpty = 0,
     tempRegex = /00000000-0000-0000-0000-\d{12}/,
     guidRegex = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
 
+export var empty = "00000000-0000-0000-0000-000000000000";
+
 function S4(): string {
     return Math.floor(Math.random() * 0x10000 /* 65536 */ ).toString(16);
 }

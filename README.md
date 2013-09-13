@@ -59,4 +59,5 @@ Javascript ORM to connect to REST / OData Web Service.
 	* Fix issue in DataSet.saveChanges and DataView.saveChanges
 	* Fix issue in DataSet.remove
 	* Fix RibbonForm.inline not working and Add class to RibbonInput
+	* Fix missing empty guid
 
