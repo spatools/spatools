@@ -83,7 +83,7 @@ export class Filter {
         if (!operator && !value) //if field implicite
             return field;
 
-        return spa.format("{0} {1} {2}", field, operator, this.formatValue(value));
+        return utils.format("{0} {1} {2}", field, operator, this.formatValue(value));
     }
 
     /** Return a function to filter entities using underscore */
@@ -150,7 +150,7 @@ export class Filter {
         if (type === "null")
             return !!this.operator() ? type : ""; // if no operator the field is a bool himself
 
-        return spa.format("{0}'{1}'", type.replace("string", ""), value);
+        return utils.format("{0}'{1}'", type.replace("string", ""), value);
     }
 
     public getItemField(item: any, field: string): any {
@@ -247,7 +247,7 @@ export class FunctionFilter extends Filter {
             return null;
 
         args = _.map(args, this.formatValue, this);
-        return spa.format.apply(null, _.union([fn, this._field()], args));
+        return utils.format.apply(null, _.union([fn, this._field()], args));
     }
 }
 
@@ -262,7 +262,7 @@ export class Ordering {
 
     /** Creates a String acceptable for odata Query String $orderby */
     public toQueryString(): string {
-        return spa.format("{0} {1}", this.field(), this.ascending() ? "asc" : "desc");
+        return utils.format("{0} {1}", this.field(), this.ascending() ? "asc" : "desc");
     }
 
     /** Create a sorting function to sort entities locally */

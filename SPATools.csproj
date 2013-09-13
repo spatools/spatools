@@ -186,6 +186,7 @@
     <Content Include="tests\timers.ts" />
     <Content Include="tests\utils.ts" />
     <Content Include="_references.d.ts" />
+    <Content Include="spa\main.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -205,7 +206,7 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="spa\ui\handlers.ts" />
+    <Content Include="spa\handlers.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="base\extenders.ts" />

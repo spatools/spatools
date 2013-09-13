@@ -1,5 +1,7 @@
 /// <reference path="_definitions.d.ts" />
 
+import utils = require("./utils");
+
 export interface CommandOptions {
     execute($data: any): any;
     canExecute? (): boolean;

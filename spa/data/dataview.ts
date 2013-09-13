@@ -3,6 +3,7 @@
 import utils = require("../utils");
 import dataset = require("./dataset");
 import mapping = require("./mapping");
+import underscore = require("../underscore");
 import _query = require("./query");
 
 //#region Interfaces 
@@ -128,6 +129,6 @@ export var dataViewFunctions: DataViewFunctions = {
         return $.when.apply($, deferreds);
     }
 };
-ko.utils.extend(dataViewFunctions, spa.underscore.collections);
+ko.utils.extend(dataViewFunctions, underscore.collections);
 
 //#endregion

@@ -40,122 +40,124 @@ export function getMomentDuration(timeSpan: string): Duration {
     }
 }
 
-ko.extenders.moment = function (target: any, options: Object): any {
-    var opts: MomentExtenderOptions = { format: null, unix: false, utc: false };
-    opts = _.extend(opts, options || {});
+export function init(): void {
+    ko.extenders.moment = function (target: any, options: Object): any {
+        var opts: MomentExtenderOptions = { format: null, unix: false, utc: false };
+        opts = _.extend(opts, options || {});
 
-    var
-        setDate = function (newValue: any = null): void {
-            target.date = getMoment(newValue, opts.unix, opts.utc, opts.format);
-        },
-        getDate = function (moment: Moment): string {
-            return dateToString(moment, opts.unix, opts.utc, opts.format);
-        },
+        var
+            setDate = function (newValue: any = null): void {
+                target.date = getMoment(newValue, opts.unix, opts.utc, opts.format);
+            },
+            getDate = function (moment: Moment): string {
+                return dateToString(moment, opts.unix, opts.utc, opts.format);
+            },
 
-        registerGetSet = function (fn: string): void {
-            target[fn] = function () {
-                var val = target.date[fn].apply(target.date, arguments);
+            registerGetSet = function (fn: string): void {
+                target[fn] = function () {
+                    var val = target.date[fn].apply(target.date, arguments);
 
-                if (arguments.length > 0)
+                    if (arguments.length > 0)
+                        target(getDate(target.date));
+
+                    return val;
+                };
+            },
+            registerManip = function (fn: string): void {
+                target[fn] = function () {
+                    var val = target.date[fn].apply(target.date, arguments);
+
                     target(getDate(target.date));
 
-                return val;
-            };
-        },
-        registerManip = function (fn: string): void {
-            target[fn] = function () {
-                var val = target.date[fn].apply(target.date, arguments);
+                    return val;
+                };
+            },
+            registerDisplay = function (fn: string): void {
+                target[fn] = function () {
+                    return target.date[fn].apply(target.date, arguments);
+                };
+            },
 
-                target(getDate(target.date));
+            getsetsFn = ["milliseconds", "seconds", "minutes", "hours", "date", "day", "month", "year"],
+            manipFn = ["add", "substract", "startOf", "endOf", "sod", "eod", "local", "utc"],
+            displayFn = ["format", "from", "fromNow", "diff", "toDate", "valueOf", "unix", "isLeapYear", "zone", "daysInMonth", "isDST"];
 
-                return val;
-            };
-        },
-        registerDisplay = function (fn: string): void {
-            target[fn] = function () {
-                return target.date[fn].apply(target.date, arguments);
-            };
-        },
+        setDate(target());
+        target.subscribe(setDate);
 
-        getsetsFn = ["milliseconds", "seconds", "minutes", "hours", "date", "day", "month", "year"],
-        manipFn = ["add", "substract", "startOf", "endOf", "sod", "eod", "local", "utc"],
-        displayFn = ["format", "from", "fromNow", "diff", "toDate", "valueOf", "unix", "isLeapYear", "zone", "daysInMonth", "isDST"];
+        _.each(getsetsFn, registerGetSet);
+        _.each(manipFn, registerManip);
+        _.each(displayFn, registerDisplay);
 
-    setDate(target());
-    target.subscribe(setDate);
+        target.now = function () {
+            setDate();
+            target(getDate(target.date));
+        };
 
-    _.each(getsetsFn, registerGetSet);
-    _.each(manipFn, registerManip);
-    _.each(displayFn, registerDisplay);
+        return target;
+    };
+    ko.extenders.momentDuration = function (target: any, options: any): any {
+        var
+            setDuration = function (newValue: string = null): void {
+                target.duration = getMomentDuration(newValue);
+            },
 
-    target.now = function () {
-        setDate();
-        target(getDate(target.date));
+            registerFn = function (fn: string): void {
+                target[fn] = function () {
+                    return (target.duration) ? target.duration[fn].apply(target.duration, arguments) : null;
+                };
+            },
+
+            fns = ["humanize", "milliseconds", "asMilliseconds", "seconds", "asSeconds", "minutes", "asMinutes", "hours", "asHours", "days", "asDays", "months", "asMonths", "years", "asYears"];
+
+        setDuration(target());
+        target.subscribe(setDuration);
+
+        _.each(fns, registerFn);
+
+        return target;
     };
 
-    return target;
-};
-ko.extenders.momentDuration = function (target: any, options: any): any {
-    var
-        setDuration = function (newValue: string = null): void {
-            target.duration = getMomentDuration(newValue);
+    ko.bindingHandlers.date = {
+        init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
+            var options = ko.utils.unwrapObservable(allBindingsAccessor()),
+                format = ko.utils.unwrapObservable(options.format),
+                utc = ko.utils.unwrapObservable(options.utc || false),
+                unix = ko.utils.unwrapObservable(options.unix || false),
+                value = valueAccessor(),
+                attr = ko.utils.unwrapObservable(options.dattr || "text");
+
+            if (ko.isWriteableObservable(value) && attr === "value") {
+                $(element).change(function (event) {
+                    var moment = getMoment($(this).val(), unix, utc, format);
+                    value(dateToString(moment, unix, utc, ""));
+                });
+            }
         },
+        update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
+            var options = ko.utils.unwrapObservable(allBindingsAccessor()),
+                format = ko.utils.unwrapObservable(options.format),
+                utc = ko.utils.unwrapObservable(options.utc || false),
+                unix = ko.utils.unwrapObservable(options.unix || false),
+                attr = ko.utils.unwrapObservable(options.dattr || "text"),
+                value = valueAccessor();
 
-        registerFn = function (fn: string): void {
-            target[fn] = function () {
-                return (target.duration) ? target.duration[fn].apply(target.duration, arguments) : null;
-            };
-        },
+            if (value && ko.utils.unwrapObservable(value)) {
+                var _moment = (value.date && moment.isMoment(value.date)) ? value.date : getMoment(ko.utils.unwrapObservable(value), unix, utc, format),
+                    text = dateToString(_moment, unix, utc, format);
 
-        fns = ["humanize", "milliseconds", "asMilliseconds", "seconds", "asSeconds", "minutes", "asMinutes", "hours", "asHours", "days", "asDays", "months", "asMonths", "years", "asYears"];
-
-    setDuration(target());
-    target.subscribe(setDuration);
-
-    _.each(fns, registerFn);
-
-    return target;
-};
-
-ko.bindingHandlers.date = {
-    init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(allBindingsAccessor()),
-            format = ko.utils.unwrapObservable(options.format),
-            utc = ko.utils.unwrapObservable(options.utc || false),
-            unix = ko.utils.unwrapObservable(options.unix || false),
-            value = valueAccessor(),
-            attr = ko.utils.unwrapObservable(options.dattr || "text");
-
-        if (ko.isWriteableObservable(value) && attr === "value") {
-            $(element).change(function (event) {
-                var moment = getMoment($(this).val(), unix, utc, format);
-                value(dateToString(moment, unix, utc, ""));
-            });
-        }
-    },
-    update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(allBindingsAccessor()),
-            format = ko.utils.unwrapObservable(options.format),
-            utc = ko.utils.unwrapObservable(options.utc || false),
-            unix = ko.utils.unwrapObservable(options.unix || false),
-            attr = ko.utils.unwrapObservable(options.dattr || "text"),
-            value = valueAccessor();
-
-        if (value && ko.utils.unwrapObservable(value)) {
-            var _moment = (value.date && moment.isMoment(value.date)) ? value.date : getMoment(ko.utils.unwrapObservable(value), unix, utc, format),
-                text = dateToString(_moment, unix, utc, format);
-
-            switch (attr) {
-                case "value":
-                    $(element).val(text);
-                    break;
-                case "text":
-                    $(element).text(text);
-                    break;
-                default:
-                    $(element).attr(attr, text);
-                    break;
+                switch (attr) {
+                    case "value":
+                        $(element).val(text);
+                        break;
+                    case "text":
+                        $(element).text(text);
+                        break;
+                    default:
+                        $(element).attr(attr, text);
+                        break;
+                }
             }
         }
-    }
-};
+    };
+}

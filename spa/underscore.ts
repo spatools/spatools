@@ -136,7 +136,13 @@ _.each(["first", "initial", "last", "rest", "compact", "flatten", "without", "un
     };
 });
 
-ko.utils.extend(ko.observableArray.fn, collections);
+export function addToObservableArrays(): void {
+    ko.utils.extend(ko.observableArray.fn, collections);
+}
+
+export function addToSubscribable<T>(val: KnockoutSubscribable<T>): void {
+    ko.utils.extend(val, collections);
+}
 
 //#endregion
 

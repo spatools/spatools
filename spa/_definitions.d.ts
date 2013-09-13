@@ -1,6 +1,5 @@
 /// <reference path="../_references.d.ts" />
 /// <reference path="../Scripts/typings/requirejs/require.d.ts" />
-// <reference path="../build/spatools.d.ts" />
 
 interface KnockoutBindingHandlers {
     date: KnockoutBindingHandler;
@@ -88,16 +87,16 @@ interface KnockoutExtenders {
     //notify: (target: any, notifyWhen: string, customEqualityComparer: (v1: any, v2: any) => number) => any;
 }
 
-//interface KnockoutTemplateEngine {
-//    addTemplate(id: string, template: string): void;
-//}
+interface KnockoutTemplateEngine {
+    addTemplate?(id: string, template: string): void;
+}
 
 interface KnockoutTemplateSources {
-    require: KnockoutPrototypeStatic<KnockoutTemplateSource>;
+    require: any;
 }
 
 interface KnockoutStatic {
-    requireTemplateEngine: KnockoutPrototypeStatic<KnockoutTemplateEngine>;
+    requireTemplateEngine: any;
 }
 
 declare module _ {
@@ -182,11 +181,6 @@ interface KnockoutUnderscoreArrayFunctions {
     _lastIndexOf<T>(value: T, from?: number): number;
 }
 
-interface KnockoutObservableArrayFunctions<T> extends KnockoutUnderscoreArrayFunctions {
-    indexOf<T>(value: T, isSorted?: boolean): KnockoutComputed<number>;
-    lastIndexOf<T>(value: T, from?: number): KnockoutComputed<number>;
-}
-
 interface KnockoutUnderscoreObjectsFunctions {
     keys(): KnockoutComputed<string[]>;
     values(): KnockoutComputed<any[]>;
@@ -197,6 +191,11 @@ interface KnockoutUnderscoreObjectsFunctions {
     _values(): any[];
     _clone<T>(object: T): T;
     _isEmpty(object: any): boolean;
+}
+
+interface KnockoutObservableArrayFunctions<T> extends KnockoutUnderscoreArrayFunctions {
+    indexOf<T>(value: T, isSorted?: boolean): KnockoutComputed<number>;
+    lastIndexOf<T>(value: T, from?: number): KnockoutComputed<number>;
 }
 
 interface OperationOptions {

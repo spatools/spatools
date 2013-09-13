@@ -1,6 +1,6 @@
-/// <reference path="../_definitions.d.ts" />
+/// <reference path="_definitions.d.ts" />
 
-import utils = require("../utils");
+import utils = require("./utils");
 
 //#region Text Bindings
 
@@ -441,3 +441,6 @@ ko.bindingHandlers.console = {
 };
 
 //#endregion
+
+var loaded = true;
+export = loaded;
