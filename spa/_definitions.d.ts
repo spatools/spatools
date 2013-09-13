@@ -1,8 +1,29 @@
 /// <reference path="../_references.d.ts" />
 /// <reference path="../Scripts/typings/requirejs/require.d.ts" />
-/// <reference path="../build/spatools.d.ts" />
+// <reference path="../build/spatools.d.ts" />
 
 interface KnockoutBindingHandlers {
+    date: KnockoutBindingHandler;
+    command: KnockoutBindingHandler;
+    loader: KnockoutBindingHandler;
+    limitedText: KnockoutBindingHandler;
+    pad: KnockoutBindingHandler;
+    formatText: KnockoutBindingHandler;
+    filesize: KnockoutBindingHandler;
+    src: KnockoutBindingHandler;
+    href: KnockoutBindingHandler;
+    mailto: KnockoutBindingHandler;
+    classes: KnockoutBindingHandler;
+    on: KnockoutBindingHandler;
+    hover: KnockoutBindingHandler;
+    toggle: KnockoutBindingHandler;
+    toggleClass: KnockoutBindingHandler;
+    dblclick: KnockoutBindingHandler;
+    editable: KnockoutBindingHandler;
+    clipboard: KnockoutBindingHandler;
+    debug: KnockoutBindingHandler;
+    console: KnockoutBindingHandler;
+
     fullscreen: {
         init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => {}, viewModel: any, bindingContext: KnockoutBindingContext): void;
     };
@@ -63,15 +84,11 @@ interface KnockoutTemplateEngine {
 }
 
 interface KnockoutTemplateSources {
-    require: any;
-}
-
-interface KnockoutTemplateSourcesDomElement {
-    nodes(element: any): any;
+    require: KnockoutPrototypeStatic<KnockoutTemplateSource>;
 }
 
 interface KnockoutStatic {
-    requireTemplateEngine: any;
+    requireTemplateEngine: KnockoutPrototypeStatic<KnockoutTemplateEngine>;
 }
 
 interface OperationOptions {

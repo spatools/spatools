@@ -71,3 +71,40 @@ export class AsyncCommand {
         }
     }
 }
+
+
+ko.bindingHandlers.command = {
+    init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
+        var value = valueAccessor(),
+            commands = !!value.execute ? { click: value } : value,
+            events = {},
+            bindings = {};
+
+        _.each(commands, function (command, event?) {
+            if (ko.bindingHandlers[event]) {
+                bindings[event] = _.bind(command.execute, command);
+            } else {
+                events[event] = _.bind(command.execute, command);
+            }
+        }),
+
+        _.each(bindings, function (bindingValue, binding?) {
+            ko.bindingHandlers[binding].init(element, utils.createAccessor(bindingValue), allBindingsAccessor, viewModel, bindingContext);
+        });
+
+        if (_.size(events) > 0)
+            ko.bindingHandlers.event.init(element, utils.createAccessor(events), allBindingsAccessor, viewModel, bindingContext);
+    },
+    update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
+        var value = valueAccessor(),
+            commands = !!value.execute ? { click: value } : value,
+            result = true;
+
+        _.find(commands, function (command) {
+            result = command.canExecute();
+            return !result;
+        });
+
+        ko.bindingHandlers.enable.update(element, utils.createAccessor(result), allBindingsAccessor, viewModel, bindingContext);
+    }
+};

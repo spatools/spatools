@@ -89,4 +89,37 @@ function Operation (options: OperationOptions): OperationFunction {
     return execute;
 }
 
+ko.bindingHandlers.loader = {
+    init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
+        var value = ko.utils.unwrapObservable(valueAccessor()),
+            template = ko.utils.unwrapObservable(value.template);
+
+        if (template) {
+            ko.renderTemplate(template, bindingContext, {}, element);
+            return { 'controlsDescendantBindings': true };
+        }
+    },
+    update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
+        var value = ko.utils.unwrapObservable(valueAccessor()),
+            operations, isVisible;
+
+        if (_.isBoolean(value))
+            isVisible = value;
+        else if (_.isArray(value))
+            operations = value;
+        else {
+            isVisible = ko.utils.unwrapObservable(value.isVisible);
+            operations = value.operations ? ko.utils.unwrapObservable(value.operations) : [];
+            if (value.operation)
+                operations.push(ko.utils.unwrapObservable(value.operation));
+        }
+
+        if (_.isUndefined(isVisible) || _.isNull(isVisible)) {
+            isVisible = _.any(operations, function (op) { return op.isExecuting(); });
+        }
+
+        ko.bindingHandlers.visible.update(element, utils.createAccessor(isVisible), allBindingsAccessor, viewModel, bindingContext);
+    }
+};
+
 export = Operation;
