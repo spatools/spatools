@@ -38,8 +38,9 @@ else {
         _utf8_decode = function (text: string): string {
             var result = "",
                 i = 0,
-                c, c1, c2, c3,
-                c = c1 = c2 = 0;
+                c, c1, c2, c3;
+
+            c = c1 = c2 = 0;
 
             while (i < text.length) {
                 c = text.charCodeAt(i);
