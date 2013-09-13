@@ -57,4 +57,5 @@ Javascript ORM to connect to REST / OData Web Service.
     * Fix issues in templateEngine for Windows 8
 	* Fix issue in Tree binding handler
 	* Fix issue in DataSet.saveChanges and DataView.saveChanges
+	* Fix issue in DataSet.remove
 

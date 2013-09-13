@@ -237,8 +237,8 @@ var dataSetFunctions: DataSetFunctions = {
     },
     /** Remove entity from dataset, if buffer is false, entity will be instantly deleted on the server */
     remove: function (entity: any): void {
-        var state = entity.EntityState ? entity.EntityState() : null;
-        if (!state || state === mapping.entityStates.added)
+        var state = entity.EntityState && entity.EntityState();
+        if (utils.isUndefined(state) || state === mapping.entityStates.added)
             this.detach(entity);
         else {
             entity.EntityState(mapping.entityStates.removed);
