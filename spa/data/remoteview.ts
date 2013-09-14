@@ -74,7 +74,7 @@ export var remoteViewFunctions: RemoteViewFunctions<any, any, any, any> = {
             })
             .then(function (data) {
                 //if (refresh === true) {
-                var existings = self._map(function (entity) { return foreignSet.getKey(entity); }),
+                var existings = self.map(function (entity) { return foreignSet.getKey(entity); }),
                     news = _.map(data, function (entity) { return foreignSet.getKey(entity); }),
                     filter, args, hasToDelete, toDelete;
 
