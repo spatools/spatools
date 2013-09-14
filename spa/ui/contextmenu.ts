@@ -206,7 +206,7 @@ ko.bindingHandlers.contextmenu = {
             .on('contextmenu', function (e) {
                 if (value instanceof ContextMenuBuilder) {
                     config = value.build(e, parentVM);
-                    menu = value.contextMenus._find(x => x.name() === config.name);
+                    menu = value.contextMenus.find(x => x.name() === config.name);
                 }
                 else {
                     config = { name: value.name() };
@@ -219,7 +219,7 @@ ko.bindingHandlers.contextmenu = {
                 if (menu !== undefined) {
                     menuContainer = $('<div></div>').appendTo('body');
 
-                    menu.items._each((item: ContextMenuItem) => {
+                    menu.items.each((item: ContextMenuItem) => {
                         item.disabled(!!config.disable && config.disable.indexOf(item.text()) !== -1); // disable item if necessary
                         item.addDataItem(parentVM); // assign the data item
                     });
