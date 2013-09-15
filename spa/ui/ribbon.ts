@@ -779,7 +779,7 @@ ko.bindingHandlers.ribbonSlider = {
         if (slider.label || slider.icon)
             $("<label>").addClass("ribbon-label").attr("data-bind", "text: label, classes: icon").appendTo(container);
 
-        $("<div>").addClass("ribbon-slider-handle").attr("data-bind", "slider: { min: min, max: max, step: step, value: value, slide: onSlide }").appendTo(container);
+        $("<div>").addClass("ribbon-slider-handle").attr("data-bind", "slider: { min: min, max: max, step: step, value: value }").appendTo(container);
 
         new ko.templateSources.anonymousTemplate(element).nodes(container.get(0));
         return { controlsDescendantBindings: true };
