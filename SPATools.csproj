@@ -69,6 +69,9 @@
     <Content Include="css\ui-ribbon.css">
       <DependentUpon>ui-ribbon.less</DependentUpon>
     </Content>
+    <Content Include="css\ui-slider.css">
+      <DependentUpon>ui-slider.less</DependentUpon>
+    </Content>
     <Content Include="css\ui-tree.css">
       <DependentUpon>ui-tree.less</DependentUpon>
     </Content>
@@ -79,6 +82,7 @@
     <Content Include="Scripts\qunit-1.12.0.js" />
     <Content Include="Scripts\typings\qunit\qunit.d.ts" />
     <Content Include="spa\ui\editor.ts" />
+    <TypeScriptCompile Include="spa\ui\slider.ts" />
     <Content Include="spa\ui\tree.ts" />
     <Content Include="spa\ui\ribbon.ts" />
     <Content Include="spa\ui\draggable.ts" />
@@ -93,6 +97,7 @@
     <Content Include="nuget\SPATools.UI.Editor.nuspec" />
     <Content Include="nuget\SPATools.UI.Draggable.nuspec" />
     <Content Include="nuget\SPATools.UI.Ribbon.nuspec" />
+    <Content Include="css\ui-slider.less" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="samples\editor.html" />
     <Content Include="samples\editor.ts" />

@@ -1,0 +1,31 @@
+.ui-slider {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  margin-left: 5px;
+  height: 10px;
+  background: #ffffff;
+  border: solid 1px #333333;
+}
+.ui-slider .ui-slider-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #aaaaaa;
+  border: solid 1px #333333;
+  border-width: 0 1px;
+}
+.ui-slider .ui-slider-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 99;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}

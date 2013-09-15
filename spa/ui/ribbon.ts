@@ -1,6 +1,8 @@
 /// <reference path="../_definitions.d.ts" />
 
 import utils = require("../utils");
+import _slider = require("./slider");
+var Slider = _slider.Slider;
 
 //#region Private Methods 
 

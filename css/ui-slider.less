@@ -1,0 +1,29 @@
+﻿@import "variables.less";
+@import "mixins.less";
+
+.ui-slider {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    margin-left: 5px;
+    height: 10px;
+    background: @background-color;
+    border: solid 1px @font-color;
+
+    .ui-slider-handle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: @font-color-sub;
+        border: solid 1px @font-color;
+        border-width: 0 1px;
+    }
+                                    
+    .ui-slider-overlay {
+        .dock-full;
+        background: transparent;
+        z-index: 99;
+        .no-select;
+        cursor: pointer;
+    }
+}

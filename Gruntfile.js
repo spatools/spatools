@@ -99,6 +99,7 @@
                     "css/ui-editor.css": "css/ui-editor.less",
                     "css/ui-ribbon.css": "css/ui-ribbon.less",
                     "css/ui-tree.css": "css/ui-tree.less",
+                    "css/ui-slider.css": "css/ui-slider.less",
                 }
             },
 
@@ -111,6 +112,7 @@
                     "<%= paths.output %>/css/ui-editor.css": "css/ui-editor.less",
                     "<%= paths.output %>/css/ui-ribbon.css": "css/ui-ribbon.less",
                     "<%= paths.output %>/css/ui-tree.css": "css/ui-tree.less",
+                    "<%= paths.output %>/css/ui-slider.css": "css/ui-slider.less",
                 }
             }
         },

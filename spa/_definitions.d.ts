@@ -52,6 +52,9 @@ interface KnockoutBindingHandlers {
     ribbonSlider: KnockoutBindingHandler;
     ribbonFlyout: KnockoutBindingHandler;
 
+    slider: KnockoutBindingHandler;
+    sliderEvents: KnockoutBindingHandler;
+
     treenodedrag: {
         init(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
         update(element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void;
