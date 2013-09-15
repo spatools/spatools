@@ -1,6 +1,5 @@
 /// <reference path="_definitions.d.ts" />
 
-import utils = require("./utils");
 import loader = require("./loader");
 import base64 = require("./base64");
 import store = require("./store");
