@@ -219,10 +219,10 @@ export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataS
 /** Refresh all entity relations */
 export function refreshRelations<T, TKey>(entity: T, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<any> {
     var config = getMappingConfiguration(entity, dataSet),
-        deferreds = [], prop;
+        deferreds, prop;
 
     if (config.relations) {
-        var deferreds = _.filterMap(config.relations, function (relation) {
+        deferreds = _.filterMap(config.relations, function (relation) {
             prop = entity[relation.propertyName];
             return !!prop && prop.refresh();
         });

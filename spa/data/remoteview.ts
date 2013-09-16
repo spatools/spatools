@@ -83,7 +83,7 @@ export var remoteViewFunctions: RemoteViewFunctions<any, any, any, any> = {
                     if (filter)
                         existings = _.filter(existings, filter);
 
-                    hasToDelete = !(query.pageSize() > 0); //TODO: exec view function to check if item is in query
+                    hasToDelete = (query.pageSize() <= 0); //TODO: exec view function to check if item is in query
                 }
 
                 if (hasToDelete) {

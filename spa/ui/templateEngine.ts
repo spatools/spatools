@@ -30,7 +30,7 @@ export class RequireSource {
     constructor(
         public source: string,
         public options: RequireSourceOptions = {}) {
-            if (!(typeof source === "string")) {
+            if (!_.isString(source)) {
                 throw new Error("Require Template Source need string template source");
             }
 

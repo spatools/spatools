@@ -15,7 +15,10 @@ export function publish(topic: string, ...args: any[]): boolean {
         return true;
     }
 
-    var _subscriptions = _.sortBy(subscriptions[topic], function (s) { return s.priority; }), result, index;
+    var _subscriptions = _.sortBy(subscriptions[topic], function (s) { return s.priority; }),
+        indexFunction = s => s.once,
+        result, index;
+
     _.find(_subscriptions, function (subscription) {
         result = subscription.callback.apply(subscription.context, args);
         return (result === false);
@@ -23,7 +26,7 @@ export function publish(topic: string, ...args: any[]): boolean {
     
     while (index !== -1)
     {
-        index = _.index(subscriptions[topic], s => s.once);
+        index = _.index(subscriptions[topic], indexFunction);
         if (index !== -1)
             subscriptions[topic].splice(index, 1);
     }

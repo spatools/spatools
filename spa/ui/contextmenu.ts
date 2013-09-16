@@ -150,18 +150,18 @@ export class ContextMenuBuilder implements IMenuContainer {
 
 //#region Templates
 
-ui.addTemplate("text!contextmenu-item-template.html", "\
-	<li data-bind=\"subcontextmenu: hasChildren(), click: onClick, clickBubble: false, css: { separator: separator, disabled: disabled }, style: { width : itemWidth() }\">\
-		<span class=\"inner\">\
-            <span class=\"icon-bar\"><span class=\"icon\" data-bind=\"classes: iconCssClass\"></span></span>\
-            <label data-bind=\"css: { parent : hasChildren() }, style: { width : labelWidth() }, text: text\"></label>\
-        </span>\
-		<!-- ko if: hasChildren() -->\
-			<div class=\"nocontext\" style=\"position:absolute;\" data-bind=\"css: container.cssClass()\">\
-				<ul data-bind='template: { name: \"text!contextmenu-item-template.html\", foreach: subMenu.items, templateEngine: $root.engine }'></ul>\
-			</div>\
-		<!-- /ko -->\
-	</li>", engine.defaultInstance);
+ui.addTemplate("text!contextmenu-item-template.html",
+	"<li data-bind=\"subcontextmenu: hasChildren(), click: onClick, clickBubble: false, css: { separator: separator, disabled: disabled }, style: { width : itemWidth() }\">" +
+		"<span class=\"inner\">" +
+            "<span class=\"icon-bar\"><span class=\"icon\" data-bind=\"classes: iconCssClass\"></span></span>" +
+            "<label data-bind=\"css: { parent : hasChildren() }, style: { width : labelWidth() }, text: text\"></label>" +
+        "</span>" +
+		"<!-- ko if: hasChildren() -->" +
+			"<div class=\"nocontext\" style=\"position:absolute;\" data-bind=\"css: container.cssClass()\">" +
+				"<ul data-bind='template: { name: \"text!contextmenu-item-template.html\", foreach: subMenu.items, templateEngine: $root.engine }'></ul>" +
+			"</div>" +
+		"<!-- /ko -->" +
+	"</li>", engine.defaultInstance);
 
 ui.addTemplate("text!contextmenu-template.html",
 	"<div class=\"ui-context nocontext\" style=\"position:absolute;\" data-bind=\"css: cssClass, style: { width: width, zIndex: zIndex }\">" +

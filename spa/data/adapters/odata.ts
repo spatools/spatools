@@ -43,16 +43,17 @@ class ODataAdapter implements adapters.IAdapter {
         return key;
     }
     private generateUrl(url: string, ...args: string[]): string {
-	    var regex = /\{([^}]*)\}/;
-
-        while (args.length && regex.test(url)) {
-            url = url.replace(regex, match => {
+        var regex = /\{([^}]*)\}/,
+            matchFunction = match => {
                 if (match.indexOf("key") !== -1) {
                     return this.generateKey(args.shift());
                 }
 
                 return args.shift();
-            });
+            };
+
+        while (args.length && regex.test(url)) {
+            url = url.replace(regex, matchFunction);
         }
 
         return this.options.baseUrl + url;

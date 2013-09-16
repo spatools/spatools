@@ -125,6 +125,10 @@
         },
         jshint: {
             options: {
+                '-W004': true,
+                '-W030': true,
+                '-W069': true,
+                '-W093': true
             },
             all: ["<%= paths.output %>/spa/**/*.js"]
         },
@@ -171,6 +175,6 @@
 
     // Buildset Tasks
     grunt.registerTask("tests", ["build_tests", "run_tests"]);
-    grunt.registerTask("default", ["build_modules", "build_samples", "build_assets", "less", "tests"]);
+    grunt.registerTask("default", ["tslint", "build_modules", "jshint", "build_samples", "build_assets", "less", "tests"]);
     grunt.registerTask("publish", ["nugetpack", "nugetpush"]);
 };

@@ -45,11 +45,11 @@ function useStyleWithCss(): void {
     } catch (e) {
         try {
             doc.execCommand("useCSS", 0, true);
-        } catch (e) {
+        } catch (_e) {
             try {
                 doc.execCommand("styleWithCSS", false, true);
             }
-            catch (e) {
+            catch (__e) {
                 return false;
             }
         }
@@ -78,8 +78,8 @@ function getNearWord(text: string, index: number): { start: number; end: number 
     var nextChar = text.substr(index, 1),
         prevChar = text.substr(index - 1, 1),
         charRegex = /\w/,
-        end: number,
-        start: number = end = index;
+        end: number = index,
+        start: number = index;
 
     if (!prevChar || !nextChar || prevChar === " " || nextChar === " ") {
         return null;
@@ -127,19 +127,21 @@ function formatFontFamily(font: string, fromDoc?: boolean): string {
     }
 }
 function docColorToHex(docColor: any): string {
+    var color;
+    
     if (docColor.length > 0 && docColor[0] === "#") {
         return docColor;
     }
     else if (parseInt(docColor, 10).toString() === docColor) { // IE
-        var color = utils.str_pad(parseInt(docColor, 10).toString(16), 6, "0");
+        color = utils.str_pad(parseInt(docColor, 10).toString(16), 6, "0");
         if (color === "0") color = "000000";
         return "#" + color.substr(4, 2) + color.substr(2, 2) + color.substr(0, 2); // IE is working in inverse order (BGR)
     }
     else if (rgbRegex.test(docColor)) { // rgbColor
-        var matches = docColor.match(rgbRegex),
-            color = utils.str_pad(parseInt(matches[1], 10).toString(16), 2, "0") +
-            utils.str_pad(parseInt(matches[2], 10).toString(16), 2, "0") +
-            utils.str_pad(parseInt(matches[3], 10).toString(16), 2, "0");
+        var matches = docColor.match(rgbRegex);
+        color = utils.str_pad(parseInt(matches[1], 10).toString(16), 2, "0") +
+                utils.str_pad(parseInt(matches[2], 10).toString(16), 2, "0") +
+                utils.str_pad(parseInt(matches[3], 10).toString(16), 2, "0");
 
         return "#" + color;
     }

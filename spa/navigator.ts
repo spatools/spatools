@@ -107,7 +107,7 @@ if (reg.test(ua)) {
     }
 }
 
-var exports = {
+var nav = {
     /** Current navigator's name */
     name: name,
     /** Current navigator's version string */
@@ -145,4 +145,4 @@ var exports = {
     os: os
 };
 
-export = exports;
+export = nav;
