@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>SPATools.Modules.Advanced</id>
-    <version>0.1.0</version>
+    <version>0.4.0</version>
     <authors>SPA Tools</authors>
     <owners>SPA Tools</owners>
     <licenseUrl>https://github.com/spatools/spatools/LICENSE</licenseUrl>
@@ -10,7 +10,9 @@
     <iconUrl>http://www.gravatar.com/avatar/6ef2fbcb91a9299ffb3c918b50d038d4.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
+      [Deprecated! use SPATools.Advanced]
       SPA Tools is a set of tools and frameworks to help creating modern web apps.
+
       This package contains advanced modules :
       - Base64 Helper
       - Assets Loader
@@ -19,7 +21,8 @@
       - Path utilities
     </description>
     <releaseNotes>
-      Initial Release
+      You can see release notes at :
+      https://github.com/spatools/spatools
     </releaseNotes>
     <copyright>Copyright 2013 - SPA Tools</copyright>
     <tags>
@@ -34,14 +37,7 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Modules.Base" version="0.3.0" />
+      <dependency id="SPATools.Advanced" version="0.4.0" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="..\build\spa\base64.js" target="Content\App\spa" />
-    <file src="..\build\spa\loader.js" target="Content\App\spa" />
-    <file src="..\build\spa\cache.js" target="Content\App\spa" />
-    <file src="..\build\spa\navigator.js" target="Content\App\spa" />
-    <file src="..\build\spa\path.js" target="Content\App\spa" />
-  </files>
 </package>

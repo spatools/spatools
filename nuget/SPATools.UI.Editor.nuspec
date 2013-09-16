@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>SPATools.UI.Editor</id>
-    <version>0.1.0</version>
+    <version>0.4.0</version>
     <authors>SPA Tools</authors>
     <owners>SPA Tools</owners>
     <licenseUrl>https://github.com/spatools/spatools/LICENSE</licenseUrl>
@@ -17,7 +17,8 @@
       - Low size
     </description>
     <releaseNotes>
-      Initial Release
+      You can see release notes at :
+      https://github.com/spatools/spatools
     </releaseNotes>
     <copyright>Copyright 2013 - SPA Tools</copyright>
     <tags>
@@ -35,7 +36,7 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.UI.Base" version="0.3.0" />
+      <dependency id="SPATools.UI.Base" version="0.4.0" />
     </dependencies>
   </metadata>
   <files>

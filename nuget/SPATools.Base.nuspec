@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>SPATools.Base</id>
-    <version>0.1.0</version>
+    <version>0.4.0</version>
     <authors>SPA Tools</authors>
     <owners>SPA Tools</owners>
     <licenseUrl>https://github.com/spatools/spatools/LICENSE</licenseUrl>
@@ -11,17 +11,28 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       SPA Tools is a set of tools and frameworks to help creating modern web apps.
-      
+
       This package contains the base framework of SPA Tools :
       - Knockout extenders
       - Knockout binding handlers
-      - Kncokout extension
       - Underscore extension
       - Underscore Knockout integration
       - Moment Knockout integration
+
+      And some helpfull modules :
+
+      - Knockout Change Tracker
+      - Knockout history observable
+      - Knockout optimized validated observable
+      - ViewModel Commanding
+      - ViewModel Messaging
+      - Local Storage wrapping and fallback
+      - Timers
+      - Utilities methods
     </description>
     <releaseNotes>
-      Initial Release
+      You can see release notes at :
+      https://github.com/spatools/spatools
     </releaseNotes>
     <copyright>Copyright 2013 - SPA Tools</copyright>
     <tags>
@@ -29,15 +40,31 @@
       jQuery
       Underscore
       Moment
+      RequireJS
       Extension
       Tool
       Framework
       Javascript
     </tags>
-    <dependencies></dependencies>
+    <dependencies>
+      <dependency id="knockoutjs" version="2.3.0" />
+      <dependency id="RequireJS" version="2.1.8" />
+      <dependency id="jQuery" version="1.9.1" />
+    </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spatools.js" target="Content\Scripts" />
-    <file src="..\build\spatools.min.js" target="Content\Scripts" />
+    <file src="..\build\spa\main.js" target="Content\App\spa" />
+    <file src="..\build\spa\extenders.js" target="Content\App\spa" />
+    <file src="..\build\spa\handlers.js" target="Content\App\spa" />
+    <file src="..\build\spa\moment.js" target="Content\App\spa" />
+    <file src="..\build\spa\underscore.js" target="Content\App\spa" />
+    <file src="..\build\spa\observable.js" target="Content\App\spa" />
+    <file src="..\build\spa\changeTracker.js" target="Content\App\spa" />
+    <file src="..\build\spa\commands.js" target="Content\App\spa" />
+    <file src="..\build\spa\messenger.js" target="Content\App\spa" />
+    <file src="..\build\spa\operation.js" target="Content\App\spa" />
+    <file src="..\build\spa\store.js" target="Content\App\spa" />
+    <file src="..\build\spa\timers.js" target="Content\App\spa" />
+    <file src="..\build\spa\utils.js" target="Content\App\spa" />
   </files>
 </package>

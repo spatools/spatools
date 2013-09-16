@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>SPATools.UI.Base</id>
+    <id>SPATools.Advanced</id>
     <version>0.4.0</version>
     <authors>SPA Tools</authors>
     <owners>SPA Tools</owners>
@@ -11,9 +11,13 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       SPA Tools is a set of tools and frameworks to help creating modern web apps.
-      This package contains base modules for UI development :
-      - RequireJS Template Engine
-      - UI Base Methods
+
+      This package contains advanced modules :
+      - Base64 Helper
+      - Assets Loader
+      - Assets Caching
+      - Navigator Detection
+      - Path utilities
     </description>
     <releaseNotes>
       You can see release notes at :
@@ -26,9 +30,6 @@
       Underscore
       Moment
       RequireJS
-      UI
-      Template
-      Engine
       Extension
       Tool
       Framework
@@ -36,11 +37,13 @@
     </tags>
     <dependencies>
       <dependency id="SPATools.Base" version="0.4.0" />
-      <dependency id="RequireJS.Text" version="2.0.7" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\ui.js" target="Content\App\spa" />
-    <file src="..\build\spa\ui\templateEngine.js" target="Content\App\spa\ui" />
+    <file src="..\build\spa\base64.js" target="Content\App\spa" />
+    <file src="..\build\spa\loader.js" target="Content\App\spa" />
+    <file src="..\build\spa\cache.js" target="Content\App\spa" />
+    <file src="..\build\spa\navigator.js" target="Content\App\spa" />
+    <file src="..\build\spa\path.js" target="Content\App\spa" />
   </files>
 </package>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>SPATools.UI.Base</id>
+    <id>SPATools.UI.Slider</id>
     <version>0.4.0</version>
     <authors>SPA Tools</authors>
     <owners>SPA Tools</owners>
@@ -11,9 +11,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       SPA Tools is a set of tools and frameworks to help creating modern web apps.
-      This package contains base modules for UI development :
-      - RequireJS Template Engine
-      - UI Base Methods
+      
+      This package contains a Slider widget :
+      - Full knockout compatible
     </description>
     <releaseNotes>
       You can see release notes at :
@@ -27,20 +27,20 @@
       Moment
       RequireJS
       UI
-      Template
-      Engine
+      Tree
       Extension
       Tool
       Framework
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Base" version="0.4.0" />
-      <dependency id="RequireJS.Text" version="2.0.7" />
+      <dependency id="SPATools.UI.Base" version="0.4.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\ui.js" target="Content\App\spa" />
-    <file src="..\build\spa\ui\templateEngine.js" target="Content\App\spa\ui" />
+    <file src="..\build\spa\ui\slider.js" target="Content\App\spa\ui" />
+    <file src="..\css\ui-slider.less" target="Content\Content" />
+    <file src="..\css\ui-slider.css" target="Content\Content" />
+    <file src="..\build\css\ui-slider.css" target="Content\Content\ui-slider.min.css" />
   </files>
 </package>
