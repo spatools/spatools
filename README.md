@@ -65,6 +65,7 @@ Javascript ORM to connect to REST / OData Web Service.
 	* Optimize bad string EOL on widget
 	* Optimize data framework
 	* TS Lint & JS Hint all modules
-	* Upgrade nuget packages
-	* Change project location in nuget
+	* Upgrade NuGet packages
 	* Append slider widget
+* 0.4.1
+	* Change project location in NuGet

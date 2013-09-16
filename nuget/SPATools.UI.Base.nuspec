@@ -35,12 +35,12 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Base" version="0.4.0" />
+      <dependency id="SPATools.Base" version="0.4.1" />
       <dependency id="RequireJS.Text" version="2.0.7" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\ui.js" target="Content\App\spa" />
-    <file src="..\build\spa\ui\templateEngine.js" target="Content\App\spa\ui" />
+    <file src="..\build\spa\ui.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\ui\templateEngine.js" target="Content\Scripts\spa\ui" />
   </files>
 </package>

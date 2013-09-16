@@ -36,12 +36,12 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.UI.Base" version="0.4.0" />
-      <dependency id="SPATools.UI.Slider" version="0.4.0" />
+      <dependency id="SPATools.UI.Base" version="0.4.1" />
+      <dependency id="SPATools.UI.Slider" version="0.4.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\ui\ribbon.js" target="Content\App\spa\ui" />
+    <file src="..\build\spa\ui\ribbon.js" target="Content\Scripts\spa\ui" />
     <file src="..\css\ui-ribbon.less" target="Content\Content" />
     <file src="..\css\ui-ribbon.css" target="Content\Content" />
     <file src="..\build\css\ui-ribbon.css" target="Content\Content\ui-ribbon.min.css" />

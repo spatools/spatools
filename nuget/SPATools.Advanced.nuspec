@@ -36,14 +36,14 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Base" version="0.4.0" />
+      <dependency id="SPATools.Base" version="0.4.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\base64.js" target="Content\App\spa" />
-    <file src="..\build\spa\loader.js" target="Content\App\spa" />
-    <file src="..\build\spa\cache.js" target="Content\App\spa" />
-    <file src="..\build\spa\navigator.js" target="Content\App\spa" />
-    <file src="..\build\spa\path.js" target="Content\App\spa" />
+    <file src="..\build\spa\base64.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\loader.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\cache.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\navigator.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\path.js" target="Content\Scripts\spa" />
   </files>
 </package>

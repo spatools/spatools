@@ -53,18 +53,18 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\main.js" target="Content\App\spa" />
-    <file src="..\build\spa\extenders.js" target="Content\App\spa" />
-    <file src="..\build\spa\handlers.js" target="Content\App\spa" />
-    <file src="..\build\spa\moment.js" target="Content\App\spa" />
-    <file src="..\build\spa\underscore.js" target="Content\App\spa" />
-    <file src="..\build\spa\observable.js" target="Content\App\spa" />
-    <file src="..\build\spa\changeTracker.js" target="Content\App\spa" />
-    <file src="..\build\spa\commands.js" target="Content\App\spa" />
-    <file src="..\build\spa\messenger.js" target="Content\App\spa" />
-    <file src="..\build\spa\operation.js" target="Content\App\spa" />
-    <file src="..\build\spa\store.js" target="Content\App\spa" />
-    <file src="..\build\spa\timers.js" target="Content\App\spa" />
-    <file src="..\build\spa\utils.js" target="Content\App\spa" />
+    <file src="..\build\spa\main.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\extenders.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\handlers.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\moment.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\underscore.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\observable.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\changeTracker.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\commands.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\messenger.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\operation.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\store.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\timers.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\utils.js" target="Content\Scripts\spa" />
   </files>
 </package>

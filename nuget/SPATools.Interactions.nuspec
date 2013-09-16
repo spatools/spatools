@@ -35,13 +35,13 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Base" version="0.4.0" />
+      <dependency id="SPATools.Base" version="0.4.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\animation.js" target="Content\App\spa" />
-    <file src="..\build\spa\event.js" target="Content\App\spa" />
-    <file src="..\build\spa\fullscreen.js" target="Content\App\spa" />
-    <file src="..\build\spa\keyboard.js" target="Content\App\spa" />
+    <file src="..\build\spa\animation.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\event.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\fullscreen.js" target="Content\Scripts\spa" />
+    <file src="..\build\spa\keyboard.js" target="Content\Scripts\spa" />
   </files>
 </package>

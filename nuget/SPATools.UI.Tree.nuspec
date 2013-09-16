@@ -38,12 +38,12 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.UI.Base" version="0.4.0" />
-      <dependency id="SPATools.UI.ContextMenu" version="0.4.0" />
+      <dependency id="SPATools.UI.Base" version="0.4.1" />
+      <dependency id="SPATools.UI.ContextMenu" version="0.4.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\ui\tree.js" target="Content\App\spa\ui" />
+    <file src="..\build\spa\ui\tree.js" target="Content\Scripts\spa\ui" />
     <file src="..\css\ui-tree.less" target="Content\Content" />
     <file src="..\css\ui-tree.css" target="Content\Content" />
     <file src="..\build\css\ui-tree.css" target="Content\Content\ui-tree.min.css" />

@@ -36,11 +36,11 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.UI.Base" version="0.4.0" />
+      <dependency id="SPATools.UI.Base" version="0.4.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\ui\editor.js" target="Content\App\spa\ui" />
+    <file src="..\build\spa\ui\editor.js" target="Content\Scripts\spa\ui" />
     <file src="..\css\ui-editor.less" target="Content\Content" />
     <file src="..\css\ui-editor.css" target="Content\Content" />
     <file src="..\build\css\ui-editor.css" target="Content\Content\ui-editor.min.css" />

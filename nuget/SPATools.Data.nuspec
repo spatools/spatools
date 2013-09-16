@@ -41,10 +41,10 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Base" version="0.4.0" />
+      <dependency id="SPATools.Base" version="0.4.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\data\**\*.js" target="Content\App\spa\data" />
+    <file src="..\build\spa\data\**\*.js" target="Content\Scripts\spa\data" />
   </files>
 </package>
