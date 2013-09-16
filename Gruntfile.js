@@ -65,6 +65,12 @@
                 }
             }
         },
+        uglify: {
+            base: {
+                src: "<%= typescript.base.dest %>",
+                dest: "<%= paths.output %>/spatools.min.js"
+            }
+        },
 
         copy: {
             modules: {
@@ -83,13 +89,6 @@
                 src: "assets/**/*.*",
                 dest: "<%= paths.output %>/"
             },
-        },
-
-        uglify: {
-            base: {
-                src: "<%= typescript.base.dest %>",
-                dest: "<%= paths.output %>/spatools.min.js"
-            }
         },
 
         less: {
@@ -147,7 +146,6 @@
                 }
             }
         },
-
         nugetpush: {
             all: {
                 src: "nuget/**/*.<%= pkg.version %>.nupkg"
