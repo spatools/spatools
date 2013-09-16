@@ -201,8 +201,9 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         var id = entity ? this.getKey(entity) : null,
             data = ko.toJSON(params);
 
-        if (!this.adapter.action)
+        if (!this.adapter.action) {
             throw "This adapter is not compatible with custom actions";
+        }
 
         return this.adapter.action(this.setName, action, data, id);
     },
@@ -493,7 +494,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                         mapping.updateEntity(entity, data, false, self);
                     })
                     .then(function () {
-                        if (oldkey != self.getKey(entity)) {
+                        if (oldkey !== self.getKey(entity)) {
                             self.valueWillMutate();
 
                             self.store.remove(self.setName, oldkey);

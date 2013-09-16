@@ -44,8 +44,9 @@ _.mixin({
         /// <param name="context" type="Object" optional="true">Context to bind iterator function</param>
         /// <returns type="Number">Items count</returns>
 
-        if (!iterator)
+        if (!iterator) {
             return _.size(list);
+        }
 
         return _.filter(list, iterator, context).length;
     },
@@ -59,8 +60,10 @@ _.mixin({
         var result = [];
 
         _.each(list, () => {
-            var _item = iterator.apply(context, arguments);
-            if (_item) result.push(_item);
+            var item = iterator.apply(context, arguments);
+            if (item) {
+                result.push(item);
+            }
         });
 
         return result;
@@ -99,7 +102,7 @@ export var objects: { [key: string]: Function } = {};
 export var collections: { [key: string]: Function } = {};
 
 _.each(["keys", "values", "clone", "isEmpty"], function (method: string) {
-    objects['_' + method] = function () {
+    objects["_" + method] = function () {
         var args = arguments;
         return ko.computed(function () {
             return this[method].apply(this, args);
@@ -110,31 +113,41 @@ _.each(["keys", "values", "clone", "isEmpty"], function (method: string) {
         return _[method].apply(_, arguments);
     };
 });
-_.each(["each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any", "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"], function (method: string) {
-    collections['_' + method] = function () {
-        var args = arguments;
-        return ko.computed(function () {
-            return this[method].apply(this, args);
-        }, this);
-    };
-    collections[method] = function () {
-        p.unshift.call(arguments, this());
-        return _[method].apply(_, arguments);
-    };
-});
-_.each(["first", "initial", "last", "rest", "compact", "flatten", "without", "union", "intersection", "difference", "uniq", "zip", "indexOf", "lastIndexOf"], function (method: string) {
-    collections['_' + method] = function () {
-        var args = arguments;
-        return ko.computed(function () {
-            return this[method].apply(this, args);
-        }, this);
-    };
-    collections[method] = function () {
-        var value = this();
-        p.unshift.call(arguments, _.isArray(value) ? value : _.values(value));
-        return _[method].apply(_, arguments);
-    };
-});
+_.each(
+    [
+        "each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any",
+        "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"
+    ],
+    function (method: string) {
+        collections["_" + method] = function () {
+            var args = arguments;
+            return ko.computed(function () {
+                return this[method].apply(this, args);
+            }, this);
+        };
+        collections[method] = function () {
+            p.unshift.call(arguments, this());
+            return _[method].apply(_, arguments);
+        };
+    });
+_.each(
+    [
+        "first", "initial", "last", "rest", "compact", "flatten", "without", "union", "intersection", "difference",
+        "uniq", "zip", "indexOf", "lastIndexOf"
+    ],
+    function (method: string) {
+        collections["_" + method] = function () {
+            var args = arguments;
+            return ko.computed(function () {
+                return this[method].apply(this, args);
+            }, this);
+        };
+        collections[method] = function () {
+            var value = this();
+            p.unshift.call(arguments, _.isArray(value) ? value : _.values(value));
+            return _[method].apply(_, arguments);
+        };
+    });
 
 export function addToObservableArrays(): void {
     ko.utils.extend(ko.observableArray.fn, collections);

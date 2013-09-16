@@ -7,21 +7,23 @@ export interface MomentExtenderOptions {
 }
 
 export function getMoment(date: any, unix: boolean, utc: boolean, format: string): Moment {
-    if (unix)
+    if (unix) {
         return moment.unix(date);
-    else if (utc)
+    } else if (utc) {
         return moment.utc(date, format);
-    else
+    } else {
         return moment(date, format);
+    }
 }
 
 export function dateToString(moment: Moment, unix: boolean, utc: boolean, format: string): string {
-    if (unix)
+    if (unix) {
         return moment.valueOf().toString();
-    else if (utc)
+    } else if (utc) {
         return moment.utc().format(format);
-    else
+    } else {
         return moment.format(format);
+    }
 }
 
 export function getMomentDuration(timeSpan: string): Duration {

@@ -5,10 +5,13 @@ import context = require("../context");
 
 class MemoryStore implements stores.IDataStore {
     public memory = {};
-    
-    constructor(public context: context.DataContext) { }
+    public context: context.DataContext;
 
-    init(force?: boolean): JQueryPromise {
+    constructor(context: context.DataContext) {
+        this.context = context;
+    }
+
+    init(force?: boolean): JQueryPromise<any> {
         return $.when();
     }
 
@@ -38,7 +41,7 @@ class MemoryStore implements stores.IDataStore {
         table[key] = item;
     }
     /* Nothing because all observable but to override to update specific stores */
-    update(setName: string, item: any): void { }
+    update(setName: string, item: any): void { return null; }
     remove(setName: string, key: any): void {
         var table = this.getMemorySet(setName);
         delete table[key];
@@ -53,7 +56,7 @@ class MemoryStore implements stores.IDataStore {
         }, this);
     }
     /* Nothing because all observable but to override to update specific stores */
-    updateRange(setName: string, items: any[]): void { }
+    updateRange(setName: string, items: any[]): void { return null; }
     removeRange(setName: string, keys: any[]): void {
         var table = this.getMemorySet(setName);
         _.each(keys, function (key) {

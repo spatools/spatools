@@ -1,5 +1,5 @@
 /// <reference path="_definitions.d.ts" />
-
+/*jshint bitwise: true */
 var encode: (str: string) => string,
     decode: (str: string) => string;
 
@@ -127,21 +127,21 @@ else {
 }
 
 /** Create Data URL with specified mime type and content */
-var createDataURL = function(mimeType: string, content: string): string {
+var createDataURL = function (mimeType: string, content: string): string {
     return "data:" + mimeType + ";base64," + content;
-}
+};
 
 /** Create Data URL with specified mime type and context */
 var encodeDataURL = function (mimeType: string, text: string): string {
     return "data:" + mimeType + ";base64," + encode(text);
-}
+};
 
 /** Download a file and encode it as Data URL */
-var downloadFileAsDataURL = function(url: string) : JQueryDeferred<string> {
+var downloadFileAsDataURL = function (url: string): JQueryDeferred<string> {
     return $.Deferred<string>(function (dfd) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'blob';
+        xhr.open("GET", url, true);
+        xhr.responseType = "blob";
 
         xhr.onload = function (e) {
             var reader = new FileReader();
@@ -153,7 +153,7 @@ var downloadFileAsDataURL = function(url: string) : JQueryDeferred<string> {
 
         xhr.send();
     });
-}
+};
 
 var result = {
     encode: encode,

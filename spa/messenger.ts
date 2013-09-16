@@ -26,15 +26,16 @@ export function publish(topic: string, ...args: any[]): boolean {
         index = _.index(subscriptions[topic], s => s.once);
         if (index !== -1)
             subscriptions[topic].splice(index, 1);
-    } 
+    }
 
     return result !== false;
 }
 
 /** Publish message with specified options in the given topic */
 export function subscribe(topic: string, callback: () => void, options?: SubscribeOptions): void {
-    if (!topic || !callback)
+    if (!topic || !callback) {
         throw new Error("missing topic or callback argument");
+    }
 
     var topics = topic.split(/\s/),
         _options = ko.utils.extend({ priority: priority }, options);
@@ -60,15 +61,16 @@ export function subscribeNext(topic: string, callback: () => void, options?: Sub
 
 /** Publish message with specified options in the given topic */
 export function unsubscribe (topic, callback) {
-    if (!subscriptions[topic])
+    if (!subscriptions[topic]) {
         return;
+    }
 
     var index = -1;
-    _.find(subscriptions[topic], (subscription, i:number) => {
+    _.find(subscriptions[topic], (subscription, i: number) => {
         index = i;
         return subscription.callback === callback;
     });
 
     if (index !== -1)
         subscriptions[topic].splice(index, 1);
-};
+}

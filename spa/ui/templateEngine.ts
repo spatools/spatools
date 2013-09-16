@@ -7,13 +7,13 @@ var sourceRegex = /^text!(.+)/,
 
 function parseMarkup(markup: string): Element {
     var allElements = $.parseHTML(markup);
-    return $(allElements).wrapAll('<div>').parent().get(0);
+    return $(allElements).wrapAll("<div>").parent().get(0);
 }
 
 //#region Require Template Source
 
 export interface RequireTemplateObservable extends KnockoutObservable<string> {
-    data: {};
+    data: any;
 }
 
 export interface RequireSourceOptions {
@@ -30,12 +30,13 @@ export class RequireSource {
     constructor(
         public source: string,
         public options: RequireSourceOptions = {}) {
-
-            if (!(typeof source === "string"))
+            if (!(typeof source === "string")) {
                 throw new Error("Require Template Source need string template source");
+            }
 
-            if (sources[source])
+            if (sources[source]) {
                 return sources[source];
+            }
 
             this.name = source.match(sourceRegex)[1];
             
@@ -86,21 +87,23 @@ export class RequireSource {
     public nodes(): Element;
     public nodes(element: Element): void;
     public nodes(element?: Element): any {
-        if (arguments.length == 0) {
+        if (arguments.length === 0) {
             var markup = this.text(); // to register dependency
-            if (!this.template.data["__NODES__"]) {
-                this.template.data["__NODES__"] = utils.unsafe(() => parseMarkup(markup));
+            if (!this.template.data.__NODES__) {
+                this.template.data.__NODES__ = utils.unsafe(() => parseMarkup(markup));
             }
 
-            return this.template.data["__NODES__"];
+            return this.template.data.__NODES__;
         }
-        else 
-            this.template.data["__NODES__"] = arguments[0];
+        else {
+            this.template.data.__NODES__ = arguments[0];
+        }
     }
 
     public loadTemplate(): void {
-        if (this.isLoading)
+        if (this.isLoading) {
             return;
+        }
 
         this.isLoading = true;
         require([this.source], template => {
@@ -108,7 +111,7 @@ export class RequireSource {
 
             this.isLoaded = true;
             this.isLoading = false;
-            this.template.data["__NODES__"] = null;
+            this.template.data.__NODES__ = null;
 
             this.template(template);
         });
@@ -159,7 +162,7 @@ export class RequireEngine extends ko.templateEngine {
 //#endregion
 
 export var RequireEngine: any = function (innerEngine) {
-    this['allowTemplateRewriting'] = false;
+    this.allowTemplateRewriting = false;
     this.innerEngine = innerEngine || new RequireEngine.defaults.engine();
 };
 
@@ -169,14 +172,15 @@ RequireEngine.defaults.engine = ko.nativeTemplateEngine;
 
 RequireEngine.prototype = new ko.templateEngine();
 RequireEngine.prototype.addTemplate = function (key: string, template: string): void {
-    if (!RequireSource.isRequireTemplateSource(key))
+    if (!RequireSource.isRequireTemplateSource(key)) {
         return;
+    }
 
     define(key, [], () => template);
 };
 RequireEngine.prototype.makeTemplateSource = function (template: any, templateDocument: any, options?: any): any {
     // Require template
-    if (typeof template == "string" && RequireSource.isRequireTemplateSource(template)) {
+    if (typeof template === "string" && RequireSource.isRequireTemplateSource(template)) {
         return new ko.templateSources.require(template, options);
     }
 

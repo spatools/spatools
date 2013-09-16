@@ -56,8 +56,9 @@ export function create<T, TKey>(dataSet: dataset.DataSet<T, TKey>, query?: _quer
     };
 
     var result = ko.computed(function () {
-        if (self.query.pageSize() > 0 && !self.set.isSynchronized() && self.lastResult.size() > 0)
+        if (self.query.pageSize() > 0 && !self.set.isSynchronized() && self.lastResult.size() > 0) {
             return self.lastResult();
+        }
 
         return self.query.apply(self.set.toArray(), true);
     }).extend({ cnotify: utils.arrayEquals, deferEvaluation: true });

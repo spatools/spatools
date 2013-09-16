@@ -89,7 +89,7 @@ export class KeyboardManager {
         var shortcut = _.isString(options) ? options : options.shortcut,
             index = -1;
 
-        this.shortcuts._find(function (s, i?) { index = i; return s.initialShortcut === shortcut; });
+        this.shortcuts.find(function (s, i) { index = i; return s.initialShortcut === shortcut; });
 
         if (index !== -1) {
             this.shortcuts.splice(index, 1);
@@ -100,7 +100,7 @@ export class KeyboardManager {
     /** Remove an array of shortcut options or shortcut string */
     public removeShortcuts(options: any[]): KeyboardManager {
         _.each(options, this.removeShortcut, this);
-        return this;  
+        return this;
     }
 }
 
@@ -120,7 +120,7 @@ export class KeyboardShortcut {
         this.initialShortcut = options.shortcut;
         this.action = options.action;
         
-        _.each(this.initialShortcut.split('+'), modifier => {
+        _.each(this.initialShortcut.split("+"), modifier => {
             switch (modifier.trim().toLowerCase()) {
                 case "ctrl":
                     this.ctrl(true);

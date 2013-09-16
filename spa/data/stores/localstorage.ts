@@ -8,10 +8,7 @@ var cachePrefix = "__SPA_DATA__";
 class LocalStorageStore extends memory {
     private initSet(set) {
         var table = this.getStoreTable(set.setName);
-        for (var key in table) {
-            table[key] = set.fromJS(table[key]);
-        }
-
+        _.each(table, (value, key) => table[key] = set.fromJS(value));
         this.memory[set.setName] = table;
     }
     
@@ -22,7 +19,7 @@ class LocalStorageStore extends memory {
         localStorage.setItem(cachePrefix + setName, JSON.stringify(setValue));
     }
 
-    init(force?: boolean): JQueryPromise {
+    init(force?: boolean): JQueryPromise<any> {
         return $.Deferred(() => {
             setTimeout(() => {
                 if (force)

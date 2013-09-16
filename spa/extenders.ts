@@ -31,8 +31,8 @@ ko.extenders.cnotify = function (target: any, notifyWhen: any): any {
     target.notifySubscribers = function (value, event) {
         if (_.isFunction(notifyWhen)) { // custom
             if (event === "beforeChange") {
-                latestValue = target.peek()
-                }
+                latestValue = target.peek();
+            }
             else if (!notifyWhen(latestValue, value)) {
                 notify(value);
             }
@@ -42,16 +42,16 @@ ko.extenders.cnotify = function (target: any, notifyWhen: any): any {
         switch (notifyWhen) {
             case "primitive":
                 if (event === "beforeChange") {
-                    latestValue = target.peek()
-                    }
+                    latestValue = target.peek();
+                }
                 else if (!ko.observable.fn.equalityComparer(latestValue, value)) {
                     notify(value);
                 }
                 break;
             case "reference":
                 if (event === "beforeChange") {
-                    latestValue = target.peek()
-                    }
+                    latestValue = target.peek();
+                }
                 else if (latestValue !== value) {
                     notify(value);
                 }
@@ -74,7 +74,7 @@ ko.extenders.notify = function (target: any, notifyWhen: any): any {
     }
     switch (notifyWhen) {
         case "always":
-            target.equalityComparer = () => false
+            target.equalityComparer = () => false;
             break;
         case "manual":
             target.equalityComparer = () => true;
@@ -92,9 +92,10 @@ ko.extenders.notify = function (target: any, notifyWhen: any): any {
 };
 
 ko.extenders.cthrottle = function (target: any, timeout: number): any {
-    target['throttleEvaluation'] = timeout;
+    target.throttleEvaluation = timeout;
     return target;
 };
 
 var result = true;
 export = result;
+

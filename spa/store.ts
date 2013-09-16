@@ -54,16 +54,21 @@ _.each(["localStorage", "sessionStorage"], function (storageType: string): void 
             createFromIStorage(storageType, window[storageType]);
         }
     }
-    catch (e) { }
+    catch (e) {
+        return false;
+    }
 });
 
-if (window.globalStorage) {
-    try {
-        createFromIStorage("globalStorage", window.globalStorage[window.location.hostname]);
+(function () {
+    if (window.globalStorage) {
+        try {
+            createFromIStorage("globalStorage", window.globalStorage[window.location.hostname]);
+        }
+        catch (e) {
+            return false;
+        }
     }
-    catch (e) {
-    }
-}
+})();
 
 //#endregion
 
@@ -77,7 +82,7 @@ if (!_store) {
         _store = stores.globalStorage;
 }
 
-if (!_store) 
+if (!_store)
     _store = stores.memory;
 
 //#endregion
@@ -116,8 +121,9 @@ export function changeStore(type: string): void {
     }
 }
 export function addStorageType(type: string, store: ISimpleStorage, change: boolean) {
-    if (stores[type])
+    if (stores[type]) {
         throw "This store already exists !";
+    }
 
     if (_.isNumber(store.length) && store.clear && store.getItem && store.setItem && store.key && store.removeItem) {
         createFromIStorage(type, store);

@@ -117,6 +117,18 @@
             }
         },
 
+        tslint: {
+            options: {
+                configuration: grunt.file.readJSON("tslint.json")
+            },
+            all: ["spa/**/*.ts"]
+        },
+        jshint: {
+            options: {
+            },
+            all: ["<%= paths.output %>/spa/**/*.js"]
+        },
+
         qunit: {
             tests: ["<%= paths.output %>/tests/all.html"]
         },
@@ -142,6 +154,7 @@
     // Load plugins
     grunt.loadNpmTasks('grunt-contrib');
     grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-tslint');
     grunt.loadNpmTasks('grunt-nuget');
 
 
@@ -149,7 +162,7 @@
     grunt.registerTask("build_base", ["typescript:base", "uglify:base"]);
     grunt.registerTask("build_modules", ["typescript:modules", "copy:modules"]);
     grunt.registerTask("build_samples", ["typescript:samples", "copy:samples"]);
-    grunt.registerTask("build_assets", ["copy:assets"])
+    grunt.registerTask("build_assets", ["copy:assets"]);
     grunt.registerTask("build_ui", ["typescript:ui", "less"]);
     grunt.registerTask("build_data", ["typescript:data"]);
     grunt.registerTask("build_tests", ["typescript:tests", "copy:tests"]);

@@ -112,10 +112,10 @@ export var presenter: Presenter = (function () {
 
 export var router: Router = (function () {
     var currentHash = ko.observable(window.location.hash),
-        defaultRoute = '',
-        defaultTitle = 'Touch it - ',
+        defaultRoute = "",
+        defaultTitle = "Touch it - ",
         isRedirecting = false,
-        startupUrl = '#/',
+        startupUrl = "#/",
         presenter = presenter,
         brokeCallback: (message: string) => any,
 
@@ -176,9 +176,10 @@ export var router: Router = (function () {
         },
         /** Register a route */
         registerRoute = function (options: Route) {
-            if (!options.callback)
+            if (!options.callback) {
                 throw new Error("callback must be specified");
-            
+            }
+
             if (options.isDefault)
                 defaultRoute = options.route;
 
@@ -221,7 +222,7 @@ export var router: Router = (function () {
         defaultRoute: defaultRoute,
         defaultTitle: defaultTitle,
         isRedirecting: false,
-        startupUrl: '',
+        startupUrl: "",
 
         navigateBack: navigateBack,
         navigateNext: navigateNext,

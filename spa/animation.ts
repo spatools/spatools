@@ -20,8 +20,9 @@ export interface TransitionOptions {
 
 /** Launch given animation on the given element */
 export function launch(element: HTMLElement, animationName: string, options: AnimationOptions, completed?: () => any): void {
-    if (!options || !options.duration)
+    if (!options || !options.duration) {
         throw "An animation duration must be set";
+    }
 
     var animProp = utils.prefixStyle("animation"),
         prefix = utils.getVendorPrefix(),
@@ -64,8 +65,9 @@ export function launch(element: HTMLElement, animationName: string, options: Ani
 
 /** Launch given animation on the given element */
 export function transitionTo(element: HTMLElement, from: { [key: string]: any }, to: { [key: string]: any }, options: TransitionOptions, completed?: () => any): void {
-    if (!options || !options.duration)
+    if (!options || !options.duration) {
         throw "A transition duration must be set";
+    }
 
     var transitionProp = utils.prefixStyle("transition"),
         transitionStyle = [],
@@ -81,23 +83,16 @@ export function transitionTo(element: HTMLElement, from: { [key: string]: any },
         transitionStyle.push(options.delay + "ms");
 
     if (from) {
-        for (var prop in from) {
-            element.style[utils.prefixStyle(prop)] = from[prop];
-        }
+        _.each(from, (value, prop) => element.style[utils.prefixStyle(prop)] = value);
     }
 
     event.once(element, eventName, function () {
         element.style[transitionProp] = "";
-
-        if (completed)
-            completed.apply(this, arguments);
+        completed && completed.apply(this, arguments);
     });
 
     setTimeout(function () {
         element.style[transitionProp] = transitionStyle.join(" ");
-
-        for (var prop in to) {
-            element.style[utils.prefixStyle(prop)] = to[prop];
-        }
+        _.each(to, (value, prop) => element.style[utils.prefixStyle(prop)] = value);
     }, 1);
 }

@@ -38,17 +38,17 @@ export interface TreeDefaults {
 }
 
 export var defaults = {
-    cssClass: 'ui-tree',
+    cssClass: "ui-tree",
     isDraggable: true,
     isDropTarget: true,
     canAddChildren: true,
-    childType: 'folder',
+    childType: "folder",
     renameAfterAdd: true,
     connectToSortable: false,
     dragCursorAt: { left: 28, bottom: 0 },
-    dragCursor: 'auto',
+    dragCursor: "auto",
     dragHelper: function (event, element) {
-        return $('<div></div>').addClass("drag-icon").append($('<span></span>').addClass(this.cssClass()));
+        return $("<div></div>").addClass("drag-icon").append($("<span></span>").addClass(this.cssClass()));
     }
 };
 
@@ -58,7 +58,7 @@ export var defaults = {
 
 export interface TreeHandlers {
     selectNode?: (node: TreeNode, onSuccess: () => void ) => void;
-    addNode?: (parent: TreeNode, type: string, name: string, onSuccess: (result: { id: any; parent: TreeNode; name: string }) => void ) => void;
+    addNode?: (parent: TreeNode, type: string, name: string, onSuccess: (result: { id: any; parent: TreeNode; name: string }) => void) => void;
     renameNode?: (node: TreeNode, from: string, to: string, onSuccess: () => void ) => void;
     deleteNode?: (node: TreeNode, action: string, onSuccess: () => void ) => void;
     moveNode?: (node: TreeNode, newParent: TreeContainer, newIndex: number, onSuccess: () => void ) => void;
@@ -95,36 +95,36 @@ export class Tree implements TreeContainer {
     public defaults: TreeDefaults = {};
     public handlers: TreeHandlers = {
         selectNode: function (node: TreeNode, onSuccess: () => void ): void {
-            console.log('select node ' + node.name());
+            console.log("select node " + node.name());
             onSuccess();
         },
-        addNode: function (parent: TreeNode, type: string, name: string, onSuccess: (result: { id: any; parent: TreeNode; name: string }) => void ): void {
-            console.log('add new ui.treeNode');
+        addNode: function (parent: TreeNode, type: string, name: string, onSuccess: (result: { id: any; parent: TreeNode; name: string }) => void): void {
+            console.log("add new ui.treeNode");
             onSuccess({ id: 10, parent: parent, name: name }); // create node data to pass back
         },
         renameNode: function (node: TreeNode, from: string, to: string, onSuccess: () => void ): void {
-            console.log('rename node "' + from + '" to "' + to + '"');
+            console.log("rename node '" + from + "' to '" + to + "'");
             onSuccess();
         },
         deleteNode: function (node: TreeNode, action: string, onSuccess: () => void ): void {
-            console.log('delete node "' + node.name() + '"');
+            console.log("delete node '" + node.name() + "'");
             onSuccess();
         },
         moveNode: function (node: TreeNode, newParent: TreeContainer, newIndex: number, onSuccess: () => void ): void {
-            console.log('move node "' + node.name() + '" to "' + newParent.name ? newParent.name() : "root" + '"');
+            console.log("move node '" + node.name() + "' to '" + newParent.name ? newParent.name() : "root" + "'");
             onSuccess();
         },
         doubleClick: function (node: TreeNode): void {
-            console.log('doubled clicked ' + node.name());
+            console.log("doubled clicked " + node.name());
         },
         rightClick: function (node: TreeNode): void {
-            console.log('right click ' + node.name());
+            console.log("right click " + node.name());
         },
         startDrag: function (node: TreeNode): void {
-            console.log('start drag');
+            console.log("start drag");
         },
         endDrag: function (node: TreeNode): void {
-            console.log('stop drag');
+            console.log("stop drag");
         }
     };
 
@@ -149,8 +149,9 @@ export class Tree implements TreeContainer {
         this.children = utils.createObservableArray(options.children, this.createNode, this);
         this.selectedNode = utils.createObservable(options.selectedNode);
 
-        if (options.contextMenu)
+        if (options.contextMenu) {
             this.contextMenu = new ctx.ContextMenuBuilder(options.contextMenu);
+        }
     }
 
     public findNode(id: string): TreeNode {
@@ -180,9 +181,9 @@ export class Tree implements TreeContainer {
             if (this.selectNode(id, node)) {
                 node.isOpen(true);
                 return true;
-            }
-            else
+            } else {
                 return false;
+            }
         });
 
         return !!result;
@@ -200,13 +201,12 @@ export class Tree implements TreeContainer {
             this.children.push(node);
 
             selected && node.selectNode();
-        }
-        else {
+        } else {
             if ((node !== undefined && node.parent === undefined) || this.children().length === 0) {
                 // add to root
-                var type = node.type !== undefined ? node.type : typeValueOrDefault('childType', undefined, this),
-                    name = node.name !== undefined ? node.name : typeValueOrDefault('name', type, this),
-                    rename = node.rename !== undefined ? node.rename : typeValueOrDefault('renameAfterAdd', type, this);
+                var type = node.type !== undefined ? node.type : typeValueOrDefault("childType", undefined, this),
+                    name = node.name !== undefined ? node.name : typeValueOrDefault("name", type, this),
+                    rename = node.rename !== undefined ? node.rename : typeValueOrDefault("renameAfterAdd", type, this);
 
                 this.handlers.addNode(undefined, type, name, data => {
                     if (data !== undefined) {
@@ -225,8 +225,7 @@ export class Tree implements TreeContainer {
                         newNode.saveState();
                     }
                 });
-            }
-            else {
+            } else {
                 this.selectedNode().addChild(node || {});
             }
         }
@@ -248,18 +247,18 @@ export class Tree implements TreeContainer {
 
     public recalculateSizes(): void {
         var maxNodeWidth = 0, widestNode;
-        $('.node:visible', this.tree).each(function (ind1, node) {
+        $(".node:visible", this.tree).each(function (ind1, node) {
             var newWidth = 0, $this = $(node);
-            newWidth = newWidth + $this.children('label').outerWidth(true);
-            newWidth = newWidth + $this.children('.icon').outerWidth(true);
-            newWidth = newWidth + $this.children('.handle').outerWidth(true);
+            newWidth = newWidth + $this.children("label").outerWidth(true);
+            newWidth = newWidth + $this.children(".icon").outerWidth(true);
+            newWidth = newWidth + $this.children(".handle").outerWidth(true);
 
             if (maxNodeWidth < newWidth) {
                 maxNodeWidth = newWidth;
                 widestNode = $this;
             }
         });
-        $('.node', this.tree).css('minWidth', maxNodeWidth + 5);
+        $(".node", this.tree).css("minWidth", maxNodeWidth + 5);
     }
 
     private createNode(node: any, index?: number): TreeNode {
@@ -322,7 +321,7 @@ export class TreeNode implements TreeContainer {
     public level: KnockoutComputed<number>;
 
     constructor(options: TreeNodeOptions, parent: TreeContainer, public viewModel?: Tree, index?: number) {
-        var defaultType = typeValueOrDefault('childType', parent === viewModel ? undefined : parent.type(), viewModel); // defaults
+        var defaultType = typeValueOrDefault("childType", parent === viewModel ? undefined : parent.type(), viewModel); // defaults
 
         this.parent = ko.observable(parent);
         this.contextMenu = viewModel ? viewModel.contextMenu : null;
@@ -331,7 +330,7 @@ export class TreeNode implements TreeContainer {
         this.name = utils.createObservable(options.name);
         this.type = utils.createObservable(options.type, defaultType);
         this.cssClass = utils.createObservable(options.cssClass, this.type());
-        this.iconCssClass = utils.createObservable(options.iconCssClass, '');
+        this.iconCssClass = utils.createObservable(options.iconCssClass, "");
         this.index = utils.createObservable(options.index, utils.isUndefined(index) ? parent.children().length : index);
 
         this.isOpen = utils.createObservable(options.isOpen, false);
@@ -342,20 +341,20 @@ export class TreeNode implements TreeContainer {
         this.contents = options.contents; // a placeholder for additional custom data
         this.children = utils.createObservableArray(options.children, this.createChild, this);
 
-        this.canAddChildren = ko.computed(() => typeValueOrDefault('canAddChildren', this.type(), this.viewModel));
+        this.canAddChildren = ko.computed(() => typeValueOrDefault("canAddChildren", this.type(), this.viewModel));
         this.showAddBefore = ko.computed(() => {
             var parent = this.parent(),
                 dragHolder = viewModel.dragHolder();
 
-            if (parent.canAddChildren && parent.canAddChildren() && parent.isDropTarget && parent.isDropTarget() && viewModel.isDragging()) {
+            if (parent.canAddChildren && parent.canAddChildren() &&
+                parent.isDropTarget && parent.isDropTarget() && viewModel.isDragging()) {
                 if (dragHolder === this) {
                     return false;
-                }
-                else if (dragHolder.parent() === parent) {
+                } else if (dragHolder.parent() === parent) {
                     return (dragHolder.index() - this.index()) !== -1;
-                }
-                else
+                } else {
                     return true;
+                }
             }
 
             return false;
@@ -367,23 +366,22 @@ export class TreeNode implements TreeContainer {
             if (parent.canAddChildren && parent.canAddChildren() && parent.isDropTarget() && viewModel.isDragging()) {
                 if (dragHolder === this) {
                     return false;
-                }
-                else if (dragHolder.parent() === parent) {
+                } else if (dragHolder.parent() === parent) {
                     return (dragHolder.index() - this.index()) !== 1;
-                }
-                else
+                } else {
                     return true;
+                }
             }
 
             return false;
         });
 
-        this.isDropTarget = ko.computed(() => typeValueOrDefault('isDropTarget', this.type(), this.viewModel));
-        this.connectToSortable = ko.computed(() => typeValueOrDefault('connectToSortable', this.type(), this.viewModel));
+        this.isDropTarget = ko.computed(() => typeValueOrDefault("isDropTarget", this.type(), this.viewModel));
+        this.connectToSortable = ko.computed(() => typeValueOrDefault("connectToSortable", this.type(), this.viewModel));
         this.isDraggable = ko.computed(() => {
             var name = this.name(),
                 childRenaming = false,
-                typeDefault = typeValueOrDefault('isDraggable', this.type(), this.viewModel);
+                typeDefault = typeValueOrDefault("isDraggable", this.type(), this.viewModel);
 
             this.children.find(child => (childRenaming = child.isRenaming()));
 
@@ -420,8 +418,7 @@ export class TreeNode implements TreeContainer {
             node.parent(this);
 
             return node;
-        }
-        else {
+        } else {
             return new TreeNode(node, this, this.viewModel, index);
         }
     }
@@ -451,7 +448,7 @@ export class TreeNode implements TreeContainer {
         var selected = this.viewModel.selectedNode();
 
         if (selected !== undefined && selected.isRenaming()) {
-            $('.rename > .node input', this.viewModel.tree).blur();
+            $(".rename > .node input", this.viewModel.tree).blur();
         }
 
         this.saveState();
@@ -473,8 +470,7 @@ export class TreeNode implements TreeContainer {
 
     public openParents(): void {
         var current = this.parent();
-        while (current.parent !== undefined)
-        {
+        while (current.parent !== undefined) {
             current.isOpen(true);
             current = current.parent();
         }
@@ -491,11 +487,11 @@ export class TreeNode implements TreeContainer {
 
     public addChild(node: any): void {
         if (this.canAddChildren()) {
-            var defaultType = typeValueOrDefault('childType', this.type(), this.viewModel),
+            var defaultType = typeValueOrDefault("childType", this.type(), this.viewModel),
                 type = node.type !== undefined ? node.type : defaultType,
-                defaultName = typeValueOrDefault('name', type, this.viewModel),
+                defaultName = typeValueOrDefault("name", type, this.viewModel),
                 name = node.name !== undefined ? node.name : defaultName,
-                rename = node.rename !== undefined ? node.rename : typeValueOrDefault('renameAfterAdd', type, this.viewModel);
+                rename = node.rename !== undefined ? node.rename : typeValueOrDefault("renameAfterAdd", type, this.viewModel);
 
             // the addNode handler must return an id for the new ui.treeNode
             this.viewModel.handlers.addNode(this, type, name, data => {
@@ -535,10 +531,10 @@ export class TreeNode implements TreeContainer {
                 parent.children.remove(this);
 
                 if (!action || action.indexOf("child") === -1) {
-                    var _index = this.index();
+                    var tIndex = this.index();
                     parent.children.each(child => {
                         var index = child.index();
-                        (index > _index) && child.index(index - 1);
+                        (index > tIndex) && child.index(index - 1);
                     });
                 }
             }
@@ -597,12 +593,14 @@ export class TreeNode implements TreeContainer {
 
         if (state) {
             var itemState = state[uid];
-            if (itemState && itemState.open === true)
+            if (itemState && itemState.open === true) {
                 this.isOpen(true);
+            }
 
             var active = state[stateActiveKey];
-            if (active && active === uid)
+            if (active && active === uid) {
                 this.isSelected(true);
+            }
         }
     }
     public saveState(): void {
@@ -611,8 +609,9 @@ export class TreeNode implements TreeContainer {
 
         state[uid] = { open: this.isOpen() };
 
-        if (this.isSelected())
+        if (this.isSelected()) {
             state[stateActiveKey] = uid;
+        }
 
         store.setItem(stateCacheKey, JSON.stringify(state));
     }
@@ -636,7 +635,8 @@ export class TreeNode implements TreeContainer {
 
 //#region Templates
 
-ui.addTemplate("text!ui-tree-item-template.html", 
+ui.addTemplate(
+    "text!ui-tree-item-template.html",
 	"<li data-bind=\"contextMenu: contextMenu, css: { empty: !hasChildren(), open: isOpen, rename: isRenaming }, hover: 'hover', classes: cssClass, attr: { 'data-id': id() }\">" +
         "<!-- ko if: showAddBefore() --><div class=\"node-order top\" data-bind=\"hover: 'hover', treenodedrop: { active : true, onDropComplete: moveBefore }\"></div><!-- /ko -->" +
 		"<div class=\"node\" data-bind=\"treenodedrag: isDraggable(), treenodedrop: { active : isDropTarget(), onDropComplete: move }, css: { selected: isSelected }, hover: 'hover', event: { dblclick: doubleClick, mousedown: clicked }\">" +
@@ -650,7 +650,8 @@ ui.addTemplate("text!ui-tree-item-template.html",
 		"<!-- ko if: hasChildren() -->" +
 		"<ul data-bind='visible: isOpen, template: { name: \"text!ui-tree-item-template.html\", foreach: children, templateEngine: $root.engine }'></ul>" +
 		"<!-- /ko -->" +
-	"</li>", engine.defaultInstance);
+    "</li>",
+    engine.defaultInstance);
 
 ui.addTemplate("text!ui-tree-container-template.html", "<div><ul class=\"ui-tree\" data-bind=\"template: { name : 'text!ui-tree-item-template.html', foreach: $data.children, templateEngine: $data.engine }\"></ul></div>", engine.defaultInstance);
 
@@ -663,15 +664,15 @@ ko.bindingHandlers.treenodedrag = {
         var $element = $(element),
             node = viewModel,
             dragOptions = {
-                revert: 'invalid',
+                revert: "invalid",
                 revertDuration: 250,
-                cancel: 'span.handle',
-                cursor: typeValueOrDefault('dragCursor', node.type(), node.viewModel),
-                cursorAt: typeValueOrDefault('dragCursorAt', node.type(), node.viewModel),
-                appendTo: 'body',
+                cancel: "span.handle",
+                cursor: typeValueOrDefault("dragCursor", node.type(), node.viewModel),
+                cursorAt: typeValueOrDefault("dragCursorAt", node.type(), node.viewModel),
+                appendTo: "body",
                 connectToSortable: viewModel.connectToSortable(),
                 helper: function (event, element) {
-                    var helper = typeValueOrDefault('dragHelper', node.type(), node.viewModel);
+                    var helper = typeValueOrDefault("dragHelper", node.type(), node.viewModel);
                     return helper.call(viewModel, event, element);
                 },
                 zIndex: 200000,
@@ -697,9 +698,9 @@ ko.bindingHandlers.treenodedrag = {
             active = ko.utils.unwrapObservable(valueAccessor());
 
         if (!active) {
-            $element.draggable('disable');
+            $element.draggable("disable");
         } else {
-            $element.draggable('enable');
+            $element.draggable("enable");
         }
     }
 };
@@ -710,7 +711,7 @@ ko.bindingHandlers.treenodedrop = {
             handler = ko.utils.unwrapObservable(value.onDropComplete),
             dropOptions = {
                 greedy: true,
-                tolerance: 'pointer',
+                tolerance: "pointer",
                 addClasses: false,
                 drop: function (e, ui) {
                     setTimeout(function () {
@@ -725,9 +726,9 @@ ko.bindingHandlers.treenodedrop = {
             active = ko.utils.unwrapObservable(valueAccessor()).active;
 
         if (!active) {
-            $element.droppable('disable');
+            $element.droppable("disable");
         } else {
-            $element.droppable('enable');
+            $element.droppable("enable");
         }
     }
 };
@@ -756,11 +757,11 @@ ko.bindingHandlers.treenoderename = {
                 nodeRenameUpdateValue(element, valueAccessor, allBindingsAccessor, viewModel);
             };
 
-        $element.click(() => false).focus('focus', function () {
+        $element.click(() => false).focus("focus", function () {
             /* add scroll to element on focus http://stackoverflow.com/questions/4217962/scroll-to-an-element-using-jquery*/
         });
-        $element.bind('blur', _.partial(nodeRenameUpdateValue, element, valueAccessor, allBindingsAccessor, viewModel));
-        $element.bind('keyup', e => (e.which === 13) && updateHandler());
+        $element.bind("blur", _.partial(nodeRenameUpdateValue, element, valueAccessor, allBindingsAccessor, viewModel));
+        $element.bind("keyup", e => (e.which === 13) && updateHandler());
     },
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void {
         ko.bindingHandlers.value.update.call(this, element, valueAccessor);
@@ -771,7 +772,7 @@ ko.bindingHandlers.tree = {
     init: function (element: HTMLElement, valueAccessor: () => any): any {
         var value = ko.utils.unwrapObservable(valueAccessor());
         value.tree = element; // needed to recalculate node sizes when multiple trees
-        console.log('Initialize tree ' + value.children().length + ' root nodes found');
+        console.log("Initialize tree " + value.children().length + " root nodes found");
 
         return { controlsDescendantBindings: true };
     },

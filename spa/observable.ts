@@ -59,7 +59,7 @@ function historyObservable<T>(initialValue: T): KnockoutHistoryObservable<T> {
     $.extend(result, history.fn);
 
     return result;
-};
+}
 var historyFn = {
     back: function () {
         if (this.canGoBack()) {
@@ -113,4 +113,4 @@ export function validated<T>(initialValue: T): KnockoutValidatedObservable<T> {
     subscription = obsv.errors.subscribe((errors: string[]) => isValid(errors.length === 0));
 
     return obsv;
-};
+}

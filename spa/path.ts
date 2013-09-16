@@ -1,7 +1,7 @@
 /// <reference path="_definitions.d.ts" />
 
 export var mimeTypes: { [key: string]: string } = {
-    '*': "application/octet-stream",
+    "*": "application/octet-stream",
     323: "text/h323",
     acx: "application/internet-property-stream",
     ai: "application/postscript",
@@ -20,7 +20,7 @@ export var mimeTypes: { [key: string]: string } = {
     c: "text/plain",
     cat: "application/vnd.ms-pkiseccat",
     cdf: "application/x-cdf",
-    cdf: "application/x-netcdf",
+    netcdf: "application/x-netcdf",
     cer: "application/x-x509-ca-cert",
     clp: "application/x-msclip",
     cmx: "image/x-cmx",
@@ -208,11 +208,11 @@ export function getExtension(path: string): string {
 /** Get mime-type from file name or path */
 export function getMimeType(path: string): string {
     var extension = getExtension(path);
-    return extension ? getMimeTypeByExtension(extension) : mimeTypes['*'];
+    return extension ? getMimeTypeByExtension(extension) : mimeTypes["*"];
 }
 /** Get mime-type associated with specified extension */
 export function getMimeTypeByExtension(extension: string): string {
-    return mimeTypes[extension] || mimeTypes['*'];
+    return mimeTypes[extension] || mimeTypes["*"];
 }
 
 /** Get path without file name */

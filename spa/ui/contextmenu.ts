@@ -5,7 +5,7 @@ import engine = require("./templateEngine");
 import ui = require("../ui");
 
 export var defaults = {
-    cssClass: 'ui-context',
+    cssClass: "ui-context",
     width: 190
 };
 
@@ -38,12 +38,11 @@ export class ContextMenu implements IMenuContainer{
 
         this.cssClass = utils.createObservable(data.cssClass, container ? container.cssClass() : defaults.cssClass);
         this.width = utils.createObservable(data.width, defaults.width);
-        this.name = utils.createObservable(data.name, '');
+        this.name = utils.createObservable(data.name, "");
 
-        for (var i in data.items) {
-            var item = data.items[i];
+        _.each(data.items, item => {
             this.items.push(new ContextMenuItem(item, this));
-        }
+        });
     }
 }
 
@@ -55,7 +54,7 @@ export interface ContextMenuItemConfiguration {
     text?: any;
     iconCssClass?: any;
     separator?: any;
-    run?: any;
+    run?: (item?: any) => any;
     items?: any;
 }
 
@@ -74,10 +73,10 @@ export class ContextMenuItem {
 
     constructor(data: ContextMenuItemConfiguration, container: ContextMenu) {
         this.container = container;
-        this.text = utils.createObservable(data.text, '');
-        this.iconCssClass = utils.createObservable(data.iconCssClass, '');
+        this.text = utils.createObservable(data.text, "");
+        this.iconCssClass = utils.createObservable(data.iconCssClass, "");
         this.separator = utils.createObservable(data.separator, false);
-        this.run = typeof data.run === 'function' ? data.run : eval(data.run);
+        this.run = data.run;
         this.width = ko.observable(container.width());
         this.disabled = ko.observable(false);
 
@@ -100,10 +99,10 @@ export class ContextMenuItem {
     }
 
     public itemWidth(): string {
-        return (this.separator() ? (this.width() - 4) : (this.width() - 6)) + 'px';
+        return (this.separator() ? (this.width() - 4) : (this.width() - 6)) + "px";
     }
     public labelWidth(): string {
-        return (this.width() - 41) + 'px'; // icon + borders + padding
+        return (this.width() - 41) + "px"; // icon + borders + padding
     }
 
     public onClick(e: Event) {
@@ -112,7 +111,7 @@ export class ContextMenuItem {
         }
 
         this.run(this.dataItem);
-        $('.ui-context').remove();
+        $(".ui-context").remove();
     }
 }
 
@@ -122,8 +121,8 @@ export class ContextMenuItem {
 
 export interface ContextMenuBuilderConfiguration {
     cssClass?: any;
-    build: any;
-    contextMenus: any;
+    build: (e: Event, parentVM: any) => ContextMenuBuilderResult;
+    contextMenus: any[];
 }
 
 export interface ContextMenuBuilderResult {
@@ -139,12 +138,11 @@ export class ContextMenuBuilder implements IMenuContainer {
 
     constructor(configuration: ContextMenuBuilderConfiguration) {
         this.cssClass = utils.createObservable(configuration.cssClass, defaults.cssClass);
-        this.build = typeof configuration.build === 'function' ? configuration.build : eval(configuration.build);
+        this.build = configuration.build;
 
-        for (var i in configuration.contextMenus) {
-            var menu = configuration.contextMenus[i];
+        _.each(configuration.contextMenus, menu => {
             this.contextMenus.push(new ContextMenu(menu, this));
-        }
+        });
     }
 }
 
@@ -165,7 +163,7 @@ ui.addTemplate("text!contextmenu-item-template.html", "\
 		<!-- /ko -->\
 	</li>", engine.defaultInstance);
 
-ui.addTemplate("text!contextmenu-template.html", 
+ui.addTemplate("text!contextmenu-template.html",
 	"<div class=\"ui-context nocontext\" style=\"position:absolute;\" data-bind=\"css: cssClass, style: { width: width, zIndex: zIndex }\">" +
 		"<ul data-bind='template: { name: \"text!contextmenu-item-template.html\", foreach: items, templateEngine: $root.engine }'></ul>" +
 	"</div>", engine.defaultInstance);
@@ -179,10 +177,10 @@ function getMaxZIndex($element: JQuery): number {
     var maxZ = 1;
 
     $element.parents().each(function () {
-        var z = $(this).css('zIndex'),
+        var z = $(this).css("zIndex"),
             _z: number;
 
-        if (z !== 'auto') {
+        if (z !== "auto") {
             _z = parseInt(z, 10);
             if (_z > maxZ) {
                 maxZ = _z;
@@ -199,11 +197,13 @@ ko.bindingHandlers.contextmenu = {
             menuContainer: JQuery, config: ContextMenuBuilderResult, menu: ContextMenu,
             parentVM = viewModel, value = ko.utils.unwrapObservable(valueAccessor());
 
-        if (!value) return;
+        if (!value) {
+            return;
+        }
 
         $element
-            .addClass('nocontext')
-            .on('contextmenu', function (e) {
+            .addClass("nocontext")
+            .on("contextmenu", function (e) {
                 if (value instanceof ContextMenuBuilder) {
                     config = value.build(e, parentVM);
                     menu = value.contextMenus.find(x => x.name() === config.name);
@@ -214,10 +214,10 @@ ko.bindingHandlers.contextmenu = {
                 }
                 
                 // remove any existing menus active
-                $('.ui-context').remove();
+                $(".ui-context").remove();
 
                 if (menu !== undefined) {
-                    menuContainer = $('<div></div>').appendTo('body');
+                    menuContainer = $("<div></div>").appendTo("body");
 
                     menu.items.each((item: ContextMenuItem) => {
                         item.disabled(!!config.disable && config.disable.indexOf(item.text()) !== -1); // disable item if necessary
@@ -237,8 +237,8 @@ ko.bindingHandlers.contextmenu = {
                 return false;
             });
 
-        $('html').click(function () {
-            $('.ui-context').remove();
+        $("html").click(function () {
+            $(".ui-context").remove();
         });
     }
 };
@@ -251,12 +251,12 @@ ko.bindingHandlers.subcontextmenu = {
             cssClass: string;
 
         if (value) {
-            cssClass = '.' + viewModel.container.cssClass();
+            cssClass = "." + viewModel.container.cssClass();
             $(cssClass, $element).hide();
 
             $element.hover(function () {
                 var $parent = $(this);
-                $(cssClass, $parent).first().toggle().position({ my: 'left top', at: 'right top', of: $parent, collision: 'flip' });
+                $(cssClass, $parent).first().toggle().position({ my: "left top", at: "right top", of: $parent, collision: "flip" });
             });
         }
     }

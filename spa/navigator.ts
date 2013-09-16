@@ -11,7 +11,7 @@ var app: string, appVersion: string, system: string,
     engine: string, engineVersion: string, os: {  name: string; alt: string[]; x64: boolean; text: string },
     sub: string, subVersion: string,
     name: string, version: string, versionNumber: number,
-    webkit: boolean, prefix: string, mobile: string,
+    webkit: boolean, prefix: string, mobile: boolean,
     ua: string = navigator.userAgent;
 
 var reg = /(\w+)\/([0-9.]+) \(([^)]+)\)( (\w+)\/([0-9.+rca]+) \(([^)]+)\))?( ([a-zA-Z ]+)\/([0-9.+rca]+))?( ([a-zA-Z ]+)\/([0-9.+a-zA-Z]+))?( ([a-zA-Z ]+)\/([0-9.+rca]+))?/;
@@ -28,7 +28,7 @@ if (reg.test(ua)) {
     }
 
     if (matches[11]) {
-        if (name == "Version" || matches[12] == "Firefox") { //Mobile Safari
+        if (name === "Version" || matches[12] === "Firefox") { //Mobile Safari
             if (matches[14]) { // iPad
                 name = matches[15];
                 version = matches[16];
@@ -61,7 +61,7 @@ if (reg.test(ua)) {
         }
     }
 
-    if (app == "Opera") {
+    if (app === "Opera") {
         var tmp = name;
         name = app;
         app = tmp;
@@ -85,20 +85,20 @@ if (reg.test(ua)) {
         text: system
     };
 
-    mobile: regMobile.test(system);
+    mobile = regMobile.test(system);
     webkit = (/webkit/i).test(ua);
 
     switch (name) {
-        case 'Internet Explorer':
+        case "Internet Explorer":
             if (versionNumber >= 8) prefix = "ms";
             break;
 
-        case 'Opera':
+        case "Opera":
             prefix = "o";
             break;
 
-        case 'Firefox':
-            prefix = 'moz';
+        case "Firefox":
+            prefix = "moz";
             break;
 
         default:
@@ -137,6 +137,8 @@ var exports = {
     },
     /** Current navigator is webkit */
     webkit: webkit,
+    /** Current navigator is mobile */
+    mobile: mobile,
     /** Current navigator's vendor prefix */
     prefix: prefix,
     /** Current navigator's OS */

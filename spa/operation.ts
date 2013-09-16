@@ -62,10 +62,11 @@ function Operation (options: OperationOptions): OperationFunction {
             isExecuting(true);
 
             if (cache === true && !!lastExecution) {
-                if (lastExecution + cacheDuration < Date.now())
+                if (lastExecution + cacheDuration < Date.now()) {
                     return onComplete.apply(null, memory);
-                else
+                } else {
                     lastExecution = memory = null;
+                }
             }
 
             if (useArgs)
@@ -96,7 +97,7 @@ ko.bindingHandlers.loader = {
 
         if (template) {
             ko.renderTemplate(template, bindingContext, {}, element);
-            return { 'controlsDescendantBindings': true };
+            return { "controlsDescendantBindings": true };
         }
     },
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {

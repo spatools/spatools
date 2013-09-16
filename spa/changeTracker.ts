@@ -3,13 +3,13 @@
 class ChangeTracker {
     private tracked: any;
     private lastData: KnockoutObservable<string>;
-    private isModified: KnockoutObservable<bool>;
+    private isModified: KnockoutObservable<boolean>;
 
-    public hasChanges: KnockoutComputed<bool>;
+    public hasChanges: KnockoutComputed<boolean>;
 
     constructor(
         object: any,
-        isAlreadyModified: bool = false,
+        isAlreadyModified: boolean = false,
         private hashFunction: (obj: any, params?: any) => string = ko.toJSON,
         private params?: any) {
 
@@ -22,7 +22,7 @@ class ChangeTracker {
             }, this);
     }
 
-    reset = function () {
+    public reset() {
         this.lastData(this.hashFunction(this.tracked, this.params));
         this.isModified(false);
     }

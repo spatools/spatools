@@ -25,7 +25,7 @@ ko.bindingHandlers.limitedText = {
             if (text.length > length)
                 result = result.substr(0, length) + suffix;
             if (escapeCR) {
-                result = result.replace(new RegExp('\n', 'g'), ' ').replace(new RegExp('\r', 'g'), ' ');
+                result = result.replace(new RegExp("\n", "g"), " ").replace(new RegExp("\r", "g"), " ");
             }
         }
 
@@ -79,8 +79,9 @@ var sizes = {
 };
 
 function simplifySize(size: string, suffix: string = ""): string {
-    if (!size)
+    if (!size) {
         return "";
+    }
 
     var _size: number = parseInt(size, 10),
         result: number = _size,
@@ -138,7 +139,7 @@ ko.bindingHandlers.classes = {
             css = {};
 
         if (value) {
-            _.each(value.split(' '), function (_class) {
+            _.each(value.split(" "), function (_class) {
                 css[_class] = true;
             });
         }
@@ -181,7 +182,7 @@ ko.bindingHandlers.hover = {
                     value.leave.call(viewModel, viewModel, e.originalEvent);
 
                 if (value.classes)
-                    ko.bindingHandlers.css.update(element, utils.createAccessor(''), allBindingsAccessor, viewModel, bindingContext);
+                    ko.bindingHandlers.css.update(element, utils.createAccessor(""), allBindingsAccessor, viewModel, bindingContext);
             });
     }
 };
@@ -309,11 +310,11 @@ ko.bindingHandlers.editable = {
             input = null;
 
         if (type === "textarea")
-            input = $("<textarea>").attr({ 'class': 'textarea-editable' });
+            input = $("<textarea>").attr({ "class": "textarea-editable" });
         else if (type === "select")
-            input = $("<select>").attr({ 'class': 'select-editable' });
+            input = $("<select>").attr({ "class": "select-editable" });
         else
-            input = $("<input>").attr({ 'class': 'input-editable', type: type });
+            input = $("<input>").attr({ "class": "input-editable", type: type });
 
         if (element.hasAttribute("id"))
             input.attr("name", element.getAttribute("id"));
@@ -353,14 +354,14 @@ ko.bindingHandlers.editable = {
 
             if (allBindings.optionsText) {
                 var optionsText = ko.utils.unwrapObservable(allBindings.optionsText);
-                if (typeof (optionsText) === 'string') {
+                if (typeof (optionsText) === "string") {
                     var _selected = _.find(ko.utils.unwrapObservable(options.options), function (item) {
                         if (allBindings.optionsValue) {
                             var optionsValue = ko.utils.unwrapObservable(allBindings.optionsValue);
-                            if (typeof (optionsValue) === 'string') {
+                            if (typeof (optionsValue) === "string") {
                                 return ko.utils.unwrapObservable(item[optionsValue]) === value;
                             }
-                            else if (typeof (optionsValue) === 'function') {
+                            else if (typeof (optionsValue) === "function") {
                                 return ko.utils.unwrapObservable(optionsValue.call(null, item)) === value;
                             }
                         }
@@ -371,7 +372,7 @@ ko.bindingHandlers.editable = {
                     if (_selected)
                         value = _selected[optionsText];
                 }
-                else if (typeof (optionsText) === 'function') {
+                else if (typeof (optionsText) === "function") {
                     var _val = optionsText.call(null, value);
                     if (_val)
                         value = _val;
@@ -386,17 +387,17 @@ ko.bindingHandlers.clipboard = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
         var _value = ko.utils.unwrapObservable(valueAccessor());
 
-        var input = $("<input>").attr({ 'class': 'input-clipboard', 'readonly': 'readonly' }).val(_value).hide();
+        var input = $("<input>").attr({ "class": "input-clipboard", "readonly": "readonly" }).val(_value).hide();
 
         $(element).after(input).text(_value);
 
-        $(element).on('click', function () {
+        $(element).on("click", function () {
             $(element).hide();
             input.show().focus().select();
         });
 
         input
-            .on('focusout', function () {
+            .on("focusout", function () {
                 $(element).show();
                 input.hide();
             })

@@ -82,6 +82,7 @@
     <Content Include="Scripts\qunit-1.12.0.js" />
     <Content Include="Scripts\typings\qunit\qunit.d.ts" />
     <Content Include="spa\ui\editor.ts" />
+    <Content Include="tslint.json" />
     <TypeScriptCompile Include="spa\ui\slider.ts" />
     <Content Include="spa\ui\tree.ts" />
     <Content Include="spa\ui\ribbon.ts" />

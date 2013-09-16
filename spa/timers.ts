@@ -22,8 +22,8 @@ export class Timer {
         private callOnFirstStart: boolean = false) {
 
         if (enabled && callback) {
-            this.start()
-            }
+            this.start();
+        }
     }
 
     //#endregion
@@ -51,8 +51,9 @@ export class Timer {
 
     /** Start current timer. */
     public start(callOnFirstStart: boolean = false): void {
-        if (!this.callback)
+        if (!this.callback) {
             throw new Error("callback is not defined, define callback before start");
+        }
 
         this.enabled = true;
 
@@ -148,8 +149,9 @@ export class AsyncTimer {
 
     /** Start current timer. */
     public start(callOnFirstStart: boolean = false): void {
-        if (!this.callback)
+        if (!this.callback) {
             throw new Error("callback is not defined, define callback before start");
+        }
 
         this.enabled = true;
 

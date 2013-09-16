@@ -27,7 +27,7 @@ export enum entityStates {
 export var defaultRules: KnockoutMappingOptions = {
     copy: ["$type", "odata.type"],
     ignore: ["_lastData", "EntityState", "IsSubmitting", "HasChanges", "ChangeTracker", "IsRemoved", "isValid", "errors", "hasChanges", "subscription"]
-}
+};
 
 //#endregion
 
@@ -35,12 +35,16 @@ export var defaultRules: KnockoutMappingOptions = {
 
 /** Class representing a relation for an entity set */
 export class Relation {
+    public ensureRemote: boolean;
+
     constructor(
         public propertyName: string,
         public type: relationTypes,
         public controllerName: string,
         public foreignKey: string,
-        public ensureRemote: boolean = false) { }
+        ensureRemote?: boolean) {
+            this.ensureRemote = ensureRemote || false;
+    }
 }
 
 /** Class representing a mapping configuration for serialization / deserialization scenarios */
@@ -51,9 +55,9 @@ export class Configuration {
     };
 
     constructor(
-        public type: string, 
-        public object: any = null, 
-        public relations: Relation[] = [], 
+        public type: string,
+        public object: any = null,
+        public relations: Relation[] = [],
         rules: KnockoutMappingOptions = null,
         public actions: string[] = []) {
             if (rules) {
@@ -110,15 +114,16 @@ function getEntityByName(name: string) {
     return new context[ctor]();
 }
 function constructEntity(type: any) {
-    if (!type)
+    if (!type) {
         return {};
-    else if (_.isFunction(type))
+    } else if (_.isFunction(type)) {
         return new type();
-    else
+    } else {
         return getEntityByName(type.toString());
+    }
 }
-function getEntityType(entity: {}) {
-    return entity["$type"] || entity["odata.type"];
+function getEntityType(entity: any) {
+    return entity.$type || entity["odata.type"];
 }
 function getMappingConfiguration<T, TKey>(entity: {}, dataSet: dataset.DataSet<T, TKey>): Configuration {
     var type = getEntityType(entity) || dataSet.defaultType;
@@ -131,8 +136,9 @@ function getMappingConfiguration<T, TKey>(entity: {}, dataSet: dataset.DataSet<T
 
 /** Add mapping properties to an entity */
 export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataSet<T, TKey>, config?: Configuration, initialState: entityStates = entityStates.unchanged, data: any = null): any {
-    if (model.EntityState)
+    if (model.EntityState) {
         throw "Model already has mapping properties";
+    }
 
     if (!config)
         config = getMappingConfiguration(model, dataSet);

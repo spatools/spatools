@@ -41,10 +41,8 @@ export function create<T, TKey, TForeign, TForeignKey>(propertyName: string, loc
     
     self.parent[self.localId].subscribe(function (newId) {
         if (self.localIdValue !== newId) {
-            var foreigns = foreignSet.filter(function (e) { return e[self.foreignId]() === self.localIdValue; });// result();
-            _.each(foreigns, function (foreign) {
-                foreign[self.foreignId](newId);
-            });
+            var foreigns = foreignSet.filter(e => e[self.foreignId]() === self.localIdValue);
+            _.each(foreigns, foreign => foreign[self.foreignId](newId));
 
             self.localIdValue = newId;
         }

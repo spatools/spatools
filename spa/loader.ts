@@ -48,15 +48,15 @@ export function loadStylesheet(url: string): JQueryPromise<string> {
             id;
 
         if (!sheet) { // only assign these once
-            cssRules = 'cssRules'; sheet = 'sheet';
+            cssRules = "cssRules"; sheet = "sheet";
             if (!(sheet in link)) { // MSIE uses non-standard property names
-                cssRules = 'rules'; sheet = 'styleSheet';
+                cssRules = "rules"; sheet = "styleSheet";
             }
         }
 
-        if ('onload' in link) link.onload = function () { return dfd.resolve(url); };
-        if ('onerror' in link) link.onerror = function () { return dfd.reject(url); };
-        if ('onreadystatechange' in link) link.onreadystatechange = function () { if (this.readyState == 'complete' || this.readyState == 'loaded') return link[sheet][cssRules].length ? dfd.resolve(url) : dfd.reject(url); };
+        if ("onload" in link) link.onload = function () { return dfd.resolve(url); };
+        if ("onerror" in link) link.onerror = function () { return dfd.reject(url); };
+        if ("onreadystatechange" in link) link.onreadystatechange = function () { if (this.readyState === "complete" || this.readyState === "loaded") return link[sheet][cssRules].length ? dfd.resolve(url) : dfd.reject(url); };
         
         id = setTimeout(function () {
             clearTimeout(id); id = null;
@@ -66,8 +66,8 @@ export function loadStylesheet(url: string): JQueryPromise<string> {
         dfd.always(function () {
             clearTimeout(timeoutId);
             clearInterval(intervalId);
-            if ('onload' in link) link.onload = null;
-            if ('onreadystatechange' in link) link.onreadystatechange = null;
+            if ("onload" in link) link.onload = null;
+            if ("onreadystatechange" in link) link.onreadystatechange = null;
         });
     }).promise();
 }

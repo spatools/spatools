@@ -14,10 +14,7 @@ class IndexedDBStore extends memory {
     private initSet(set) {
         var name = set.setName;
         return this.getStoreTable(name).then(table => {
-            for (var key in table) {
-                table[key] = set.fromJS(table[key], table[key].EntityState);
-            }
-
+            _.each(table, (value, key) => table[key] = set.fromJS(value, value.EntityState));
             this.memory[name] = table;
         });
     }

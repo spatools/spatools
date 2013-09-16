@@ -22,8 +22,9 @@ export function initializePrefilter(): void {
     if (!prefilterInitialized) {
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             // retry not set or less than 2 : retry not requested // no timeout was setup
-            if (!originalOptions.retryCount || originalOptions.retryCount < 2 || originalOptions.retryDelay === 0)
+            if (!originalOptions.retryCount || originalOptions.retryCount < 2 || originalOptions.retryDelay === 0) {
                 return;
+            }
 
             if (originalOptions.retries) {
                 originalOptions.retries++; // increment retry count each time

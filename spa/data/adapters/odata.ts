@@ -6,10 +6,10 @@ import query = require("../query");
 import utils = require("../../utils");
 
 var urls = {
-    entitySet: '{controller}',
-    entity: '{controller}({key})',
-    entitySetAction: '{controller}/{action}',
-    entityAction: '{controller}({key})/{action}',
+    entitySet: "{controller}",
+    entity: "{controller}({key})",
+    entitySetAction: "{controller}/{action}",
+    entityAction: "{controller}({key})/{action}",
 };
 
 class ODataAdapter implements adapters.IAdapter {
@@ -24,17 +24,21 @@ class ODataAdapter implements adapters.IAdapter {
     }
 
     private generateKey(key: any): string {
-	    if (guid.isGuid(key))
+        if (guid.isGuid(key)) {
             return "guid'" + key + "'";
+        }
 
-        if (utils.isDate(key))
+        if (utils.isDate(key)) {
             return "datetime'" + key + "'";
+        }
 
-        if (typeof key === "string")
+        if (typeof key === "string") {
             return "'" + encodeURIComponent(key) + "'";
+        }
 
-        if (_.isObject(key))
+        if (_.isObject(key)) {
             return _.map(key, (v, i?) => i + "=" + this.generateKey(v)).join(", ");
+        }
 
         return key;
     }
@@ -43,8 +47,9 @@ class ODataAdapter implements adapters.IAdapter {
 
         while (args.length && regex.test(url)) {
             url = url.replace(regex, match => {
-                if (match.indexOf('key') !== -1)
+                if (match.indexOf("key") !== -1) {
                     return this.generateKey(args.shift());
+                }
 
                 return args.shift();
             });
@@ -57,7 +62,7 @@ class ODataAdapter implements adapters.IAdapter {
 	public getAll(controller: string, query?: query.ODataQuery): JQueryPromise<any> {
 	    var url = this.generateUrl(urls.entitySet, controller);
 
-        if (query) 
+        if (query)
             url = url + "?" + query.toQueryString();
 
         return $.ajax({
@@ -71,7 +76,7 @@ class ODataAdapter implements adapters.IAdapter {
     }
     /** Get a single entity (GET) */
     public getOne(controller: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
-	    var url = this.generateUrl(urls.entity, controller, id); 
+	    var url = this.generateUrl(urls.entity, controller, id);
 
         if (query)
             url = url + "?" + query.toQueryString();
@@ -88,7 +93,7 @@ class ODataAdapter implements adapters.IAdapter {
 
     /** Create an entity (POST) */
     public post(controller: string, data: any): JQueryPromise<any> {
-	    var url = this.generateUrl(urls.entitySet, controller); 
+	    var url = this.generateUrl(urls.entitySet, controller);
 
         return $.ajax({
             url: url,
@@ -102,7 +107,7 @@ class ODataAdapter implements adapters.IAdapter {
     }
     /** Updates an entity (PUT) */
     public put(controller: string, id: any, data: any): JQueryPromise<any> {
-	    var url = this.generateUrl(urls.entity, controller, id); 
+	    var url = this.generateUrl(urls.entity, controller, id);
 
         return $.ajax({
             url: url,
@@ -125,13 +130,13 @@ class ODataAdapter implements adapters.IAdapter {
             dataType: "text json",
             retryCount: this.options.retryCount,
             retryDelay: this.options.retryDelay,
-        })
+        });
     }
 
     public getRelation(controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
 	    var url = this.generateUrl(urls.entityAction, controller, id, relationName);
 
-        if (query) 
+        if (query)
             url = url + "?" + query.toQueryString();
 
         return $.ajax({
@@ -144,7 +149,7 @@ class ODataAdapter implements adapters.IAdapter {
         });
     }
     public action(controller: string, action: string, parameters: any, id?: any): JQueryPromise<any> {
-	    var url = this.generateUrl(id ? urls.entityAction : urls.entitySetAction, controller, id ? id : action, action); 
+	    var url = this.generateUrl(id ? urls.entityAction : urls.entitySetAction, controller, id ? id : action, action);
 
         return $.ajax({
             url: url,

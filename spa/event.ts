@@ -59,15 +59,15 @@ export function once(element: HTMLElement, eventTypes: string, handler: () => an
 
 /** Check existence of given event name */
 export function check(eventName: string): boolean {
-	var tagnames = { 'select': 'input', 'change': 'input', 'submit': 'form', 'reset': 'form', 'error': 'img', 'load': 'img', 'abort': 'img' };
-    var element = document.createElement(tagnames[eventName] || 'div');
+	var tagnames = { "select": "input", "change": "input", "submit": "form", "reset": "form", "error": "img", "load": "img", "abort": "img" };
+    var element = document.createElement(tagnames[eventName] || "div");
 
-    eventName = 'on' + eventName;
+    eventName = "on" + eventName;
     var isSupported: boolean = (eventName in element);
 
     if (!isSupported) {
-        element.setAttribute(eventName, 'return;');
-        isSupported = typeof element[eventName] === 'function';
+        element.setAttribute(eventName, "return;");
+        isSupported = typeof element[eventName] === "function";
     }
 
     element = null;

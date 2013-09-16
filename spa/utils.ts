@@ -31,25 +31,30 @@ export function createAccessor<T>(value: T): () => T {
 
 /** Return an observable from value (or _default if undefined). If value is subscribable, returns value directly. */
 export function createObservable<T>(value: any, _default?: T): KnockoutObservable<T> {
-    if (_.isUndefined(value) || _.isNull(value))
+    if (_.isUndefined(value) || _.isNull(value)) {
         return ko.observable(_default);
+    }
 
-    if (ko.isSubscribable(value))
+    if (ko.isSubscribable(value)) {
         return value;
+    }
 
     return ko.observable(value);
 }
 
 /** Return an observable from value (or _default if undefined). If value is subscribable, returns value directly. */
 export function createObservableArray(value: any, mapFunction?: (obj: any) => any, context?: any): KnockoutObservableArray<any> {
-    if (typeof value === "undefined")
+    if (typeof value === "undefined") {
         return ko.observableArray();
+    }
 
-    if (ko.isSubscribable(value) && _.isArray(value()))
+    if (ko.isSubscribable(value) && _.isArray(value())) {
         return value;
+    }
 
-    if (_.isArray(value) && typeof mapFunction === "function")
+    if (_.isArray(value) && typeof mapFunction === "function") {
         value = _.map(value, mapFunction, context);
+    }
 
     return ko.observableArray(value);
 }
@@ -83,28 +88,27 @@ export function extend(target: any, ...objs: any[]): any {
         return target;
     }
 
-    for (var i = 0; i < objs.length; i++) {
-        var obj = objs[i];
-        if (!obj)
-            continue;
-
-        for (var prop in obj) {
-            target[prop] = obj[prop];
+    _.each(objs, obj => {
+        if (!obj) {
+            return;
         }
-    }
+
+        _.each(obj, (value, key) => {
+            target[key] = value;
+        });
+    });
 
     return target;
 }
 
 /** Make inheritance operation. */
 export function inherits(obj: any, base: any, prototype: any): any {
-    if (base.constructor == Function) {
+    if (_.isFunction(base.constructor)) {
         //Normal Inheritance 
         obj.prototype = new base();
         obj.prototype.constructor = obj;
         obj.prototype.parent = base.prototype;
-    }
-    else {
+    } else {
         //Pure Virtual Inheritance 
         obj.prototype = base;
         obj.prototype.constructor = obj;
@@ -120,10 +124,11 @@ export function inherits(obj: any, base: any, prototype: any): any {
 
 /** Execute callback methods in a safe DOM modification environment. Usefull when creating HTML5 Application. */
 export function unsafe(callback: () => any): void {
-    if (typeof MSApp === "undefined")
+    if (typeof MSApp === "undefined") {
         return callback.call(null);
-    else
+    } else {
         return MSApp.execUnsafeLocalFunction(callback);
+    }
 }
 
 /** Get current window size. */
@@ -136,7 +141,7 @@ export function getWindowSize(): Size {
         winH = document.body.offsetHeight;
     }
 
-    if (document.compatMode === 'CSS1Compat' && document.documentElement && document.documentElement.offsetWidth) {
+    if (document.compatMode === "CSS1Compat" && document.documentElement && document.documentElement.offsetWidth) {
         winW = document.documentElement.offsetWidth;
         winH = document.documentElement.offsetHeight;
     }
@@ -155,16 +160,17 @@ export function getWindowSize(): Size {
 /** Get query strings. If a key is specified, returns only query string for specified key. */
 export function getQueryString(key: string): any {
     var dictionary = {},
-        qs = window.location.search.replace('?', ''),
-        pairs = qs.split('&');
+        qs = window.location.search.replace("?", ""),
+        pairs = qs.split("&");
 
     _.each(pairs, val => {
-        var pair = val.split('=');
+        var pair = val.split("=");
         dictionary[pair[0]] = pair[1];
     });
 
-    if (key)
+    if (key) {
         return dictionary[key];
+    }
 
     return dictionary;
 }
@@ -176,8 +182,7 @@ export function load(...modules: string[]): JQueryPromise<any> {
 
         try {
             require(args, dfd.resolve);
-        }
-        catch (ex) {
+        } catch (ex) {
             dfd.reject(ex);
         }
     }).promise();
@@ -194,11 +199,13 @@ export function format(text: string, ...args: any[]): string {
             index = parseInt(match[2], 10),
             value = args[index];
 
-        if (match[1].length > 1 && match[5].length > 1)
+        if (match[1].length > 1 && match[5].length > 1) {
             return "{" + index + (match[3] || "") + "}";
+        }
 
-        if (typeof value === 'undefined')
+        if (typeof value === "undefined") {
             value = "";
+        }
 
         if (match[3]) {
             switch (match[4]) {
@@ -220,7 +227,7 @@ export function format(text: string, ...args: any[]): string {
 
 /** Fill given text with given char while text length < given length */
 export function str_pad(text: string, length: number, char: string, right: boolean = false): string {
-    var str: string = '' + text;
+    var str: string = "" + text;
     while (str.length < length) {
         str = right ? str + char : char + str;
     }
@@ -253,34 +260,42 @@ export function arrayEquals(array1: any[], array2: any[]): boolean {
 
 //#region Prefix Methods
 
+var vendorPrefix = null;
 /** Get current vendor prefix */
 export function getVendorPrefix(): string {
-    if ('result' in arguments.callee) return arguments.callee.result;
+    if (vendorPrefix !== null) {
+        return vendorPrefix;
+    }
 
     var regex = /^(moz|webkit|Moz|Webkit|Khtml|O|ms|Icab)(?=[A-Z])/,
-        someScript = document.getElementsByTagName('script')[0];
+        someScript = document.getElementsByTagName("script")[0];
 
     for (var prop in someScript.style) {
         if (regex.test(prop)) {
-            // test is faster than match, so it's better to perform
+            // test is faster than match, so it"s better to perform
             // that on the lot and match only when necessary
-            return arguments.callee.result = prop.match(regex)[0];
+            return (vendorPrefix = prop.match(regex)[0]);
         }
     }
 
     // Nothing found so far? Webkit does not enumerate over the CSS properties of the style object.
-    // However (prop in style) returns the correct value, so we'll have to test for
+    // However (prop in style) returns the correct value, so we"ll have to test for
     // the precence of a specific property
-    if ('webkitOpacity' in someScript.style) return arguments.callee.result = 'webkit';
-    if ('KhtmlOpacity' in someScript.style) return arguments.callee.result = 'Khtml';
+    if ("webkitOpacity" in someScript.style) {
+        return (vendorPrefix = "webkit");
+    }
+    if ("KhtmlOpacity" in someScript.style) {
+        return (vendorPrefix = "Khtml");
+    }
 
-    return arguments.callee.result = '';
+    return (vendorPrefix = "");
 }
 
 /** Prefix specified property using actual vendor prefix */
 export function prefixStyle(prop: string): string {
-    if ($.support[prop])
+    if ($.support[prop]) {
         return $.support[prop];
+    }
 
     var vendorProp, supportedProp,
 
@@ -291,8 +306,7 @@ export function prefixStyle(prop: string): string {
 
     if (prop in div.style) { // browser supports standard CSS property name
         supportedProp = prop;
-    }
-    else { // otherwise test support for vendor-prefixed property names
+    } else { // otherwise test support for vendor-prefixed property names
         for (var i = 0; i < prefixes.length; i++) {
             vendorProp = prefixes[i] + capProp;
             if (vendorProp in div.style) {

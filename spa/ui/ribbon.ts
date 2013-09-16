@@ -21,8 +21,9 @@ function mapToRibbonItem(array: any) {
 }
 
 function createRibbonItem(item: any): RibbonItem {
-    if (item instanceof RibbonItem)
+    if (item instanceof RibbonItem) {
         return item;
+    }
 
     switch (item.__.toLowerCase()) {
         case "button":
@@ -46,20 +47,27 @@ function createRibbonItem(item: any): RibbonItem {
 }
 
 function getRibbonItemHandler(item: any): string {
-    if (item instanceof RibbonButton)
+    if (item instanceof RibbonButton) {
         return "ribbonButton";
-    if (item instanceof RibbonList)
+    }
+    else if (item instanceof RibbonList) {
         return "ribbonList";
-    if (item instanceof RibbonForm)
+    }
+    else if (item instanceof RibbonForm) {
         return "ribbonForm";
-    if (item instanceof RibbonInput)
+    }
+    else if (item instanceof RibbonInput) {
         return "ribbonInput";
-    if (item instanceof RibbonCheckbox)
+    }
+    else if (item instanceof RibbonCheckbox) {
         return "ribbonCheckbox";
-    if (item instanceof RibbonFlyout)
+    }
+    else if (item instanceof RibbonFlyout) {
         return "ribbonFlyout";
-    if (item instanceof RibbonSlider)
+    }
+    else if (item instanceof RibbonSlider) {
         return "ribbonSlider";
+    }
 }
 
 //#endregion
@@ -85,7 +93,7 @@ export class Ribbon {
     public triggerResize: KnockoutObservable<boolean>;
 
     public backButtonIcon: KnockoutObservable<string>;
-    public backButtonClick: () => any = function () { };
+    public backButtonClick: () => any = function () { return null; };
 
     constructor(options: RibbonOptions) {
         this.pages = utils.createObservableArray(options.pages, this.createPage);
@@ -109,8 +117,9 @@ export class Ribbon {
     public selectPage(page: string): void;
     public selectPage(page: RibbonPage): void;
     public selectPage(page: any): void {
-        if (this.isLocked())
+        if (this.isLocked()) {
             return;
+        }
 
         if (_.isNumber(page)) {
             var index = page;
@@ -161,8 +170,9 @@ export class Ribbon {
     }
 
     private createPage(page: any): RibbonPage {
-        if (page instanceof RibbonPage)
+        if (page instanceof RibbonPage) {
             return page;
+        }
 
         else return new RibbonPage(page);
     }
@@ -197,8 +207,9 @@ export class RibbonPage {
     }
 
     private createGroup(group: any): RibbonGroup {
-        if (group instanceof RibbonGroup)
+        if (group instanceof RibbonGroup) {
             return group;
+        }
 
         return new RibbonGroup(group);
     }
@@ -282,7 +293,7 @@ export class RibbonButton extends RibbonItem {
         this.title = utils.createObservable(options.title, "Button");
         this.icon = utils.createObservable(options.icon, "icon-base");
         this.selected = utils.createObservable(options.selected, false);
-        this.click = options.click || function () { };
+        this.click = options.click || function () { return null; };
 
         super();
     }
@@ -316,7 +327,7 @@ export class RibbonListItem extends RibbonItem {
     constructor(options: RibbonListItemOptions) {
         this.title = utils.createObservable(options.title, "List Item");
         this.icon = utils.createObservable(options.icon, "icon-list-base");
-        this.click = options.click || function () { };
+        this.click = options.click || function () { return null; };
 
         super();
     }
@@ -466,7 +477,7 @@ ko.bindingHandlers.popOut = {
                         return false;
                     });
 
-                    $('html').bind("click.koPop", function (e) {
+                    $("html").bind("click.koPop", function (e) {
                         if ($(e.target).closest(parent.get(0)).length === 0) {
                             options.visible(false);
                         }
@@ -595,7 +606,7 @@ function flyoutAfterRender(nodes: any[]): void {
     var button = $(nodes[0]), ul = $(nodes[1]);
     button.on("click", function (event) {
         if (!ul.is(":visible")) {
-            $('html').on("click", function (e) {
+            $("html").on("click", function (e) {
                 ul.fadeOut();
                 $("html").unbind("click");
             });
@@ -715,7 +726,7 @@ ko.bindingHandlers.ribbonInput = {
             inputBinding = "";
 
         if (type === "textarea") {
-            inputElement = $("<textarea>").addClass('ribbon-textarea');
+            inputElement = $("<textarea>").addClass("ribbon-textarea");
             inputBinding = "value: value";
         }
         else if (type === "select") {
@@ -726,10 +737,10 @@ ko.bindingHandlers.ribbonInput = {
             if (input.optionsValue)
                 inputBinding += ", optionsValue: optionsValue";
 
-            inputElement = $("<select>").addClass('ribbon-select');
+            inputElement = $("<select>").addClass("ribbon-select");
         }
         else {
-            inputElement = $("<input>").addClass('ribbon-input-' + type).attr({ type: type });
+            inputElement = $("<input>").addClass("ribbon-input-" + type).attr({ type: type });
 
             if (type === "checkbox") {
                 inputBinding = "checked: value";
@@ -763,7 +774,7 @@ ko.bindingHandlers.ribbonInput = {
             _class = ko.utils.unwrapObservable(input.class);
 
         if (_class) {
-            var classes = _class.split(' '), css = {};
+            var classes = _class.split(" "), css = {};
             _.each(classes, _class => css[_class] = true);
             ko.bindingHandlers.css.update(element, utils.createAccessor(css), allBindingsAccessor, viewModel, bindingContext);
         }

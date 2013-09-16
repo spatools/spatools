@@ -6,8 +6,9 @@ import engine = require("./templateEngine");
 import ui = require("../ui");
 
 function getBestStep(value: number, step: number): number {
-    if (!step)
+    if (!step) {
         return value;
+    }
 
     var rest = value % step,
         upper = rest >= step / 2;
@@ -106,8 +107,9 @@ export class Slider {
         this.position(pos.x);
     }
     public onMouseMove(e: MouseEvent): void {
-        if (!this.isMouseDown)
-                return;
+        if (!this.isMouseDown) {
+            return;
+        }
 
         var pos = this.getRelativePosition(e.pageX, e.pageY);
         this.position(pos.x);
@@ -130,7 +132,7 @@ export class Slider {
     }
 }
 
-ui.addTemplate("text!ui-slider-template.html", 
+ui.addTemplate("text!ui-slider-template.html",
 	"<div class=\"ui-slider\">" +
 		"<div class=\"ui-slider-bar\">" +
             "<div class=\"ui-slider-handle\" data-bind=\"style: { left: position }\"></div>" +

@@ -77,11 +77,13 @@ export class Filter {
             operator = this.operator(),
             value = this.value();
 
-        if (!field)
+        if (!field) {
             return null;
+        }
 
-        if (!operator && !value) //if field implicite
+        if (!operator && !value) { //if field implicite
             return field;
+        }
 
         return utils.format("{0} {1} {2}", field, operator, this.formatValue(value));
     }
@@ -133,22 +135,24 @@ export class Filter {
     public getValueType(value?: any): string {
         value = _.isUndefined(value) ? this.value() : value;
 
-        if (_.isUndefined(value) || _.isNull(value)) return "null";
-        else if (_.isNumber(value)) return null;
-        else if (guid.isGuid(value)) return "guid";
-        else if (moment(value) && moment(value).isValid()) return "datetime";
-        else if (_.isString(value)) return "string";
+        if (_.isUndefined(value) || _.isNull(value)) { return "null"; }
+        else if (_.isNumber(value)) { return null; }
+        else if (guid.isGuid(value)) { return "guid"; }
+        else if (moment(value) && moment(value).isValid()) { return "datetime"; }
+        else if (_.isString(value)) { return "string"; }
     }
 
     public formatValue(value?: any): string {
         value = _.isUndefined(value) ? this.value() : value;
         var type = this.getValueType(value);
 
-        if (!type)
+        if (!type) {
             return value;
+        }
 
-        if (type === "null")
+        if (type === "null") {
             return !!this.operator() ? type : ""; // if no operator the field is a bool himself
+        }
 
         return utils.format("{0}'{1}'", type.replace("string", ""), value);
     }
@@ -172,7 +176,7 @@ export class FunctionFilter extends Filter {
         this.args = utils.createObservable(args, []);
 
         super(field, operator, value);
-        
+
         this.field = ko.computed(this.formatField, this);
     }
 
@@ -186,7 +190,7 @@ export class FunctionFilter extends Filter {
 
         switch (this.fn()) {
             case string.substringof:
-                return _itemFieldString.toLowerCase().indexOf(argString.toLowerCase()) != -1;
+                return _itemFieldString.toLowerCase().indexOf(argString.toLowerCase()) !== -1;
             case string.endswith:
                 return (new RegExp(argString + "$")).test(_itemFieldString);
             case string.startswith:
@@ -243,8 +247,9 @@ export class FunctionFilter extends Filter {
 
         args = _.isArray(args) ? ko.toJS(args) : [args];
 
-        if (_.contains([string.substringof, string.endswith, string.startswith, string.indexof], fn) && (!args.length || !args[0]))
+        if (_.contains([string.substringof, string.endswith, string.startswith, string.indexof], fn) && (!args.length || !args[0])) {
             return null;
+        }
 
         args = _.map(args, this.formatValue, this);
         return utils.format.apply(null, _.union([fn, this._field()], args));
@@ -254,7 +259,7 @@ export class FunctionFilter extends Filter {
 export class Ordering {
     public field: KnockoutObservable<string>;
     public ascending: KnockoutObservable<boolean>;
-    
+
     constructor(field: any, ascending: any) {
         this.field = utils.createObservable<string>(field);
         this.ascending = utils.createObservable<boolean>(ascending, true);
@@ -274,8 +279,8 @@ export class Ordering {
             var itemField1 = ko.utils.unwrapObservable(item1[field]);
             var itemField2 = ko.utils.unwrapObservable(item2[field]);
 
-            if (itemField1 > itemField2) return 1 * (asc ? 1 : -1);
-            if (itemField1 < itemField2) return -1 * (asc ? 1 : -1);
+            if (itemField1 > itemField2) { return 1 * (asc ? 1 : -1); }
+            if (itemField1 < itemField2) { return -1 * (asc ? 1 : -1); }
             return 0;
         };
     }
@@ -370,7 +375,7 @@ export class ODataQuery {
             case 2:
                 filter = new FunctionFilter(args[0], args[1]);
                 break;
-            
+
             case 3:
                 filter = _.isArray(args[2]) ?
                 new FunctionFilter(args[0], args[1], args[2]) :
@@ -391,8 +396,8 @@ export class ODataQuery {
 
         return this;
     }
-  
-      /** Order by specified field */
+
+    /** Order by specified field */
     public orderby(field: any, ascending?: any): ODataQuery {
         var order = this.ordersby.find(order => order.field() === ko.utils.unwrapObservable(field));
         if (order) {
@@ -430,11 +435,13 @@ export class ODataQuery {
             pageNum = this.pageNum(), pageSize = this.pageSize(),
             selects = this.selects(), expands = this.expands();
 
-        if ((pageNum !== 0 || pageSize !== 0) && this.ordersby.size() === 0)
+        if ((pageNum !== 0 || pageSize !== 0) && this.ordersby.size() === 0) {
             throw "You must specify atleast 1 order function when using paging";
+        }
 
-        if (pageNum !== 0 && pageSize === 0)
+        if (pageNum !== 0 && pageSize === 0) {
             throw "You cannot specify a page number without a page size";
+        }
 
         _.each(this.filters(), function (filter) {
             if (_.isObject(filter)) {

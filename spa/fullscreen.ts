@@ -11,9 +11,9 @@ var api = {
     /** Get if window is currently in full-screen mode */
     isFullScreen: function () { return false; },
     /** Request full-screen mode */
-    requestFullScreen: function () { },
+    requestFullScreen: function () { return null; },
     /** Exit full-screen mode */
-    exitFullScreen: function () { },
+    exitFullScreen: function () { return null; },
     /** Get current fullscreenchange eventName */
     eventName: "",
     /** Get current vendor prefix */
@@ -52,7 +52,7 @@ if (api.isSupported === true) {
         api.requestFullScreen = api.exitFullScreen = function () {
             var wscript = new ActiveXObject("WScript.Shell");
             if (wscript !== null) {
-                wscript.SendKeys('{F11}');
+                wscript.SendKeys("{F11}");
                 isFullScreen = !isFullScreen;
             }
         };
@@ -73,12 +73,12 @@ if (api.isSupported === true) {
         });
         api.isFullScreen = function () {
             switch (this.prefix) {
-                case '':
+                case "":
                     return document.fullScreen;
-                case 'webkit':
+                case "webkit":
                     return document.webkitIsFullScreen;
                 default:
-                    return document[this.prefix + 'FullScreen'];
+                    return document[this.prefix + "FullScreen"];
             }
         };
         if (event.check("fullscreenchange"))

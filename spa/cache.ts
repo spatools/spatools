@@ -22,7 +22,7 @@ export function loadScript(key: string, url: string, force: boolean = false): JQ
     return cache(key, url, "application/x-javascript", force)
         .then(function (entry) {
             var deferred = $.Deferred(),
-                script = doc.createElement('script');
+                script = doc.createElement("script");
 
             script.src = base64.createDataURL("application/x-javascript", entry.content);
             script.setAttribute("name", key);
@@ -66,10 +66,11 @@ export function loadJSON(key: string, url: string, force: boolean = false): JQue
 //#region Private Methods
 
 function cache(key: string, url: string, mime: string, force?: boolean): JQueryPromise<any> {
-    if (cacheEntries[key] === true && !force)
+    if (cacheEntries[key] === true && !force) {
         return $.when(memory[key]);
-    else
+    } else {
         return downloadAndEncode(key, url, mime);
+    }
 }
 
 function downloadAndEncode(key: string, url: string, mime: string): JQueryPromise<any> {

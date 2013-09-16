@@ -6,14 +6,14 @@ import engine = require("./templateEngine");
 import ui = require("../ui");
 
 export var defaults = {
-    cssClass: 'ui-editor',
-    buttonSet: 'default',
-    updateMode: 'blur',
+    cssClass: "ui-editor",
+    buttonSet: "default",
+    updateMode: "blur",
 
     defaultFontFamily: "Arial",
     defaultFontSize: "11px",
     fontFamilies: ko.observableArray(["Arial", "Verdana", "Times New Roman", "Comic Sans Ms", "Helvetica"]),
-    fontSizes: _.map(["8|8px", "9|9px", "10|10px", "11|11px", "12|12px", "14|14px", "16|16px", "18|18px", "20|20px", "22|22px", "24|24px", "26|26px", "28|28px", "36|36px", "48|48px", "72|72px"], function (item) { var sizes = item.split('|'); return { text: sizes[0], value: sizes[1] }; }),
+    fontSizes: _.map(["8|8px", "9|9px", "10|10px", "11|11px", "12|12px", "14|14px", "16|16px", "18|18px", "20|20px", "22|22px", "24|24px", "26|26px", "28|28px", "36|36px", "48|48px", "72|72px"], function (item) { var sizes = item.split("|"); return { text: sizes[0], value: sizes[1] }; }),
 
     popupOffset: {
         top: -15,
@@ -47,9 +47,10 @@ function useStyleWithCss(): void {
             doc.execCommand("useCSS", 0, true);
         } catch (e) {
             try {
-                doc.execCommand('styleWithCSS', false, true);
+                doc.execCommand("styleWithCSS", false, true);
             }
             catch (e) {
+                return false;
             }
         }
     }
@@ -80,14 +81,15 @@ function getNearWord(text: string, index: number): { start: number; end: number 
         end: number,
         start: number = end = index;
 
-    if (!prevChar || !nextChar || prevChar === ' ' || nextChar === ' ')
+    if (!prevChar || !nextChar || prevChar === " " || nextChar === " ") {
         return null;
+    }
 
-    while (prevChar !== ' ' && charRegex.test(prevChar) && start >= 0) {
+    while (prevChar !== " " && charRegex.test(prevChar) && start >= 0) {
         prevChar = text[--start];
     }
 
-    while (nextChar !== ' ' && charRegex.test(nextChar) && end < text.length) {
+    while (nextChar !== " " && charRegex.test(nextChar) && end < text.length) {
         nextChar = text[++end];
     }
 
@@ -125,18 +127,19 @@ function formatFontFamily(font: string, fromDoc?: boolean): string {
     }
 }
 function docColorToHex(docColor: any): string {
-    if (docColor.length > 0 && docColor[0] === '#')
+    if (docColor.length > 0 && docColor[0] === "#") {
         return docColor;
-    else if (parseInt(docColor, 10) == docColor) { // IE
-        var color = utils.str_pad(parseInt(docColor, 10).toString(16), 6, '0');
+    }
+    else if (parseInt(docColor, 10).toString() === docColor) { // IE
+        var color = utils.str_pad(parseInt(docColor, 10).toString(16), 6, "0");
         if (color === "0") color = "000000";
         return "#" + color.substr(4, 2) + color.substr(2, 2) + color.substr(0, 2); // IE is working in inverse order (BGR)
     }
     else if (rgbRegex.test(docColor)) { // rgbColor
         var matches = docColor.match(rgbRegex),
-            color = utils.str_pad(parseInt(matches[1], 10).toString(16), 2, '0') +
-            utils.str_pad(parseInt(matches[2], 10).toString(16), 2, '0') +
-            utils.str_pad(parseInt(matches[3], 10).toString(16), 2, '0');
+            color = utils.str_pad(parseInt(matches[1], 10).toString(16), 2, "0") +
+            utils.str_pad(parseInt(matches[2], 10).toString(16), 2, "0") +
+            utils.str_pad(parseInt(matches[3], 10).toString(16), 2, "0");
 
         return "#" + color;
     }
@@ -146,7 +149,7 @@ function convertColorsToHex(html: string): string {
 }
 
 function setFontFamily(editor: Editor): void {
-    var fontfamily = formatFontFamily(doc.queryCommandValue('fontname'), true),
+    var fontfamily = formatFontFamily(doc.queryCommandValue("fontname"), true),
         families = ko.utils.unwrapObservable(editor.fontFamilies);
 
     if (!_.contains(families, fontfamily))
@@ -171,12 +174,12 @@ function setSelectionFormatting(editor: Editor): void {
         if (fontSize !== style.fontSize) fontSize = null;
     }
 
-    setIfChanged(format.bold, document.queryCommandState('bold'));
-    setIfChanged(format.italic, document.queryCommandState('italic'));
-    setIfChanged(format.underline, document.queryCommandState('underline'));
+    setIfChanged(format.bold, document.queryCommandState("bold"));
+    setIfChanged(format.italic, document.queryCommandState("italic"));
+    setIfChanged(format.underline, document.queryCommandState("underline"));
 
-    setIfChanged(format.subscript, document.queryCommandState('subscript'));
-    setIfChanged(format.superscript, document.queryCommandState('superscript'));
+    setIfChanged(format.subscript, document.queryCommandState("subscript"));
+    setIfChanged(format.superscript, document.queryCommandState("superscript"));
 
     //alignment
     if (document.queryCommandState("justifyleft")) align = "left";
@@ -186,19 +189,19 @@ function setSelectionFormatting(editor: Editor): void {
     if (align) setIfChanged(format.align, align);
 
     setFontFamily(editor);
-    setIfChanged(format.color, document.queryCommandValue('forecolor'));
+    setIfChanged(format.color, document.queryCommandValue("forecolor"));
     if (fontSize) setIfChanged(format.fontsize, fontSize);
 }
 function setEnabledCommands(editor: Editor): void {
     var commands = editor.commands;
-    setIfChanged(commands.undo, document.queryCommandEnabled('undo'));
-    setIfChanged(commands.redo, document.queryCommandEnabled('redo'));
+    setIfChanged(commands.undo, document.queryCommandEnabled("undo"));
+    setIfChanged(commands.redo, document.queryCommandEnabled("redo"));
 
-    setIfChanged(commands.copy, document.queryCommandEnabled('copy'));
-    setIfChanged(commands.cut, document.queryCommandEnabled('cut'));
-    setIfChanged(commands.paste, document.queryCommandEnabled('paste'));
+    setIfChanged(commands.copy, document.queryCommandEnabled("copy"));
+    setIfChanged(commands.cut, document.queryCommandEnabled("cut"));
+    setIfChanged(commands.paste, document.queryCommandEnabled("paste"));
 
-    setIfChanged(commands.unlink, document.queryCommandEnabled('unlink'));
+    setIfChanged(commands.unlink, document.queryCommandEnabled("unlink"));
 }
 
 function _setFontSizeSpecific(element: JQuery, startOffset: number, endOffset: number, range: Range, fontsize): void {
@@ -315,7 +318,7 @@ export var prompts = {
         var text = prompt("Please enter some code :", "var myVar = 1 << 2 * 2 >> 4;");
         callback({
             content: text,
-            language: 'text/javascript',
+            language: "text/javascript",
             mode: "",
             mimeType: "text/javascript"
         });
@@ -386,7 +389,7 @@ export var commands = {
         tagName = tagName || "p";
         tagName = "<" + tagName + ">";
 
-        commands.execCommandOnBlock('formatBlock', false, tagName);
+        commands.execCommandOnBlock("formatBlock", false, tagName);
     },
 
     //#endregion
@@ -424,27 +427,27 @@ export var commands = {
     //#region Inline Commands
 
     bold: function (): void {
-        commands.execCommandOnSelectionOrWord('bold');
+        commands.execCommandOnSelectionOrWord("bold");
         this.setHasChanged();
     },
     italic: function (): void {
-        commands.execCommandOnSelectionOrWord('italic');
+        commands.execCommandOnSelectionOrWord("italic");
         this.setHasChanged();
     },
     underline: function (): void {
-        commands.execCommandOnSelectionOrWord('underline');
+        commands.execCommandOnSelectionOrWord("underline");
         this.setHasChanged();
     },
     subscript: function (): void {
-        commands.execCommandOnSelectionOrWord('subscript');
+        commands.execCommandOnSelectionOrWord("subscript");
         this.setHasChanged();
     },
     superscript: function (): void {
-        commands.execCommandOnSelectionOrWord('superscript');
+        commands.execCommandOnSelectionOrWord("superscript");
         this.setHasChanged();
     },
     unlink: function (): void {
-        commands.execCommandOnSelectionOrWord('unlink');
+        commands.execCommandOnSelectionOrWord("unlink");
         this.setHasChanged();
     },
     fontfamily: function (family: string): void {
@@ -453,15 +456,15 @@ export var commands = {
     },
     fontsize: function (size): void {
         var actualSize = this.formatting.fontsize(),
-            index = _.index(defaults.fontSizes, s => s.value == actualSize),
+            index = _.index(defaults.fontSizes, s => s.value === actualSize),
             selection = window.getSelection(),
             oldRange, range, span;
 
         switch (size) {
-            case '+':
+            case "+":
                 size = index < defaults.fontSizes.length - 1 ? defaults.fontSizes[index + 1].value : actualSize;
                 break;
-            case '-':
+            case "-":
                 size = index > 0 ? defaults.fontSizes[index - 1].value : actualSize;
                 break;
         }
@@ -478,7 +481,7 @@ export var commands = {
         this.setHasChanged();
     },
     clearFormat: function () {
-        commands.execCommandOnSelectionOrWord('removeFormat');
+        commands.execCommandOnSelectionOrWord("removeFormat");
         this.focus();
         this.setHasChanged();
     },
@@ -488,12 +491,12 @@ export var commands = {
     //#region Block Commands
 
     ul: function (): void {
-        commands.execCommandOnBlock('insertunorderedlist');
+        commands.execCommandOnBlock("insertunorderedlist");
         this.focus(); // needed as we loose focus when applied
         this.setHasChanged();
     },
     ol: function (): void {
-        commands.execCommandOnBlock('insertorderedlist');
+        commands.execCommandOnBlock("insertorderedlist");
         this.focus(); // needed as we loose focus when applied
         this.setHasChanged();
     },
@@ -509,17 +512,17 @@ export var commands = {
     },
     align: function (direction: string): void {
         switch (direction) {
-            case 'left':
-                commands.execCommandOnBlock('justifyleft');
+            case "left":
+                commands.execCommandOnBlock("justifyleft");
                 break;
-            case 'center':
-                commands.execCommandOnBlock('justifycenter');
+            case "center":
+                commands.execCommandOnBlock("justifycenter");
                 break;
-            case 'right':
-                commands.execCommandOnBlock('justifyright');
+            case "right":
+                commands.execCommandOnBlock("justifyright");
                 break;
-            case 'justify':
-                commands.execCommandOnBlock('justifyfull');
+            case "justify":
+                commands.execCommandOnBlock("justifyfull");
                 break;
         }
         this.setHasChanged();
@@ -550,13 +553,14 @@ export var commands = {
             oldRange = selection.getRangeAt(0).cloneRange(),
             range = oldRange.cloneRange();
 
-        if (range.startContainer.parentNode.tagName === 'A' || range.endContainer.parentNode.tagName === 'A') {
+        if (range.startContainer.parentNode.tagName === "A" || range.endContainer.parentNode.tagName === "A") {
             commands.unlink.call(this);
         }
         else {
             prompts.link(function (link) {
-                if (utils.isNullOrWhiteSpace(link.href))
+                if (utils.isNullOrWhiteSpace(link.href)) {
                     return;
+                }
 
                 if (range.collapsed) {
                     var container = range.startContainer,
@@ -577,7 +581,7 @@ export var commands = {
                     setSingleRange(selection, oldRange);
 
                 range = selection.getRangeAt(0);
-                if (range.startContainer.parentNode.tagName === 'A') {
+                if (range.startContainer.parentNode.tagName === "A") {
                     var a: any = range.startContainer.parentNode;
 
                     if (!utils.isNullOrWhiteSpace(link.title))
@@ -598,17 +602,18 @@ export var commands = {
             range = selection.getRangeAt(0);
 
         prompts.image(function (image) {
-            if (utils.isNullOrWhiteSpace(image.src))
+            if (utils.isNullOrWhiteSpace(image.src)) {
                 return;
+            }
 
-            var img = doc.createElement('img');
-            img.setAttribute('src', image.src);
+            var img = doc.createElement("img");
+            img.setAttribute("src", image.src);
 
             if (!utils.isNullOrWhiteSpace(image.alt))
-                img.setAttribute('alt', image.alt);
+                img.setAttribute("alt", image.alt);
 
             if (!utils.isNullOrWhiteSpace(image.title))
-                img.setAttribute('title', image.title);
+                img.setAttribute("title", image.title);
 
             if (!utils.isUndefined(image.width))
                 img.style.width = image.width + "px";
@@ -661,50 +666,50 @@ export var buttons = {
     i: { title: "Italic", description: "make the selected text italic", iconCssClass: "ui-editor-sprite icon-italic", command: "italic" },
     u: { title: "Underline", description: "underline the selected text", iconCssClass: "ui-editor-sprite icon-underline", command: "underline" },
 
-    'super': { title: 'Superscript', description: 'make the selected text superscript', iconCssClass: 'ui-editor-sprite icon-superscript', command: 'superscript' },
-    sub: { title: 'Subscript', description: 'make the selected text subscript', iconCssClass: 'ui-editor-sprite icon-subscript', command: 'subscript' },
+    "super": { title: "Superscript", description: "make the selected text superscript", iconCssClass: "ui-editor-sprite icon-superscript", command: "superscript" },
+    sub: { title: "Subscript", description: "make the selected text subscript", iconCssClass: "ui-editor-sprite icon-subscript", command: "subscript" },
 
-    font: { title: 'FontFamily', description: 'change the selected text font family', options: defaults.fontFamilies, width: '170px', command: 'fontfamily' },
-    size: { title: 'FontSize', description: 'change the selected text font size', options: defaults.fontSizes, optionsText: 'text', optionsValue: 'value', width: '40px', command: 'fontsize' },
+    font: { title: "FontFamily", description: "change the selected text font family", options: defaults.fontFamilies, width: "170px", command: "fontfamily" },
+    size: { title: "FontSize", description: "change the selected text font size", options: defaults.fontSizes, optionsText: "text", optionsValue: "value", width: "40px", command: "fontsize" },
 
-    sizeup: { title: 'SizeUp', description: 'make the selected text a step bigger', iconCssClass: 'ui-editor-sprite icon-font-size-up', command: 'fontsize', commandArguments: ['+'] },
-    sizedown: { title: 'SizeDown', description: 'make the selected text a step lower', iconCssClass: 'ui-editor-sprite icon-font-size-down', command: 'fontsize', commandArguments: ['-'] },
+    sizeup: { title: "SizeUp", description: "make the selected text a step bigger", iconCssClass: "ui-editor-sprite icon-font-size-up", command: "fontsize", commandArguments: ["+"] },
+    sizedown: { title: "SizeDown", description: "make the selected text a step lower", iconCssClass: "ui-editor-sprite icon-font-size-down", command: "fontsize", commandArguments: ["-"] },
 
-    h1: { title: 'H1', text: '1', description: 'make the selected text a heading 1', command: 'heading', commandArguments: [1] },
-    h2: { title: 'H2', text: '2', description: 'make the selected text a heading 2', command: 'heading', commandArguments: [2] },
-    h3: { title: 'H3', text: '3', description: 'make the selected text a heading 3', command: 'heading', commandArguments: [3] },
-    h4: { title: 'H4', text: '4', description: 'make the selected text a heading 4', command: 'heading', commandArguments: [4] },
-    h5: { title: 'H5', text: '5', description: 'make the selected text a heading 5', command: 'heading', commandArguments: [5] },
-    h6: { title: 'H6', text: '6', description: 'make the selected text a heading 5', command: 'heading', commandArguments: [6] },
-    h: { title: 'Heading', description: 'select a heading number from below', iconCssClass: 'ui-editor-sprite icon-heading', buttons: [] },
+    h1: { title: "H1", text: "1", description: "make the selected text a heading 1", command: "heading", commandArguments: [1] },
+    h2: { title: "H2", text: "2", description: "make the selected text a heading 2", command: "heading", commandArguments: [2] },
+    h3: { title: "H3", text: "3", description: "make the selected text a heading 3", command: "heading", commandArguments: [3] },
+    h4: { title: "H4", text: "4", description: "make the selected text a heading 4", command: "heading", commandArguments: [4] },
+    h5: { title: "H5", text: "5", description: "make the selected text a heading 5", command: "heading", commandArguments: [5] },
+    h6: { title: "H6", text: "6", description: "make the selected text a heading 5", command: "heading", commandArguments: [6] },
+    h: { title: "Heading", description: "select a heading number from below", iconCssClass: "ui-editor-sprite icon-heading", buttons: [] },
 
-    ul: { title: 'Bulletted List', description: 'add a bulletted list', iconCssClass: 'ui-editor-sprite icon-list', command: 'ul' },
-    ol: { title: 'Numbered List', description: 'add a numbered list', iconCssClass: 'ui-editor-sprite icon-ordered-list', command: 'ol' },
+    ul: { title: "Bulletted List", description: "add a bulletted list", iconCssClass: "ui-editor-sprite icon-list", command: "ul" },
+    ol: { title: "Numbered List", description: "add a numbered list", iconCssClass: "ui-editor-sprite icon-ordered-list", command: "ol" },
 
-    p: { title: 'Paragraph', description: 'add a paragraph', iconCssClass: 'ui-editor-sprite icon-paragraph', command: 'paragraph' },
+    p: { title: "Paragraph", description: "add a paragraph", iconCssClass: "ui-editor-sprite icon-paragraph", command: "paragraph" },
 
     alignLeft: { title: "AlignLeft", description: "Align the text left", iconCssClass: "ui-editor-sprite icon-align-left", command: "align", commandArguments: ["left"] },
     alignCenter: { title: "AlignCenter", description: "Align the text center", iconCssClass: "ui-editor-sprite icon-align-center", command: "align", commandArguments: ["center"] },
     alignRight: { title: "AlignRight", description: "Align the text right", iconCssClass: "ui-editor-sprite icon-align-right", command: "align", commandArguments: ["right"] },
     alignJustify: { title: "AlignJustify", description: "Justify the text left and right", iconCssClass: "ui-editor-sprite icon-align-justify", command: "align", commandArguments: ["justify"] },
 
-    link: { title: 'Link', description: 'add a link', iconCssClass: 'ui-editor-sprite icon-link', command: 'link' },
-    color: { title: 'Color', description: 'change selected text color', iconCssClass: 'ui-editor-sprite icon-color', command: 'color' },
-    image: { title: 'Image', description: 'add an image', iconCssClass: 'ui-editor-sprite icon-image', command: 'image' },
+    link: { title: "Link", description: "add a link", iconCssClass: "ui-editor-sprite icon-link", command: "link" },
+    color: { title: "Color", description: "change selected text color", iconCssClass: "ui-editor-sprite icon-color", command: "color" },
+    image: { title: "Image", description: "add an image", iconCssClass: "ui-editor-sprite icon-image", command: "image" },
 
-    code: { title: 'Code', description: 'add a code block', iconCssClass: 'ui-editor-sprite icon-code', command: 'pre' },
-    quote: { title: 'Quote', description: 'add a quote block', iconCssClass: 'ui-editor-sprite icon-quote', command: 'blockquote' },
-    html: { title: 'Html', description: 'add a html block', iconCssClass: 'ui-editor-sprite icon-html', command: 'html' },
+    code: { title: "Code", description: "add a code block", iconCssClass: "ui-editor-sprite icon-code", command: "pre" },
+    quote: { title: "Quote", description: "add a quote block", iconCssClass: "ui-editor-sprite icon-quote", command: "blockquote" },
+    html: { title: "Html", description: "add a html block", iconCssClass: "ui-editor-sprite icon-html", command: "html" },
 
-    copy: { title: 'Copy', description: 'copy the current selection', iconCssClass: 'ui-editor-sprite icon-copy', command: 'copy' },
-    cut: { title: 'Cut', description: 'cut the current selection', iconCssClass: 'ui-editor-sprite icon-cut', command: 'cut' },
-    paste: { title: 'Paste', description: 'paste the current selection', iconCssClass: 'ui-editor-sprite icon-paste', command: 'paste' },
+    copy: { title: "Copy", description: "copy the current selection", iconCssClass: "ui-editor-sprite icon-copy", command: "copy" },
+    cut: { title: "Cut", description: "cut the current selection", iconCssClass: "ui-editor-sprite icon-cut", command: "cut" },
+    paste: { title: "Paste", description: "paste the current selection", iconCssClass: "ui-editor-sprite icon-paste", command: "paste" },
 
-    undo: { title: 'undo', description: 'undo the last action', iconCssClass: 'ui-editor-sprite icon-undo', command: 'undo' },
-    redo: { title: 'redo', description: 'redo last action', iconCssClass: 'ui-editor-sprite icon-redo', command: 'redo' },
-    datetime: { title: 'datetime', description: 'insert date in selection', iconCssClass: 'ui-editor-sprite icon-datetime', command: 'text', commandArguments: [new Date().toString()] },
+    undo: { title: "undo", description: "undo the last action", iconCssClass: "ui-editor-sprite icon-undo", command: "undo" },
+    redo: { title: "redo", description: "redo last action", iconCssClass: "ui-editor-sprite icon-redo", command: "redo" },
+    datetime: { title: "datetime", description: "insert date in selection", iconCssClass: "ui-editor-sprite icon-datetime", command: "text", commandArguments: [new Date().toString()] },
 
-    clearFormat: { title: 'RemoveFormat', description: 'remove formatting from the current selection', iconCssClass: 'ui-editor-sprite icon-clear-format', command: 'clearFormat' },
+    clearFormat: { title: "RemoveFormat", description: "remove formatting from the current selection", iconCssClass: "ui-editor-sprite icon-clear-format", command: "clearFormat" },
 };
 buttons.h.buttons = [
     buttons.h1, buttons.h2, buttons.h3,
@@ -712,7 +717,7 @@ buttons.h.buttons = [
 ];
 
 export var buttonSets = {
-    'default': [
+    "default": [
         [buttons.b, buttons.i, buttons.u],
         [buttons.ul, buttons.ol],
         [buttons.alignLeft, buttons.alignCenter, buttons.alignRight],
@@ -836,7 +841,7 @@ export class Editor {
         command = ko.utils.unwrapObservable(command);
         args = ko.utils.unwrapObservable(args);
 
-        if (typeof command === 'function') {
+        if (typeof command === "function") {
             command.apply(this, [this].concat(args));
         } else if (commands[command]) {
             commands[command].apply(this, args);
@@ -1069,10 +1074,11 @@ export class EditorRow implements IEditorParent {
             return item;
         }
         else {
-            if (item.options)
+            if (item.options) {
                 return new EditorSelect(item, this);
-            else
+            } else {
                 return new EditorButton(item, this);
+            }
         }
     }
 }
@@ -1253,8 +1259,9 @@ export class EditorSelect extends EditorItem {
         this.value = ko.computed({
             read: val,
             write: function (newValue) {
-                if (!this.editor.isEditing())
+                if (!this.editor.isEditing()) {
                     return;
+                }
 
                 var _value = val();
                 if (_value !== newValue) {
@@ -1325,8 +1332,9 @@ ko.bindingHandlers.editor = {
 
         $element
             .on("click", (e: JQueryMouseEventObject) => {
-                if (!editor.isEnabled())
+                if (!editor.isEnabled()) {
                     return;
+                }
 
                 if (!editor.isEditing()) {
                     createEditorPopup(editor, popup => {
@@ -1358,9 +1366,10 @@ ko.bindingHandlers.editor = {
                 event.stopPropagation(e);
                 return false;
             })
-            .bind('blur keyup paste', function(e: JQueryEventObject) {
-                if (!editor.isEnabled())
+            .bind("blur keyup paste", function(e: JQueryEventObject) {
+                if (!editor.isEnabled()) {
                     return;
+                }
 
                 if (editor.value() !== $(this).html()) {
                     editor.setHasChanged();

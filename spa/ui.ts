@@ -9,9 +9,9 @@ export function addTemplate(id: string, template: string, engine?: KnockoutTempl
         return;
     }
 
-    if ($('#' + id).length === 0) {
+    if ($("#" + id).length === 0) {
         utils.unsafe(function () {
-            $("body").append('<script id="' + id + '" type="text/html">' + template + '</script>'); // create the template
+            $("body").append("<script id='" + id + "' type='text/html'>" + template + "</script>"); // create the template
         });
     }
 }
