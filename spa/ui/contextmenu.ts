@@ -165,10 +165,10 @@ ui.addTemplate("text!contextmenu-item-template.html", "\
 		<!-- /ko -->\
 	</li>", engine.defaultInstance);
 
-ui.addTemplate("text!contextmenu-template.html", "\
-	<div class=\"ui-context nocontext\" style=\"position:absolute;\" data-bind=\"css: cssClass, style: { width: width, zIndex: zIndex }\">\
-		<ul data-bind='template: { name: \"text!contextmenu-item-template.html\", foreach: items, templateEngine: $root.engine }'></ul>\
-	</div>", engine.defaultInstance);
+ui.addTemplate("text!contextmenu-template.html", 
+	"<div class=\"ui-context nocontext\" style=\"position:absolute;\" data-bind=\"css: cssClass, style: { width: width, zIndex: zIndex }\">" +
+		"<ul data-bind='template: { name: \"text!contextmenu-item-template.html\", foreach: items, templateEngine: $root.engine }'></ul>" +
+	"</div>", engine.defaultInstance);
 
     //#endregion
 

@@ -1278,32 +1278,32 @@ export class EditorSelect extends EditorItem {
 //#region Templates
 
 ui.addTemplate("text!editor-button-template.html",
-    "<button data-bind=\"hover: 'hover', css: { disable: !isEnabled(), active: isActive }, enable: isEnabled, click: executeCommand, clickBubble: false\" tabindex=\"-1\">\
-			<span class=\"icon\" data-bind=\"css: iconCssClass, text: text\"></span>\
-		</button>\
-		<!-- ko if: hasSubMenu -->\
-			<ul data-bind=\"css: { visible: isSubActive }, foreach: buttons\">\
-				<li data-bind=\"hover : 'hover', attr: { title: description }, click: keepFocus, clickBubble: false\">\
-					<button class=\"button-inner\" data-bind=\"click: executeCommand, clickBubble: false\">\
-				        <span class=\"icon\" data-bind=\"css: iconCssClass, text: text\"></span>\
-					</button>\
-				</li>\
-			</ul>\
-		<!-- /ko -->", engine.defaultInstance);
+    "<button data-bind=\"hover: 'hover', css: { disable: !isEnabled(), active: isActive }, enable: isEnabled, click: executeCommand, clickBubble: false\" tabindex=\"-1\">" +
+		"<span class=\"icon\" data-bind=\"css: iconCssClass, text: text\"></span>" +
+	"</button>" +
+	"<!-- ko if: hasSubMenu -->" +
+		"<ul data-bind=\"css: { visible: isSubActive }, foreach: buttons\">" +
+			"<li data-bind=\"hover : 'hover', attr: { title: description }, click: keepFocus, clickBubble: false\">" +
+				"<button class=\"button-inner\" data-bind=\"click: executeCommand, clickBubble: false\">" +
+				    "<span class=\"icon\" data-bind=\"css: iconCssClass, text: text\"></span>" +
+				"</button>" +
+			"</li>" +
+		"</ul>" +
+	"<!-- /ko -->", engine.defaultInstance);
 
 ui.addTemplate("text!editor-select-template.html", "<select data-bind=\"options: options, optionsText: optionsText, optionsValue: optionsValue, value: value, style: { width: width }\"></select>", engine.defaultInstance);
 
 ui.addTemplate("text!editor-item-template.html", "<li class=\"ui-editor-item\" data-bind=\"hover : 'hover', attr: { title: description }, template: { name: template, data: $data, templateEngine: $root.engine }\"></li>", engine.defaultInstance);
 
 ui.addTemplate("text!editor-template.html",
-    "<div class=\"ui-editor\" data-bind=\"style: { top: position.top() + 'px', left: position.left() + 'px' }, click: keepFocus, clickBubble: false\">\
-		<div class=\"ui-editor-content\" data-bind=\"foreach: groups\">\
-            <div class=\"ui-editor-group\" data-bind=\"css : { first: isFirst, last: isLast }, foreach: rows\">\
-                <ul class=\"ui-editor-row\" data-bind=\"template: { name: 'text!editor-item-template.html', foreach: items, templateEngine: $root.engine }\"></ul>\
-            </div>\
-        </div>\
-		<div class=\"ui-editor-move\" title=\"click and hold to move\" data-bind=\"draggable: { container: 'body', top: position.top, left: position.left, dragStart: removeTransitions, dragEnd: restoreTransitions }\"></div>\
-	</div>", engine.defaultInstance);
+    "<div class=\"ui-editor\" data-bind=\"style: { top: position.top() + 'px', left: position.left() + 'px' }, click: keepFocus, clickBubble: false\">" +
+		"<div class=\"ui-editor-content\" data-bind=\"foreach: groups\">" +
+            "<div class=\"ui-editor-group\" data-bind=\"css : { first: isFirst, last: isLast }, foreach: rows\">" +
+                "<ul class=\"ui-editor-row\" data-bind=\"template: { name: 'text!editor-item-template.html', foreach: items, templateEngine: $root.engine }\"></ul>" +
+            "</div>" +
+        "</div>" +
+		"<div class=\"ui-editor-move\" title=\"click and hold to move\" data-bind=\"draggable: { container: 'body', top: position.top, left: position.left, dragStart: removeTransitions, dragEnd: restoreTransitions }\"></div>" +
+	"</div>", engine.defaultInstance);
 
 //#endregion
 

@@ -636,21 +636,21 @@ export class TreeNode implements TreeContainer {
 
 //#region Templates
 
-ui.addTemplate("text!ui-tree-item-template.html", "\
-	<li data-bind=\"contextMenu: contextMenu, css: { empty: !hasChildren(), open: isOpen, rename: isRenaming }, hover: 'hover', classes: cssClass, attr: { 'data-id': id() }\">\
-        <!-- ko if: showAddBefore() --><div class=\"node-order top\" data-bind=\"hover: 'hover', treenodedrop: { active : true, onDropComplete: moveBefore }\"></div><!-- /ko -->\
-		<div class=\"node\" data-bind=\"treenodedrag: isDraggable(), treenodedrop: { active : isDropTarget(), onDropComplete: move }, css: { selected: isSelected }, hover: 'hover', event: { dblclick: doubleClick, mousedown: clicked }\">\
-			<!-- ko if: hasChildren() --><span class=\"handle\" data-bind=\"click: toggle, hover : 'hover'\"></span><!-- /ko -->\
-			<!-- ko ifnot: hasChildren() --><span class=\"handle\"></span><!-- /ko -->\
-            <span class=\"icon\" data-bind=\"classes: iconCssClass\"></span>\
-            <label data-bind=\"visible: !isRenaming(), text: name\" unselectable=\"on\"></label>\
-            <input class=\"rename\" type=\"text\" data-bind=\"treenoderename: name, onRenameComplete : rename, treenodeselectvisible: isRenaming\"/>\
-		</div>\
-        <!-- ko if: showAddAfter() --><div class=\"node-order bottom\" data-bind=\"hover: 'hover', treenodedrop: { active : true, onDropComplete: moveAfter }\"></div><!-- /ko -->\
-		<!-- ko if: hasChildren() -->\
-		<ul data-bind='visible: isOpen, template: { name: \"text!ui-tree-item-template.html\", foreach: children, templateEngine: $root.engine }'></ul>\
-		<!-- /ko -->\
-	</li>", engine.defaultInstance);
+ui.addTemplate("text!ui-tree-item-template.html", 
+	"<li data-bind=\"contextMenu: contextMenu, css: { empty: !hasChildren(), open: isOpen, rename: isRenaming }, hover: 'hover', classes: cssClass, attr: { 'data-id': id() }\">" +
+        "<!-- ko if: showAddBefore() --><div class=\"node-order top\" data-bind=\"hover: 'hover', treenodedrop: { active : true, onDropComplete: moveBefore }\"></div><!-- /ko -->" +
+		"<div class=\"node\" data-bind=\"treenodedrag: isDraggable(), treenodedrop: { active : isDropTarget(), onDropComplete: move }, css: { selected: isSelected }, hover: 'hover', event: { dblclick: doubleClick, mousedown: clicked }\">" +
+			"<!-- ko if: hasChildren() --><span class=\"handle\" data-bind=\"click: toggle, hover : 'hover'\"></span><!-- /ko -->" +
+			"<!-- ko ifnot: hasChildren() --><span class=\"handle\"></span><!-- /ko -->" +
+            "<span class=\"icon\" data-bind=\"classes: iconCssClass\"></span>" +
+            "<label data-bind=\"visible: !isRenaming(), text: name\" unselectable=\"on\"></label>" +
+            "<input class=\"rename\" type=\"text\" data-bind=\"treenoderename: name, onRenameComplete : rename, treenodeselectvisible: isRenaming\"/>" +
+		"</div>" +
+        "<!-- ko if: showAddAfter() --><div class=\"node-order bottom\" data-bind=\"hover: 'hover', treenodedrop: { active : true, onDropComplete: moveAfter }\"></div><!-- /ko -->" +
+		"<!-- ko if: hasChildren() -->" +
+		"<ul data-bind='visible: isOpen, template: { name: \"text!ui-tree-item-template.html\", foreach: children, templateEngine: $root.engine }'></ul>" +
+		"<!-- /ko -->" +
+	"</li>", engine.defaultInstance);
 
 ui.addTemplate("text!ui-tree-container-template.html", "<div><ul class=\"ui-tree\" data-bind=\"template: { name : 'text!ui-tree-item-template.html', foreach: $data.children, templateEngine: $data.engine }\"></ul></div>", engine.defaultInstance);
 

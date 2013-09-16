@@ -130,13 +130,13 @@ export class Slider {
     }
 }
 
-ui.addTemplate("text!ui-slider-template.html", "\
-	<div class=\"ui-slider\">\
-		<div class=\"ui-slider-bar\">\
-            <div class=\"ui-slider-handle\" data-bind=\"style: { left: position }\"></div>\
-		</div>\
-		<div class=\"ui-slider-overlay\" data-bind=\"sliderEvents: true\"></div>\
-	</div>", engine.defaultInstance);
+ui.addTemplate("text!ui-slider-template.html", 
+	"<div class=\"ui-slider\">" +
+		"<div class=\"ui-slider-bar\">" +
+            "<div class=\"ui-slider-handle\" data-bind=\"style: { left: position }\"></div>" +
+		"</div>" +
+		"<div class=\"ui-slider-overlay\" data-bind=\"sliderEvents: true\"></div>" +
+	"</div>", engine.defaultInstance);
 
 ko.bindingHandlers.slider = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
