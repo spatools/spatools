@@ -69,3 +69,5 @@ Javascript ORM to connect to REST / OData Web Service.
 	* Append slider widget
 * 0.4.1
 	* Change project location in NuGet
+* 0.4.2
+	* Fix compatibility issue with new moment version
