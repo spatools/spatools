@@ -79,6 +79,9 @@
       <DependentUpon>variables.less</DependentUpon>
     </Content>
     <None Include="LICENSE" />
+    <Content Include="nuget\SPATools.Base.nuspec">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="samples\contextmenu.html" />
     <Content Include="Scripts\qunit-1.12.0.js" />
     <Content Include="Scripts\typings\qunit\qunit.d.ts" />
@@ -88,7 +91,6 @@
     <Content Include="spa\ui\tree.ts" />
     <Content Include="spa\ui\ribbon.ts" />
     <Content Include="spa\ui\draggable.ts" />
-    <Content Include="nuget\SPATools.Base.nuspec" />
     <Content Include="nuget\SPATools.Modules.Base.nuspec" />
     <Content Include="nuget\SPATools.Modules.Advanced.nuspec" />
     <Content Include="nuget\SPATools.Modules.Interactions.nuspec" />
