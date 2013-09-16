@@ -60,4 +60,11 @@ Javascript ORM to connect to REST / OData Web Service.
 	* Fix issue in DataSet.remove
 	* Fix RibbonForm.inline not working and Add class to RibbonInput
 	* Fix missing empty guid
-
+* 0.4.0
+	* Remove base library (all is now require based)
+	* Optimize bad string EOL on widget
+	* Optimize data framework
+	* TS Lint & JS Hint all modules
+	* Upgrade nuget packages
+	* Change project location in nuget
+	* Append slider widget

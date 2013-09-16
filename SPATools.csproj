@@ -78,6 +78,7 @@
     <Content Include="css\variables.css">
       <DependentUpon>variables.less</DependentUpon>
     </Content>
+    <None Include="LICENSE" />
     <Content Include="samples\contextmenu.html" />
     <Content Include="Scripts\qunit-1.12.0.js" />
     <Content Include="Scripts\typings\qunit\qunit.d.ts" />
