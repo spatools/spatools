@@ -3,6 +3,7 @@
 import loader = require("./loader");
 import base64 = require("./base64");
 import store = require("./store");
+import utils = require("./utils");
 
 var cacheKeyPrefix: string = "__SPA_CACHE__",
     cacheEntries: { [key: string]: boolean } = {},
@@ -21,17 +22,19 @@ export function load(key: string, url: string, mime: string = "text/plain", forc
 export function loadScript(key: string, url: string, force: boolean = false): JQueryPromise<any> {
     return cache(key, url, "application/x-javascript", force)
         .then(function (entry) {
-            var deferred = $.Deferred(),
-                script = doc.createElement("script");
+            return utils.unsafe(() => {
+                var deferred = $.Deferred(),
+                    script = doc.createElement("script");
 
-            script.src = base64.createDataURL("application/x-javascript", entry.content);
-            script.setAttribute("name", key);
-            script.onload = deferred.resolve;
-            script.onerror = deferred.reject;
+                script.src = base64.createDataURL("application/x-javascript", entry.content);
+                script.setAttribute("name", key);
+                script.onload = deferred.resolve;
+                script.onerror = deferred.reject;
 
-            head.appendChild(script);
+                head.appendChild(script);
 
-            return deferred.promise();
+                return deferred.promise();
+            });
         });
 }
 

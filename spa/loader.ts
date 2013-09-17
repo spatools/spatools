@@ -1,5 +1,7 @@
 /// <reference path="_definitions.d.ts" />
 
+import utils = require("./utils");
+
 var doc = document, head = doc.head,
     interval = 10, timeout = 150000,
     cssRules, sheet;
@@ -36,14 +38,18 @@ export function loadStyle(css: string): JQueryPromise<any> {
 /** Load specified stylesheet by url */
 export function loadStylesheet(url: string): JQueryPromise<string> {
     return $.Deferred(function (dfd) {
-        var link = doc.createElement("link");
+        var link;
 
-        link.rel = "stylesheet";
-        link.type = "text/css";
-        link.media = "all";
-        link.href = url;
+        utils.unsafe(() => {
+            link = doc.createElement("link");
 
-        var timeoutId = setTimeout(function () { dfd.reject(url); }, timeout),
+            link.rel = "stylesheet";
+            link.type = "text/css";
+            link.media = "all";
+            link.href = url;
+        });
+
+        var timeoutId = setTimeout(() => dfd.reject(url), timeout),
             intervalId = setInterval(_.partial(checkStyleSheetLoaded, url, link, dfd), interval),
             id;
 
@@ -54,16 +60,18 @@ export function loadStylesheet(url: string): JQueryPromise<string> {
             }
         }
 
-        if ("onload" in link) link.onload = function () { return dfd.resolve(url); };
-        if ("onerror" in link) link.onerror = function () { return dfd.reject(url); };
-        if ("onreadystatechange" in link) link.onreadystatechange = function () { if (this.readyState === "complete" || this.readyState === "loaded") return link[sheet][cssRules].length ? dfd.resolve(url) : dfd.reject(url); };
+        if ("onload" in link) link.onload = () => dfd.resolve(url);
+        if ("onerror" in link) link.onerror = () => dfd.reject(url);
+        if ("onreadystatechange" in link) link.onreadystatechange = () => { if (this.readyState === "complete" || this.readyState === "loaded") return link[sheet][cssRules].length ? dfd.resolve(url) : dfd.reject(url); };
         
-        id = setTimeout(function () {
-            clearTimeout(id); id = null;
-            head.appendChild(link);
+        id = setTimeout(() => {
+            utils.unsafe(() => {
+                clearTimeout(id); id = null;
+                head.appendChild(link);
+            });
         }, 1);
 
-        dfd.always(function () {
+        dfd.always(() => {
             clearTimeout(timeoutId);
             clearInterval(intervalId);
             if ("onload" in link) link.onload = null;
