@@ -35,19 +35,34 @@ export function dateToString(moment: Moment, unix: boolean, utc: boolean, format
 }
 
 export function getMomentDuration(timeSpan: string): Duration {
-    var regex = /((\d*)\.)?(\d{2}):(\d{2}):(\d{2})(\.(\d{0,3}))?/;
-    if (regex.test(timeSpan)) {
-        var matches = timeSpan.match(regex);
-        var options = {
+    var litRegex = /((\d*)\.)?(\d{2}):(\d{2}):(\d{2})(\.(\d{0,3}))?/,
+        isoRegex = /^P(([\d\.]+)Y)?(([\d\.]+)M)?(([\d\.]+)D)?T(([\d\.]+)H)?(([\d\.]+)M)?(([\d\.]+)S)?$/,
+        matches, options;
+
+    if (isoRegex.test(timeSpan)) {
+        matches = timeSpan.match(isoRegex);
+        options = {
+            years: matches[1] ? parseFloat(matches[2]) : 0,
+            months: matches[3] ? parseFloat(matches[4]) : 0,
+            days: matches[5] ? parseFloat(matches[6]) : 0,
+            hours: matches[7] ? parseFloat(matches[8]) : 0,
+            minutes: matches[9] ? parseFloat(matches[10]) : 0,
+            seconds: matches[11] ? parseFloat(matches[12]) : 0
+        };
+    }
+    else if (litRegex.test(timeSpan)) {
+        matches = timeSpan.match(litRegex);
+        options = {
             milliseconds: parseInt(matches[7] || 0, 10),
             seconds: parseInt(matches[5], 10),
             minutes: parseInt(matches[4], 10),
             hours: parseInt(matches[3], 10),
             days: parseInt(matches[2] || 0, 10)
         };
-
-        return moment.duration(options);
     }
+
+    if (options)
+        return moment.duration(options);
 }
 
 export function init(): void {
