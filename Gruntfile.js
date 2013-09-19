@@ -17,7 +17,7 @@
                 target: "es3",
                 module: "amd",
                 sourcemap: false,
-                declaration: true,
+                declaration: false,
                 comments: false,
                 disallowbool: true,
                 disallowimportmodule: true
@@ -26,29 +26,31 @@
                 src: "base/*.ts",
                 dest: "<%= paths.output %>/spatools.js",
                 options: {
-                    module: "commonjs"
+                    module: "commonjs",
+                    declaration: true
                 }
             },
             modules: {
                 src: "spa/**/*.ts",
-                dest: "<%= paths.output %>/",
-                options: {
-                    declaration: false
-                }
+                dest: "<%= paths.output %>/"
             },
             data: {
                 src: "spa/data/**/*.ts",
-                dest: "<%= paths.output %>/",
-                options: {
-                    declaration: false
-                }
+                dest: "<%= paths.output %>/"
+            },
+            math: {
+                src: [
+                    "spa/math/**/*.ts",
+                    "spa/math.ts"
+                ],
+                dest: "<%= paths.output %>/"
             },
             ui: {
-                src: "spa/ui/**/*.ts",
-                dest: "<%= paths.output %>/",
-                options: {
-                    declaration: false
-                }
+                src: [
+                    "spa/ui/**/*.ts",
+                    "spa/ui.ts"
+                ],
+                dest: "<%= paths.output %>/"
             },
             samples: {
                 src: "samples/**/*.ts",
@@ -161,18 +163,24 @@
 
 
     // Build Steps
-    grunt.registerTask("build_base", ["typescript:base", "uglify:base"]);
-    grunt.registerTask("build_modules", ["typescript:modules", "copy:modules"]);
-    grunt.registerTask("build_samples", ["typescript:samples", "copy:samples"]);
-    grunt.registerTask("build_assets", ["copy:assets"]);
+    grunt.registerTask("files", ["copy:assets"]);
     grunt.registerTask("build_ui", ["typescript:ui", "less"]);
     grunt.registerTask("build_data", ["typescript:data"]);
-    grunt.registerTask("build_tests", ["typescript:tests", "copy:tests"]);
-    grunt.registerTask("run_tests", ["qunit:tests"]);
+    grunt.registerTask("build_math", ["typescript:math"]);
 
+    var buildTasks = grunt.option("nohint") ? ["typescript:modules", "copy:modules"] : ["tslint", "typescript:modules", "copy:modules", "jshint"],
+        defaultTask = [];
+
+    grunt.option("nobuild") || defaultTask.push("build");
+    grunt.option("nosamples") || defaultTask.push("samples");
+    grunt.option("nofiles") || defaultTask.push("files");
+    grunt.option("nostyles") || defaultTask.push("less");
+    grunt.option("notest") || defaultTask.push("test");
 
     // Buildset Tasks
-    grunt.registerTask("tests", ["build_tests", "run_tests"]);
-    grunt.registerTask("default", ["tslint", "build_modules", "jshint", "build_samples", "build_assets", "less", "tests"]);
+    grunt.registerTask("build", buildTasks)
+    grunt.registerTask("samples", ["typescript:samples", "copy:samples"]);
+    grunt.registerTask("test", ["typescript:tests", "copy:tests", "qunit:tests"]);
+    grunt.registerTask("default", defaultTask);
     grunt.registerTask("publish", ["nugetpack", "nugetpush"]);
 };
