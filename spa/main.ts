@@ -1,11 +1,8 @@
 /// <reference path="_definitions.d.ts" />
+/// <amd-dependency path="./knockout" />
+/// <amd-dependency path="./moment" />
+/// <amd-dependency path="./underscore" />
 
-import handlers = require("./handlers");
-import extenders = require("./extenders");
+import knockout = require("./knockout");
 import moment = require("./moment");
 import underscore = require("./underscore");
-
-underscore.addToObservableArrays();
-
-if (window.moment)
-    moment.init();

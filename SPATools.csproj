@@ -85,8 +85,15 @@
     <Content Include="samples\contextmenu.html" />
     <Content Include="Scripts\qunit-1.12.0.js" />
     <Content Include="Scripts\typings\qunit\qunit.d.ts" />
+    <TypeScriptCompile Include="spa\math.ts" />
+    <TypeScriptCompile Include="spa\math\base.ts" />
+    <TypeScriptCompile Include="spa\math\matrix.ts" />
     <Content Include="spa\ui\editor.ts" />
     <Content Include="tslint.json" />
+    <TypeScriptCompile Include="spa\math\matrix3.ts" />
+    <TypeScriptCompile Include="spa\math\matrix4.ts" />
+    <TypeScriptCompile Include="spa\math\vector2.ts" />
+    <TypeScriptCompile Include="spa\math\vector3.ts" />
     <TypeScriptCompile Include="spa\ui\slider.ts" />
     <Content Include="spa\ui\tree.ts" />
     <Content Include="spa\ui\ribbon.ts" />
@@ -167,7 +174,6 @@
     <Content Include="spa\data\stores\localstorage.ts" />
     <Content Include="spa\data\stores\indexeddb.ts" />
     <Content Include="spa\event.ts" />
-    <Content Include="spa\extenders.ts" />
     <Content Include="base\handlers.ts" />
     <Content Include="spa\fullscreen.ts" />
     <Content Include="spa\keyboard.ts" />
@@ -218,7 +224,7 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="spa\handlers.ts" />
+    <Content Include="spa\knockout.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="base\extenders.ts" />

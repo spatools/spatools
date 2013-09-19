@@ -149,13 +149,11 @@ _.each(
         };
     });
 
-export function addToObservableArrays(): void {
-    ko.utils.extend(ko.observableArray.fn, collections);
-}
-
 export function addToSubscribable<T>(val: KnockoutSubscribable<T>): void {
     ko.utils.extend(val, collections);
 }
+
+ko.utils.extend(ko.observableArray.fn, collections);
 
 //#endregion
 

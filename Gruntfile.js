@@ -23,12 +23,12 @@
                 disallowimportmodule: true
             },
             base: {
-                src: "base/*.ts",
-                dest: "<%= paths.output %>/spatools.js",
-                options: {
-                    module: "commonjs",
-                    declaration: true
-                }
+                src: "spa/main.ts",
+                dest: "<%= paths.output %>/",
+                //options: {
+                //    module: "commonjs",
+                //    declaration: true
+                //}
             },
             modules: {
                 src: "spa/**/*.ts",
