@@ -179,8 +179,7 @@
     grunt.loadNpmTasks('grunt-nuget');
 
     grunt.registerMultiTask('nugetdeps', 'NuGet Dependencies - Upgrade dependencies version', function () {
-        var _ = grunt.util._,
-            params = this.options(),
+        var params = this.options(),
             depRegexGlobal = /<dependency[^>]*\/>/g,
             depRegex = /<dependency\s+id="([^"]+)"\s+version="([^"]+)"\s+\/>/;
 
@@ -223,7 +222,7 @@
     grunt.option("notest") || defaultTask.push("test");
 
     // Buildset Tasks
-    grunt.registerTask("build", buildTasks)
+    grunt.registerTask("build", buildTasks);
     grunt.registerTask("samples", ["typescript:samples", "copy:samples"]);
     grunt.registerTask("test", ["typescript:tests", "copy:tests", "qunit:tests"]);
     grunt.registerTask("default", defaultTask);
