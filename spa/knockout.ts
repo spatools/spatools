@@ -6,19 +6,19 @@ import utils = require("./utils");
 
 ko.bindingHandlers.limitedText = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(valueAccessor());
-        var attr = ko.utils.unwrapObservable(options.attr || "text");
+        var options = ko.unwrap(valueAccessor()),
+            attr = ko.unwrap(options.attr || "text");
 
         if (attr === "html")
             ko.bindingHandlers.html.init(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
     },
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(valueAccessor());
-        var text = ko.utils.unwrapObservable(options.text);
-        var length = ko.utils.unwrapObservable(options.length);
-        var suffix = ko.utils.unwrapObservable(options.suffix || "...");
-        var escapeCR = ko.utils.unwrapObservable(options.escapeCR || false);
-        var attr = ko.utils.unwrapObservable(options.attr || "text");
+        var options = ko.unwrap(valueAccessor()),
+            text = ko.unwrap(options.text),
+            length = ko.unwrap(options.length),
+            suffix = ko.unwrap(options.suffix || "..."),
+            escapeCR = ko.unwrap(options.escapeCR || false),
+            attr = ko.unwrap(options.attr || "text");
 
         var result = text;
         if (text) {
@@ -42,12 +42,12 @@ ko.bindingHandlers.limitedText = {
 };
 ko.bindingHandlers.pad = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(valueAccessor()),
-            text = ko.utils.unwrapObservable(options.text),
-            length = ko.utils.unwrapObservable(options.length),
-            char = ko.utils.unwrapObservable(options.char || "0"),
-            prefix = ko.utils.unwrapObservable(options.prefix || ""),
-            right = ko.utils.unwrapObservable(options.right || false);
+        var options = ko.unwrap(valueAccessor()),
+            text = String(ko.unwrap(options.text)),
+            length = ko.unwrap(options.length),
+            char = ko.unwrap(options.char || "0"),
+            prefix = ko.unwrap(options.prefix || ""),
+            right = ko.unwrap(options.right || false);
 
         while (text.length < length) {
             text = right ? text + char : char + text;
@@ -58,13 +58,13 @@ ko.bindingHandlers.pad = {
 };
 ko.bindingHandlers.formatText = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(valueAccessor()),
-            format = ko.utils.unwrapObservable(options.format),
-            values = ko.utils.unwrapObservable(options.values),
+        var options = ko.unwrap(valueAccessor()),
+            format = ko.unwrap(options.format),
+            values = ko.unwrap(options.values),
             args = [format];
 
         _.each(values, function (value) {
-            args.push(ko.utils.unwrapObservable(value));
+            args.push(ko.unwrap(value));
         });
 
         ko.bindingHandlers.text.update(element, utils.createAccessor(utils.format.apply(null, args)), allBindingsAccessor, viewModel, bindingContext);
@@ -101,7 +101,7 @@ function simplifySize(size: string, suffix: string = ""): string {
 
 ko.bindingHandlers.filesize = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var value = ko.utils.unwrapObservable(valueAccessor()),
+        var value = ko.unwrap(valueAccessor()),
             suffix = allBindingsAccessor().suffix || "B";
 
         ko.bindingHandlers.text.update(element, utils.createAccessor(simplifySize(value, suffix)), allBindingsAccessor, viewModel, bindingContext);
@@ -114,7 +114,7 @@ ko.bindingHandlers.filesize = {
 
 ko.bindingHandlers.src = {
     update: function (element, valueAccessor) {
-        var value = ko.utils.unwrapObservable(valueAccessor());
+        var value = ko.unwrap(valueAccessor());
 
         if (element.src !== value)
             element.setAttribute("src", value);
@@ -122,20 +122,20 @@ ko.bindingHandlers.src = {
 };
 ko.bindingHandlers.href = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var value = ko.utils.unwrapObservable(valueAccessor());
+        var value = ko.unwrap(valueAccessor());
         ko.bindingHandlers.attr.update(element, utils.createAccessor({ href: value }), allBindingsAccessor, viewModel, bindingContext);
     }
 };
 ko.bindingHandlers.mailto = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var email = ko.utils.unwrapObservable(valueAccessor());
+        var email = ko.unwrap(valueAccessor());
         ko.bindingHandlers.href.update(element, utils.createAccessor("mailto:" + email), allBindingsAccessor, viewModel, bindingContext);
     }
 };
 
 ko.bindingHandlers.classes = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var value = ko.utils.unwrapObservable(valueAccessor()),
+        var value = ko.unwrap(valueAccessor()),
             css = {};
 
         if (value) {
@@ -154,7 +154,7 @@ ko.bindingHandlers.classes = {
 
 ko.bindingHandlers.on = {
     init: function (element, valueAccessor) {
-        var handlers = ko.utils.unwrapObservable(valueAccessor()),
+        var handlers = ko.unwrap(valueAccessor()),
             $element = $(element);
 
         _.each(handlers, function (handler, key?) {
@@ -164,7 +164,7 @@ ko.bindingHandlers.on = {
 };
 ko.bindingHandlers.hover = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var value = ko.utils.unwrapObservable(valueAccessor());
+        var value = ko.unwrap(valueAccessor());
 
         if (typeof value === "string")
             value = { classes: value };
@@ -189,8 +189,8 @@ ko.bindingHandlers.hover = {
 ko.bindingHandlers.toggle = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
         var value = valueAccessor(),
-            options = ko.utils.unwrapObservable(value),
-            event = ko.utils.unwrapObservable(options.event) || "click",
+            options = ko.unwrap(value),
+            event = ko.unwrap(options.event) || "click",
             eventValue = {};
 
         if (_.isBoolean(options))
@@ -231,11 +231,11 @@ function createToggleClassAccessor(element, off, on, down) {
 
 ko.bindingHandlers.toggleClass = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var value = ko.utils.unwrapObservable(valueAccessor()),
-            off = ko.utils.unwrapObservable(value.off),
-            on = ko.utils.unwrapObservable(value.on),
-            down = ko.utils.unwrapObservable(value.down),
-            useParent = ko.utils.unwrapObservable(value.useParent),
+        var value = ko.unwrap(valueAccessor()),
+            off = ko.unwrap(value.off),
+            on = ko.unwrap(value.on),
+            down = ko.unwrap(value.down),
+            useParent = ko.unwrap(value.useParent),
             _element = element;
 
         if (useParent)
@@ -271,11 +271,11 @@ ko.bindingHandlers.toggleClass = {
         });
     },
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var value = ko.utils.unwrapObservable(valueAccessor()),
-            off = ko.utils.unwrapObservable(value.off),
-            on = ko.utils.unwrapObservable(value.on),
-            down = ko.utils.unwrapObservable(value.down),
-            useParent = ko.utils.unwrapObservable(value.useParent),
+        var value = ko.unwrap(valueAccessor()),
+            off = ko.unwrap(value.off),
+            on = ko.unwrap(value.on),
+            down = ko.unwrap(value.down),
+            useParent = ko.unwrap(value.useParent),
             _element = element;
 
         if (useParent)
@@ -302,11 +302,11 @@ ko.bindingHandlers.dblclick = {
 
 ko.bindingHandlers.editable = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(valueAccessor()),
-            value = ko.utils.unwrapObservable(options.value),
-            toValid = ko.utils.unwrapObservable(options.toValid || true),
-            isEdit = ko.utils.unwrapObservable(options.isEdit || false),
-            type = ko.utils.unwrapObservable(options.type || "text"),
+        var options = ko.unwrap(valueAccessor()),
+            value = ko.unwrap(options.value),
+            toValid = ko.unwrap(options.toValid || true),
+            isEdit = ko.unwrap(options.isEdit || false),
+            type = ko.unwrap(options.type || "text"),
             input = null;
 
         if (type === "textarea")
@@ -331,10 +331,10 @@ ko.bindingHandlers.editable = {
     },
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
         var allBindings = allBindingsAccessor(),
-            options = ko.utils.unwrapObservable(valueAccessor()),
-            value = ko.utils.unwrapObservable(options.value),
-            isEdit = ko.utils.unwrapObservable(options.isEdit || false),
-            type = ko.utils.unwrapObservable(options.type || "text"),
+            options = ko.unwrap(valueAccessor()),
+            value = ko.unwrap(options.value),
+            isEdit = ko.unwrap(options.isEdit || false),
+            type = ko.unwrap(options.type || "text"),
             input = $(element).next(),
             del = input.nextAll("del");
 
@@ -353,16 +353,16 @@ ko.bindingHandlers.editable = {
             ko.bindingHandlers.options.update(input.get(0), utils.createAccessor(options.options), allBindingsAccessor, viewModel, bindingContext);
 
             if (allBindings.optionsText) {
-                var optionsText = ko.utils.unwrapObservable(allBindings.optionsText);
+                var optionsText = ko.unwrap(allBindings.optionsText);
                 if (typeof (optionsText) === "string") {
-                    var _selected = _.find(ko.utils.unwrapObservable(options.options), function (item) {
+                    var _selected = _.find(ko.unwrap(options.options), function (item) {
                         if (allBindings.optionsValue) {
-                            var optionsValue = ko.utils.unwrapObservable(allBindings.optionsValue);
+                            var optionsValue = ko.unwrap(allBindings.optionsValue);
                             if (typeof (optionsValue) === "string") {
-                                return ko.utils.unwrapObservable(item[optionsValue]) === value;
+                                return ko.unwrap(item[optionsValue]) === value;
                             }
                             else if (typeof (optionsValue) === "function") {
-                                return ko.utils.unwrapObservable(optionsValue.call(null, item)) === value;
+                                return ko.unwrap(optionsValue.call(null, item)) === value;
                             }
                         }
 
@@ -385,7 +385,7 @@ ko.bindingHandlers.editable = {
 };
 ko.bindingHandlers.clipboard = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var _value = ko.utils.unwrapObservable(valueAccessor());
+        var _value = ko.unwrap(valueAccessor());
 
         var input = $("<input>").attr({ "class": "input-clipboard", "readonly": "readonly" }).val(_value).hide();
 
@@ -406,7 +406,7 @@ ko.bindingHandlers.clipboard = {
             });
     },
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var _value = ko.utils.unwrapObservable(valueAccessor());
+        var _value = ko.unwrap(valueAccessor());
         var input = $(element).next();
 
         $(element).text(_value).show();
@@ -420,13 +420,13 @@ ko.bindingHandlers.clipboard = {
 
 ko.bindingHandlers.debug = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
-        var options = ko.utils.unwrapObservable(valueAccessor()),
+        var options = ko.unwrap(valueAccessor()),
             message = "Debug Binding", value = options, sub = false;
 
         if (options.name && options.value) {
-            value = ko.utils.unwrapObservable(options.value);
-            message = ko.utils.unwrapObservable(options.message) || "Debug Binding";
-            sub = ko.utils.unwrapObservable(options.sub) || false;
+            value = ko.unwrap(options.value);
+            message = ko.unwrap(options.message) || "Debug Binding";
+            sub = ko.unwrap(options.sub) || false;
         }
 
         sub === true ?
@@ -437,7 +437,7 @@ ko.bindingHandlers.debug = {
 
 ko.bindingHandlers.console = {
     update: function (element, valueAccessor) {
-        console.log(ko.utils.unwrapObservable(valueAccessor()));
+        console.log(ko.unwrap(valueAccessor()));
     }
 };
 
