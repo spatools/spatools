@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>SPATools.UI.Draggable</id>
+    <id>SPATools.Math</id>
     <version>0.4.0</version>
     <authors>SPA Tools</authors>
     <owners>SPA Tools</owners>
@@ -11,9 +11,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       SPA Tools is a set of tools and frameworks to help creating modern web apps.
-      This package contains a Draggable widget :
-      - Knockout optimized
-      - Binding Handler
+      This package contains a set of helpers for geometry and Matrix :
+      - Geometry Helpers
+      - Vector2, Vector3
+      - Matrix3, Matrix4
+      - CSS and WebGL Engines
+      - Very useful in 3d and canvas applications
     </description>
     <releaseNotes>
       You can see release notes at :
@@ -26,19 +29,25 @@
       Underscore
       Moment
       RequireJS
-      UI
-      Draggable
-      Mouse
+      Math
+      Matrix
+      Vector
+      Geometry
+      Projection
+      Transformation
+      3D
       Extension
+      Interaction
       Tool
       Framework
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.UI.Base" version="0.5.0" />
+      <dependency id="SPATools.Base" version="0.5.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\build\spa\ui\draggable.js" target="Content\Scripts\spa\ui" />
+    <file src="..\build\spa\math\**\*.js" target="Content\Scripts\spa\math" />
+    <file src="..\build\spa\math.js" target="Content\Scripts\spa\math" />
   </files>
 </package>

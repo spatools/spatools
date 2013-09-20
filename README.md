@@ -71,3 +71,12 @@ Javascript ORM to connect to REST / OData Web Service.
 	* Change project location in NuGet
 * 0.4.2
 	* Fix compatibility issue with new moment version
+* 0.5.0
+	* Make cache and loader Windows 8 Compliant
+	* Append ISO 8601 moment duration parser
+	* Improve startup modules
+	* Append Math Framework
+		* Separate package
+		* Geometry Helpers
+		* Vector2, Vector3, Matrix3, Matrix4 calculation
+		* Very useful in 3d and canvas applications

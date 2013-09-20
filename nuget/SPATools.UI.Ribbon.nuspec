@@ -36,8 +36,8 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.UI.Base" version="0.4.1" />
-      <dependency id="SPATools.UI.Slider" version="0.4.1" />
+      <dependency id="SPATools.UI.Base" version="0.5.0" />
+      <dependency id="SPATools.UI.Slider" version="0.5.0" />
     </dependencies>
   </metadata>
   <files>

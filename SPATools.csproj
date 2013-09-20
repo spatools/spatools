@@ -112,6 +112,7 @@
     <Content Include="nuget\SPATools.Advanced.nuspec" />
     <Content Include="nuget\SPATools.Interactions.nuspec" />
     <Content Include="nuget\SPATools.UI.Slider.nuspec" />
+    <Content Include="nuget\SPATools.Math.nuspec" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="samples\editor.html" />
     <Content Include="samples\editor.ts" />
