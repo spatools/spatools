@@ -138,6 +138,23 @@
             tests: ["<%= paths.output %>/tests/all.html"]
         },
 
+        nugetdeps: {
+            options: {
+                'SPATools.Base': "<%= pkg.version %>",
+                'SPATools.Advanced': "<%= pkg.version %>",
+                'SPATools.Interactions': "<%= pkg.version %>",
+                'SPATools.Data': "<%= pkg.version %>",
+                'SPATools.Math': "<%= pkg.version %>",
+                'SPATools.UI.Base': "<%= pkg.version %>",
+                'SPATools.UI.ContextMenu': "<%= pkg.version %>",
+                'SPATools.UI.Draggable': "<%= pkg.version %>",
+                'SPATools.UI.Editor': "<%= pkg.version %>",
+                'SPATools.UI.Ribbon': "<%= pkg.version %>",
+                'SPATools.UI.Slider': "<%= pkg.version %>",
+                'SPATools.UI.Tree': "<%= pkg.version %>"
+            },
+            all: "nuget/**/*.nuspec"
+        },
         nugetpack: {
             all: {
                 src: "nuget/**/*.nuspec",
@@ -161,6 +178,34 @@
     grunt.loadNpmTasks('grunt-tslint');
     grunt.loadNpmTasks('grunt-nuget');
 
+    grunt.registerMultiTask('nugetdeps', 'NuGet Dependencies - Upgrade dependencies version', function () {
+        var _ = grunt.util._,
+            params = this.options(),
+            depRegexGlobal = /<dependency[^>]*\/>/g,
+            depRegex = /<dependency\s+id="([^"]+)"\s+version="([^"]+)"\s+\/>/;
+
+        this.files.forEach(function(file) {
+            file.src.forEach(function (src) {
+                var content = grunt.file.read(src);
+
+                content = content.replace(depRegexGlobal, function (dependency) {
+                    var match = dependency.match(depRegex),
+                        id = match[1],
+                        version = match[2];
+
+                    if (params[id]) {
+                        version = params[id];
+                    }
+
+                    return '<dependency id="' + id + '" version="' + version + '" />';
+                });
+
+                //grunt.log.write(content);
+                grunt.file.write(src, content);
+                grunt.log.ok("Dependencies updated on :" + src);
+            });
+        });
+    });
 
     // Build Steps
     grunt.registerTask("files", ["copy:assets"]);
@@ -182,5 +227,5 @@
     grunt.registerTask("samples", ["typescript:samples", "copy:samples"]);
     grunt.registerTask("test", ["typescript:tests", "copy:tests", "qunit:tests"]);
     grunt.registerTask("default", defaultTask);
-    grunt.registerTask("publish", ["nugetpack", "nugetpush"]);
+    grunt.registerTask("publish", ["nugetdeps", "nugetpack", "nugetpush"]);
 };
