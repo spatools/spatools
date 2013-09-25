@@ -35,7 +35,7 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.Base" version="0.5.0" />
+      <dependency id="SPATools.Base" version="0.5.1" />
       <dependency id="RequireJS.Text" version="2.0.7" />
     </dependencies>
   </metadata>
