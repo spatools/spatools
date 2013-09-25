@@ -181,7 +181,7 @@ export class FunctionFilter extends Filter {
     }
 
     public getItemField(item: any, field: string): any {
-        var _itemField = super.getItemField(item, field),
+        var _itemField = super.getItemField(item, this._field()),
             args = ko.toJS(this.args),
             _itemFieldString = (_itemField || "").toString(),
             _itemFieldDate = _itemField && moment.isMoment(_itemField.date) ? _itemField.date : moment(_itemFieldString),
