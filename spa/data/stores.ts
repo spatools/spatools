@@ -32,7 +32,7 @@ export function addStoreType(name: string, store: any): void {
 
 export function getStore(name: string, context: context.DataContext): JQueryPromise<IDataStore> {
     var dfd: JQueryPromise<IDataStore> = (!stores[name]) ?
-                utils.load("./data/stores/" + name).then(() => new stores[name](context)) :
+                utils.load("./data/stores/" + name).then(store => { stores[name] = store; return new store(context); }) :
                 $.when(new stores[name](context));
 
     return dfd.then(store => store.init(true).then(() => store));
