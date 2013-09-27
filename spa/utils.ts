@@ -123,7 +123,7 @@ export function inherits(obj: any, base: any, prototype: any): any {
 }
 
 /** Execute callback methods in a safe DOM modification environment. Usefull when creating HTML5 Application. */
-export function unsafe(callback: () => any): void {
+export function unsafe<T>(callback: () => T): T {
     if (typeof MSApp === "undefined") {
         return callback.call(null);
     } else {
