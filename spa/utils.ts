@@ -258,6 +258,27 @@ export function arrayEquals(array1: any[], array2: any[]): boolean {
 
 //#endregion
 
+//#region Promise Methods
+
+/** Create a global promise which resolve when all given promises resolved */
+export function whenAll<T>(...promises: JQueryPromise<T>[]): JQueryPromise<T> {
+    return $.when.apply($, promises);
+}
+
+/** Create a rejected promise with given error */
+export function wrapError<T>(error: T): JQueryPromise<T> {
+    return $.Deferred().reject(error).promise();
+}
+
+/** Create a promise which resolve after given milliseconds */
+export function timeout(milliseconds: number = 1): JQueryPromise<void> {
+    return $.Deferred(dfd => {
+        setTimeout(() => dfd.resolve(), milliseconds);
+    }).promise();
+}
+
+//#endregion
+
 //#region Prefix Methods
 
 var vendorPrefix = null;
