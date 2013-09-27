@@ -37,21 +37,17 @@ export function loadStyle(css: string): JQueryPromise<any> {
 
 /** Load specified stylesheet by url */
 export function loadStylesheet(url: string): JQueryPromise<string> {
-    return $.Deferred(function (dfd) {
-        var link;
-
-        utils.unsafe(() => {
+    return utils.unsafe(() => {
+        var dfd = $.Deferred<string>(),
             link = doc.createElement("link");
 
-            link.rel = "stylesheet";
-            link.type = "text/css";
-            link.media = "all";
-            link.href = url;
-        });
+        link.rel = "stylesheet";
+        link.type = "text/css";
+        link.media = "all";
+        link.href = url;
 
         var timeoutId = setTimeout(() => dfd.reject(url), timeout),
-            intervalId = setInterval(_.partial(checkStyleSheetLoaded, url, link, dfd), interval),
-            id;
+            intervalId = setInterval(_.partial(checkStyleSheetLoaded, url, link, dfd), interval);
 
         if (!sheet) { // only assign these once
             cssRules = "cssRules"; sheet = "sheet";
@@ -62,22 +58,19 @@ export function loadStylesheet(url: string): JQueryPromise<string> {
 
         if ("onload" in link) link.onload = () => dfd.resolve(url);
         if ("onerror" in link) link.onerror = () => dfd.reject(url);
-        if ("onreadystatechange" in link) link.onreadystatechange = () => { if (this.readyState === "complete" || this.readyState === "loaded") return link[sheet][cssRules].length ? dfd.resolve(url) : dfd.reject(url); };
+        if ("onreadystatechange" in link) link.onreadystatechange = () => { if (link.readyState === "complete" || link.readyState === "loaded") return link[sheet][cssRules].length ? dfd.resolve(url) : dfd.reject(url); };
         
-        id = setTimeout(() => {
-            utils.unsafe(() => {
-                clearTimeout(id); id = null;
-                head.appendChild(link);
-            });
-        }, 1);
-
         dfd.always(() => {
             clearTimeout(timeoutId);
             clearInterval(intervalId);
             if ("onload" in link) link.onload = null;
             if ("onreadystatechange" in link) link.onreadystatechange = null;
         });
-    }).promise();
+
+        head.appendChild(link);
+
+        return dfd.promise();
+    });
 }
 
 function checkStyleSheetLoaded(url: string, element: HTMLLinkElement, deferred: JQueryDeferred<string>) {
