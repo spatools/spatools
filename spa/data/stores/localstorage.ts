@@ -1,12 +1,14 @@
 /// <reference path="../_data.d.ts" />
 
+import utils = require("../../utils");
 import stores = require("../stores");
 import memory = require("./memory");
+import dataset = require("../dataset");
 
 var cachePrefix = "__SPA_DATA__";
 
 class LocalStorageStore extends memory {
-    private initSet(set) {
+    private initSet(set: dataset.DataSet<any>): void {
         var table = this.getStoreTable(set.setName);
         _.each(table, (value, key) => table[key] = set.fromJS(value));
         this.memory[set.setName] = table;
@@ -15,63 +17,61 @@ class LocalStorageStore extends memory {
     private getStoreTable(setName: string): {} {
         return JSON.parse(localStorage.getItem(cachePrefix + setName)) || {};
     }
-    private setStoreTable(setName: string, setValue: {}) {
+    private setStoreTable(setName: string, setValue: {}): void {
         localStorage.setItem(cachePrefix + setName, JSON.stringify(setValue));
     }
 
     init(force?: boolean): JQueryPromise<any> {
-        return $.Deferred(() => {
-            setTimeout(() => {
-                if (force)
-                    _.each(this.context.getSets(), this.initSet, this);
-            });
-        }).promise();
+        return utils.timeout().then(() => {
+            if (force)
+                _.each(this.context.getSets(), this.initSet, this);
+        });
     }
 
-    add(setName: string, item: any): void {
+    add(setName: string, item: any): JQueryPromise<void> {
         var key = this.getKey(setName, item),
             currentSet = this.context[setName];
 
         super.add(setName, item);
 
-        setTimeout(() => {
+        return utils.timeout().then(() => {
             var table = this.getStoreTable(setName);
             table[key] = currentSet.toJS(item, true);
             this.setStoreTable(setName, table);
-        }, 1);
+        });
     }
-    update(setName: string, item: any): void {
+    update(setName: string, item: any): JQueryPromise<void> {
         var currentSet = this.context[setName];
 
         super.update(setName, item);
 
-        setTimeout(() => {
+        return utils.timeout().then(() => {
             var table = this.getStoreTable(setName),
                 key = this.getKey(setName, item);
 
             table[key] = currentSet.toJS(item, true);
             this.setStoreTable(setName, table);
-        }, 1);
+        });
     }
-    remove(setName: string, key: any): void {
+    remove(setName: string, key: any): JQueryPromise<void> {
         super.remove(setName, key);
 
-        setTimeout(() => {
+        return utils.timeout().then(() => {
             var table = this.getStoreTable(setName);
 
             if (table[key]) {
                 delete table[key];
                 this.setStoreTable(setName, table);
             }
-        }, 1);
+        });
     }
 
-    addRange(setName: string, items: any[]): void {
+    addRange(setName: string, items: any[]): JQueryPromise<void> {
         var currentSet = this.context[setName];
 
         super.addRange(setName, items);
 
-        setTimeout(() => {
+        return utils.timeout().then(() => {
             var table = this.getStoreTable(setName);
             
             _.each(items, (item) => {
@@ -80,14 +80,14 @@ class LocalStorageStore extends memory {
             });
             
             this.setStoreTable(setName, table);
-        }, 1);
+        });
     }
-    updateRange(setName: string, items: any[]): void {
+    updateRange(setName: string, items: any[]): JQueryPromise<void> {
         var currentSet = this.context[setName];
 
         super.updateRange(setName, items);
 
-        setTimeout(() => {
+        return utils.timeout().then(() => {
             var table = this.getStoreTable(setName);
             
             _.each(items, (item) => {
@@ -96,12 +96,12 @@ class LocalStorageStore extends memory {
             });
             
             this.setStoreTable(setName, table);
-        }, 1);
+        });
     }
-    removeRange(setName: string, keys: any[]): void {
+    removeRange(setName: string, keys: any[]): JQueryPromise<void> {
         super.removeRange(setName, keys);
 
-        setTimeout(() => {
+        return utils.timeout().then(() => {
             var table = this.getStoreTable(setName);
 
             _.each(keys, (key) => {
@@ -110,7 +110,7 @@ class LocalStorageStore extends memory {
             });
 
             this.setStoreTable(setName, table);
-        }, 1);
+        });
     }
 }
 
