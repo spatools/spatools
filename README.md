@@ -80,7 +80,13 @@ Javascript ORM to connect to REST / OData Web Service.
 		* Geometry Helpers
 		* Vector2, Vector3, Matrix3, Matrix4 calculation
 		* Very useful in 3d and canvas applications
- * 0.5.1
+* 0.5.1
 	* Optimize Knockout handler by using ko.unwrap
 	* Fix issue in pad binding handler
 	* Fix issue in ODataQuery FunctionFilter
+* 0.5.2
+	* Fix issue in data store getStore method
+	* Fix issues in localstorage data store
+	* Fix issues in loader.loadStylesheet
+	* Append some promise related methods into utils module
+	* Make utils.unsafe method generic
