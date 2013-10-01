@@ -1,11 +1,13 @@
 /// <reference path="../_data.d.ts" />
 
 import stores = require("../stores");
+import MemoryStore = require("./memory");
 import context = require("../context");
+import dataset = require("../dataset");
 
 var cachePrefix = "__SPA_DATA__";
 
-class IndexedDBStore extends stores.MemoryStore {
+class IndexedDBStore extends MemoryStore {
     private database: string = "__SPA_DATA__";
     private prefix: string = "";
     private version: number = 0;

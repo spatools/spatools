@@ -85,9 +85,11 @@
     <Content Include="samples\contextmenu.html" />
     <Content Include="Scripts\qunit-1.12.0.js" />
     <Content Include="Scripts\typings\qunit\qunit.d.ts" />
+    <TypeScriptCompile Include="spa\data\stores\memory.ts" />
     <TypeScriptCompile Include="spa\math.ts" />
     <TypeScriptCompile Include="spa\math\base.ts" />
     <TypeScriptCompile Include="spa\math\matrix.ts" />
+    <TypeScriptCompile Include="spa\data\adapters\prefilter.ts" />
     <Content Include="spa\ui\editor.ts" />
     <Content Include="tslint.json" />
     <TypeScriptCompile Include="spa\math\matrix3.ts" />

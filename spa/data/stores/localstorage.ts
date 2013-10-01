@@ -2,11 +2,12 @@
 
 import utils = require("../../utils");
 import stores = require("../stores");
+import MemoryStore = require("./memory");
 import dataset = require("../dataset");
 
 var cachePrefix = "__SPA_DATA__";
 
-class LocalStorageStore extends stores.MemoryStore {
+class LocalStorageStore extends MemoryStore {
     private initSet(set: dataset.DataSet<any, any>): void {
         var table = this.getStoreTable(set.setName);
         _.each(table, (value, key) => table[key] = set.fromJS(value));
