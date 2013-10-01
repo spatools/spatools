@@ -8,7 +8,7 @@ import dataset = require("./dataset");
 export class DataContext {
     private sets: {[key: string]: dataset.DataSet<any, any>} = {};
 
-    public store: stores.IDataStore;
+    public store: stores.IDataStore = stores.getDefaultStore(this);
     public adapter: adapters.IAdapter;
 
     public buffer: boolean = false;
@@ -52,7 +52,10 @@ export class DataContext {
 
     /** change local store type */
     public setLocalStore(storeType: string): JQueryPromise<any> {
-        return stores.getStore(storeType, this).then(store => this.store = store);
+        return stores.getStore(storeType, this).then(store => {
+            this.store = store;
+            _.each(this.getSets(), set => set.setLocalStore(store));
+        });
     }
     /** change remote adapter type */
     public setAdapter(adapterType: string): JQueryPromise<any> {

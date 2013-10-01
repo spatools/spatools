@@ -171,7 +171,6 @@
     <Content Include="spa\data\stores.ts" />
     <Content Include="spa\data\relationview.ts" />
     <Content Include="spa\data\remoteview.ts" />
-    <Content Include="spa\data\stores\memory.ts" />
     <Content Include="spa\data\stores\localstorage.ts" />
     <Content Include="spa\data\stores\indexeddb.ts" />
     <Content Include="spa\event.ts" />

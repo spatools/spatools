@@ -2,13 +2,12 @@
 
 import utils = require("../../utils");
 import stores = require("../stores");
-import memory = require("./memory");
 import dataset = require("../dataset");
 
 var cachePrefix = "__SPA_DATA__";
 
-class LocalStorageStore extends memory {
-    private initSet(set: dataset.DataSet<any>): void {
+class LocalStorageStore extends stores.MemoryStore {
+    private initSet(set: dataset.DataSet<any, any>): void {
         var table = this.getStoreTable(set.setName);
         _.each(table, (value, key) => table[key] = set.fromJS(value));
         this.memory[set.setName] = table;
@@ -21,10 +20,9 @@ class LocalStorageStore extends memory {
         localStorage.setItem(cachePrefix + setName, JSON.stringify(setValue));
     }
 
-    init(force?: boolean): JQueryPromise<any> {
+    init(): JQueryPromise<any> {
         return utils.timeout().then(() => {
-            if (force)
-                _.each(this.context.getSets(), this.initSet, this);
+            _.each(this.context.getSets(), set => utils.timeout().then(() => this.initSet(set)), this);
         });
     }
 

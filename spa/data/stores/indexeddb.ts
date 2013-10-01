@@ -1,17 +1,25 @@
 /// <reference path="../_data.d.ts" />
 
 import stores = require("../stores");
-import memory = require("./memory");
+import context = require("../context");
 
 var cachePrefix = "__SPA_DATA__";
 
-class IndexedDBStore extends memory {
+class IndexedDBStore extends stores.MemoryStore {
     private database: string = "__SPA_DATA__";
     private prefix: string = "";
     private version: number = 0;
     private db: IDBDatabase = null;
 
-    private initSet(set) {
+    constructor(context: context.DataContext) {
+        super(context);
+
+        window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+        window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+        window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+    }
+
+    private initSet(set: dataset.DataSet<any, any>) {
         var name = set.setName;
         return this.getStoreTable(name).then(table => {
             _.each(table, (value, key) => table[key] = set.fromJS(value, value.EntityState));
@@ -107,10 +115,7 @@ class IndexedDBStore extends memory {
     }
 
     init(force?: boolean): JQueryPromise<any> {
-        window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-        window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-        window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-
+        
         if (force) {
             return this.ensureDatabase().then(() => {
                 var deferreds = _.map(this.context.getSets(), this.initSet, this);

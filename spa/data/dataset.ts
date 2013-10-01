@@ -32,6 +32,9 @@ export interface DataSet<T, TKey> extends DataSetFunctions<T, TKey> {
 }
 
 export interface DataSetFunctions<T, TKey> {
+    /** Change local store */
+    setLocalStore(store: stores.IDataStore): void;
+
     /** Create a new view of the current set with specified query */
     createView(query?: query.ODataQuery): dataview.DataView<T, TKey>;
 
@@ -133,11 +136,17 @@ export function create<T, TKey>(setName: string, keyPropertyName: string, defaul
 }
 
 var dataSetFunctions: DataSetFunctions<any, any> = {
+    /** Change local store */
+    setLocalStore: function (store: stores.IDataStore): void {
+        this.store = store;
+        this(store.getMemorySet(this.setName));
+    },
+
     /** Create a new view of the current set with specified query */
     createView: function (query?: query.ODataQuery): dataview.DataView<any, any> {
         return dataview.create(this, query);
     },
-    
+
     /** Refresh dataset from remote source */
     refresh: function (): JQueryPromise<any> {
         return this.query(null, true);
