@@ -261,7 +261,7 @@ export function arrayEquals(array1: any[], array2: any[]): boolean {
 //#region Promise Methods
 
 /** Create a global promise which resolve when all given promises resolved */
-export function whenAll<T>(...promises: JQueryPromise<T>[]): JQueryPromise<T> {
+export function whenAll<T>(promises: JQueryPromise<T>[]): JQueryPromise<T> {
     return $.when.apply($, promises);
 }
 
