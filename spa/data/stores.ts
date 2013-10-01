@@ -31,10 +31,6 @@ export interface IDataStore {
 
 stores["memory"] = MemoryStore;
 
-export function addStoreType(name: string, store: IDataStoreConstructor): void {
-    stores[name] = store;
-}
-
 export function getDefaultStore(context: context.DataContext): IDataStore {
     return new MemoryStore(context);
 }

@@ -1,6 +1,7 @@
 /// <reference path="../_data.d.ts" />
 
 import adapters = require("../adapters");
+import prefilter = require("./prefilter");
 import guid = require("../guid");
 import query = require("../query");
 import utils = require("../../utils");
@@ -13,7 +14,7 @@ class WebApiAdapter implements adapters.IAdapter {
     };
 
     constructor() {
-        adapters.initializePrefilter();
+        prefilter.initialize();
     }
 
     private ajax(url: string, type: string = "GET", data?: any): JQueryPromise<any> {
@@ -80,7 +81,5 @@ class WebApiAdapter implements adapters.IAdapter {
         return this.ajax(url, "POST", parameters);
     }
 }
-
-adapters.addAdapter("webapi", new WebApiAdapter());
 
 export = WebApiAdapter;

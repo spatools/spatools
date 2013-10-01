@@ -34,6 +34,8 @@ export interface DataSet<T, TKey> extends DataSetFunctions<T, TKey> {
 export interface DataSetFunctions<T, TKey> {
     /** Change local store */
     setLocalStore(store: stores.IDataStore): void;
+    /** Change remote adapter */
+    setAdapter(adapter: adapters.IAdapter): void;
 
     /** Create a new view of the current set with specified query */
     createView(query?: query.ODataQuery): dataview.DataView<T, TKey>;
@@ -140,6 +142,11 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     setLocalStore: function (store: stores.IDataStore): void {
         this.store = store;
         this(store.getMemorySet(this.setName));
+    },
+
+    /** Change remote adapter */
+    setAdapter: function (adapter: adapters.IAdapter): void {
+        this.adapter = adapter;
     },
 
     /** Create a new view of the current set with specified query */

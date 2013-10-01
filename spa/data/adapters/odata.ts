@@ -1,6 +1,7 @@
 ﻿/// <reference path="../_data.d.ts" />
 
 import adapters = require("../adapters");
+import prefilter = require("./prefilter");
 import guid = require("../guid");
 import query = require("../query");
 import utils = require("../../utils");
@@ -20,7 +21,7 @@ class ODataAdapter implements adapters.IAdapter {
     };
 
     constructor() {
-        adapters.initializePrefilter();
+        prefilter.initialize();
     }
 
     private generateKey(key: any): string {
@@ -122,7 +123,5 @@ class ODataAdapter implements adapters.IAdapter {
         return this.ajax(url, "POST", parameters);
     }
 }
-
-adapters.addAdapter("odata", new ODataAdapter());
 
 export = ODataAdapter;

@@ -9,7 +9,7 @@ export class DataContext {
     private sets: {[key: string]: dataset.DataSet<any, any>} = {};
 
     public store: stores.IDataStore = stores.getDefaultStore(this);
-    public adapter: adapters.IAdapter;
+    public adapter: adapters.IAdapter = adapters.getDefaultAdapter();
 
     public buffer: boolean = false;
     public autoLazyLoading: boolean = false;
@@ -59,7 +59,10 @@ export class DataContext {
     }
     /** change remote adapter type */
     public setAdapter(adapterType: string): JQueryPromise<any> {
-        return adapters.getAdapter(adapterType).then(adapter => this.adapter = adapter);
+        return adapters.getAdapter(adapterType).then(adapter => {
+            this.adapter = adapter;
+            _.each(this.getSets(), set => set.setAdapter(adapter));
+        });
     }
 }
 
