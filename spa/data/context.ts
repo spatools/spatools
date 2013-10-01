@@ -42,14 +42,6 @@ export class DataContext {
         return this.sets[name];
     }
     
-    /** Initialize context with default store and adapter */
-    public initDefault(): JQueryPromise<any> {
-        return $.when(
-            this.setLocalStore("memory"),
-            this.setAdapter("odata")
-        );
-    }
-
     /** change local store type */
     public setLocalStore(storeType: string): JQueryPromise<any> {
         return stores.getStore(storeType, this).then(store => {
