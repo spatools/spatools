@@ -5,6 +5,7 @@ import context = require("./context");
 import MemoryStore = require("./stores/memory");
 
 var stores: { [key: string]: IDataStoreConstructor } = {};
+stores.memory = MemoryStore;
 
 export interface IDataStoreConstructor {
     new (context: context.DataContext): IDataStore;
@@ -28,8 +29,6 @@ export interface IDataStore {
     updateRange(setName: string, items: any[]): void;
     removeRange(setName: string, keys: any[]): void;
 }
-
-stores["memory"] = MemoryStore;
 
 export function getDefaultStore(context: context.DataContext): IDataStore {
     return new MemoryStore(context);

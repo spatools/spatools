@@ -21,7 +21,7 @@ export interface IAdapter {
 }
 
 var adapters: { [key: string]: IAdapaterConstructor } = {};
-adapter["odata"] = ODataAdapter;
+adapter.odata = ODataAdapter;
 
 export function getDefaultAdapter(): IAdapter {
     return new ODataAdapter();
