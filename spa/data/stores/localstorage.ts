@@ -23,7 +23,8 @@ class LocalStorageStore extends MemoryStore {
 
     init(): JQueryPromise<any> {
         return utils.timeout().then(() => {
-            _.each(this.context.getSets(), set => utils.timeout().then(() => this.initSet(set)), this);
+            var dfds = _.map(this.context.getSets(), set => utils.timeout().then(() => this.initSet(set)));
+            return utils.whenAll(dfds);
         });
     }
 

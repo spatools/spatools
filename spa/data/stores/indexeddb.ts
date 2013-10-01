@@ -116,14 +116,11 @@ class IndexedDBStore extends MemoryStore {
         });
     }
 
-    init(force?: boolean): JQueryPromise<any> {
-        
-        if (force) {
-            return this.ensureDatabase().then(() => {
-                var deferreds = _.map(this.context.getSets(), this.initSet, this);
-                return $.when.apply($, deferreds);
-            });
-        }
+    init(): JQueryPromise<any> {
+        return this.ensureDatabase().then(() => {
+            var deferreds = _.map(this.context.getSets(), this.initSet, this);
+            return $.when.apply($, deferreds);
+        });
     }
 
     add(setName: string, item: any): JQueryPromise<any> {
