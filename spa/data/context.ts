@@ -8,13 +8,16 @@ import dataset = require("./dataset");
 export class DataContext {
     private sets: {[key: string]: dataset.DataSet<any, any>} = {};
 
-    public store: stores.IDataStore = stores.getDefaultStore(this);
+    public store: stores.IDataStore;
     public adapter: adapters.IAdapter = adapters.getDefaultAdapter();
 
     public buffer: boolean = false;
     public autoLazyLoading: boolean = false;
     public mapping = new mapping.Configurations();
 
+    constructor() {
+        this.store = stores.getDefaultStore(this);
+    }
 
     /** Get Mapping Configuration for specified type */
     public getMappingConfiguration(type: string): mapping.Configuration {

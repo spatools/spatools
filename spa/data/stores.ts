@@ -4,8 +4,9 @@ import utils = require("../utils");
 import context = require("./context");
 import MemoryStore = require("./stores/memory");
 
-var stores: { [key: string]: IDataStoreConstructor } = {};
-stores.memory = MemoryStore;
+var stores: { [key: string]: IDataStoreConstructor } = {
+    memory: MemoryStore
+};
 
 export interface IDataStoreConstructor {
     new (context: context.DataContext): IDataStore;

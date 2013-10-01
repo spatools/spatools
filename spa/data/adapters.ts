@@ -20,8 +20,9 @@ export interface IAdapter {
     action? (controller: string, action: string, parameters: any, id?: any): JQueryPromise<any>;
 }
 
-var adapters: { [key: string]: IAdapaterConstructor } = {};
-adapter.odata = ODataAdapter;
+var adapters: { [key: string]: IAdapaterConstructor } = {
+    odata: ODataAdapter
+};
 
 export function getDefaultAdapter(): IAdapter {
     return new ODataAdapter();
