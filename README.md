@@ -90,3 +90,10 @@ Javascript ORM to connect to REST / OData Web Service.
 	* Fix issues in loader.loadStylesheet
 	* Append some promise related methods into utils module
 	* Make utils.unsafe method generic
+* 0.5.3
+	* Make MemoryStore and ODataAdapter respectively default data store and adapter
+	* Optimize adapters size by factorizing ajax calls
+	* Avoid circular dependency by creating alone prefilter module
+	* Remove unused initDefault method from DataContext class
+	* Optimize store and adapter change in DataSet class
+	* Fix issue in utils.whenAll definition
