@@ -14,7 +14,7 @@ var urls = {
 
 class ODataAdapter implements adapters.IAdapter {
     private options = {
-        baseUrl: "/api/",
+        baseUrl: "/data/",
         retryCount: 0,
         retryDelay: 0
     };
@@ -58,6 +58,21 @@ class ODataAdapter implements adapters.IAdapter {
 
         return this.options.baseUrl + url;
     }
+    private ajax(url: string, type: string = "GET", data?: any): JQueryPromise<any> {
+        var options: JQueryAjaxSettings = {
+            url: url,
+            type: type,
+            contentType: "application/json",
+            dataType: "text json",
+            retryCount: this.options.retryCount,
+            retryDelay: this.options.retryDelay
+        };
+
+        if (data)
+            options.data = data;
+
+        return $.ajax(options);
+    }
 
     /** Get entity collection filtered by query (if provided) (GET) */
 	public getAll(controller: string, query?: query.ODataQuery): JQueryPromise<any> {
@@ -66,14 +81,7 @@ class ODataAdapter implements adapters.IAdapter {
         if (query)
             url = url + "?" + query.toQueryString();
 
-        return $.ajax({
-            url: url,
-            type: "GET",
-            contentType: "application/json",
-            dataType: "text json",
-            retryCount: this.options.retryCount,
-            retryDelay: this.options.retryDelay
-        });
+        return this.ajax(url);
     }
     /** Get a single entity (GET) */
     public getOne(controller: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
@@ -82,56 +90,23 @@ class ODataAdapter implements adapters.IAdapter {
         if (query)
             url = url + "?" + query.toQueryString();
 
-        return $.ajax({
-            url: url,
-            type: "GET",
-            contentType: "application/json",
-            dataType: "text json",
-            retryCount: this.options.retryCount,
-            retryDelay: this.options.retryDelay
-        });
+        return this.ajax(url);
     }
 
     /** Create an entity (POST) */
     public post(controller: string, data: any): JQueryPromise<any> {
 	    var url = this.generateUrl(urls.entitySet, controller);
-
-        return $.ajax({
-            url: url,
-            type: "POST",
-            contentType: "application/json",
-            data: data,
-            dataType: "text json",
-            retryCount: this.options.retryCount,
-            retryDelay: this.options.retryDelay,
-        });
+        return this.ajax(url, "POST", data);
     }
     /** Updates an entity (PUT) */
     public put(controller: string, id: any, data: any): JQueryPromise<any> {
 	    var url = this.generateUrl(urls.entity, controller, id);
-
-        return $.ajax({
-            url: url,
-            type: "PUT",
-            contentType: "application/json",
-            data: data,
-            dataType: "text json",
-            retryCount: this.options.retryCount,
-            retryDelay: this.options.retryDelay
-        });
+        return this.ajax(url, "PUT", data);
     }
     /** Deletes an entity (DELETE) */
     public remove(controller: string, id: any): JQueryPromise<any> {
 	    var url = this.generateUrl(urls.entity, controller, id);
-
-        return $.ajax({
-            url: url,
-            type: "DELETE",
-            contentType: "application/json",
-            dataType: "text json",
-            retryCount: this.options.retryCount,
-            retryDelay: this.options.retryDelay,
-        });
+        return this.ajax(url, "DELETE");
     }
 
     public getRelation(controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
@@ -140,27 +115,11 @@ class ODataAdapter implements adapters.IAdapter {
         if (query)
             url = url + "?" + query.toQueryString();
 
-        return $.ajax({
-            url: url,
-            type: "GET",
-            contentType: "application/json",
-            dataType: "text json",
-            retryCount: this.options.retryCount,
-            retryDelay: this.options.retryDelay,
-        });
+        return this.ajax(url);
     }
     public action(controller: string, action: string, parameters: any, id?: any): JQueryPromise<any> {
 	    var url = this.generateUrl(id ? urls.entityAction : urls.entitySetAction, controller, id ? id : action, action);
-
-        return $.ajax({
-            url: url,
-            type: "POST",
-            contentType: "application/json",
-            data: parameters,
-            dataType: "text json",
-            retryCount: this.options.retryCount,
-            retryDelay: this.options.retryDelay,
-        });
+        return this.ajax(url, "POST", parameters);
     }
 }
 
