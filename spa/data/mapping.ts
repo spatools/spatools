@@ -306,7 +306,7 @@ export function updateEntity<T, TKey>(entity: T, data: any, commit: boolean, dat
 }
 
 /** Reset specified entity with last remote data */
-export function resetEntity<T, TKey>(entity: T, dataSet: dataset.DataSet<T, TKey>): T {
+export function resetEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TKey>): T {
     var config = getMappingConfiguration(entity, dataSet),
         mappingRules = config.rules;
 

@@ -39,12 +39,17 @@ export interface DataSetFunctions<T, TKey> {
     reset(): void;
 
     /** Create a new view of the current set with specified query */
-    createView(query?: query.ODataQuery): dataview.DataView<T, TKey>;
+    createView(): dataview.DataView<T, TKey>;
+    createView(query: query.ODataQuery): dataview.DataView<T, TKey>;
 
     /** Refresh dataset from remote source */
-    refresh(mode?: string): JQueryPromise<T[]>;
+    refresh(): JQueryPromise<T[]>;
+    refresh(mode: string): JQueryPromise<T[]>;
+    refresh(mode: string, query: query.ODataQuery): JQueryPromise<T[]>;
+
     /** Query server to refresh dataset */
-    query(query?: query.ODataQuery): JQueryPromise<T[]>;
+    query(): JQueryPromise<T[]>;
+    query(query: query.ODataQuery): JQueryPromise<T[]>;
 
     /** Load an entity by id from the remote source */
     load(key: TKey): JQueryPromise<T>;
@@ -91,14 +96,18 @@ export interface DataSetFunctions<T, TKey> {
     attachOrUpdateRange(data: any[], commit?: boolean): JQueryPromise<T[]>;
 
     /** Create a JS object from given entity */
-    toJS(entity: T, keepstate?: boolean): any;
+    toJS(entity: T): any;
+    toJS(entity: T, keepstate: boolean): any;
     /** Serialize given entity to JSON */
-    toJSON(entity: T, keepstate?: boolean): string;
+    toJSON(entity: T): string;
+    toJSON(entity: T, keepstate: boolean): string;
 
     /** Instanciate an entity from a JS object */
-    fromJS(data: any, state?: mapping.entityStates): T;
+    fromJS(data: any): T;
+    fromJS(data: any, state: mapping.entityStates): T;
     /** Instanciate an entity from a JSON string */
-    fromJSON(json: string, state?: mapping.entityStates): T;
+    fromJSON(json: string): T;
+    fromJSON(json: string, state: mapping.entityStates): T;
 
     /** Get a report of changes in the dataSet */
     getChanges(): any;

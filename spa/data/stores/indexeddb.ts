@@ -33,7 +33,7 @@ class IndexedDBStore implements stores.IDataStore {
                 var conf = mapping.getMappingConfiguration(null, dataset),
                     ids = _.map(conf.relations, relation => relation.propertyName);
 
-                indexes[dataset.setName] = ids;
+                this.indexes[dataset.setName] = ids;
             });
         });
     }
@@ -220,7 +220,7 @@ class IndexedDBStore implements stores.IDataStore {
 
                 if (query && query.filters.size() > 0) {
                     var ids = this.indexes[setName],
-                        filter = <_query.Filter>query.filters.find(f => !_.isString(f) && _.contains(ids, f.field()) && f.operator() === _query.operator.equal);
+                        filter: any = query.filters.find((f: any) => !_.isString(f) && _.contains(ids, f.field()) && f.operator() === _query.operator.equal);
 
                     if (filter) {
                         cursor = store.index(filter.field()).openCursor(new IDBKeyRange().only(filter.value()));
