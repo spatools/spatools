@@ -59,6 +59,26 @@ class ODataAdapter implements adapters.IAdapter {
 
         return this.options.baseUrl + url;
     }
+
+    private fixResult(result: any): adapters.IAdapterResult {
+        var data = result,
+            count = -1;
+
+        if (result["odata.metadata"]) {
+            if (result["odata.count"])
+                count = result["odata.count"];
+
+            data = result.value;
+        }
+        else if (!query) {
+            count = result.length;
+        }
+
+        return {
+            data: data,
+            count: count
+        };
+    }
     private ajax(url: string, type: string = "GET", data?: any): JQueryPromise<any> {
         var options: JQueryAjaxSettings = {
             url: url,
@@ -76,13 +96,13 @@ class ODataAdapter implements adapters.IAdapter {
     }
 
     /** Get entity collection filtered by query (if provided) (GET) */
-	public getAll(controller: string, query?: query.ODataQuery): JQueryPromise<any> {
+    public getAll(controller: string, query?: query.ODataQuery): JQueryPromise<adapters.IAdapterResult> {
 	    var url = this.generateUrl(urls.entitySet, controller);
 
         if (query)
             url = url + "?" + query.toQueryString();
 
-        return this.ajax(url);
+        return this.ajax(url).then(this.fixResult);
     }
     /** Get a single entity (GET) */
     public getOne(controller: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
@@ -110,13 +130,13 @@ class ODataAdapter implements adapters.IAdapter {
         return this.ajax(url, "DELETE");
     }
 
-    public getRelation(controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
+    public getRelation(controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<adapters.IAdapterResult> {
 	    var url = this.generateUrl(urls.entityAction, controller, id, relationName);
 
         if (query)
             url = url + "?" + query.toQueryString();
 
-        return this.ajax(url);
+        return this.ajax(url).then(this.fixResult);
     }
     public action(controller: string, action: string, parameters: any, id?: any): JQueryPromise<any> {
 	    var url = this.generateUrl(id ? urls.entityAction : urls.entitySetAction, controller, id ? id : action, action);

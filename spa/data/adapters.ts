@@ -9,15 +9,20 @@ export interface IAdapaterConstructor {
 }
 
 export interface IAdapter {
-    getAll(controller: string, query?: query.ODataQuery): JQueryPromise<any>;
+    getAll(controller: string, query?: query.ODataQuery): JQueryPromise<IAdapterResult>;
     getOne(controler: string, id: any, query?: query.ODataQuery): JQueryPromise<any>;
-    getRelation? (controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<any>;
+    getRelation? (controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<IAdapterResult>;
 
     post(controller: string, data: any): JQueryPromise<any>;
     put(controller: string, id: any, data: any): JQueryPromise<any>;
     remove(controller: string, id: any): JQueryPromise<any>;
 
     action? (controller: string, action: string, parameters: any, id?: any): JQueryPromise<any>;
+}
+
+export interface IAdapterResult {
+    data: any[];
+    count: number;
 }
 
 var adapters: { [key: string]: IAdapaterConstructor } = {

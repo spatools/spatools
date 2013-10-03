@@ -17,6 +17,23 @@ class WebApiAdapter implements adapters.IAdapter {
         prefilter.initialize();
     }
 
+    private fixResult(result: any): adapters.IAdapterResult {
+        var data = result,
+            count = -1;
+
+        if (result.__count) {
+            count = result.__count;
+            data = result.results;
+        }
+        else if (!query) {
+            count = result.length;
+        }
+
+        return {
+            data: data,
+            count: count
+        };
+    }
     private ajax(url: string, type: string = "GET", data?: any): JQueryPromise<any> {
         var options: JQueryAjaxSettings = {
             url: url,
@@ -34,13 +51,13 @@ class WebApiAdapter implements adapters.IAdapter {
     }
 
     /** Get entity collection filtered by query (if provided) (GET) */
-    public getAll(controller: string, query?: query.ODataQuery): JQueryPromise<any> {
+    public getAll(controller: string, query?: query.ODataQuery): JQueryPromise<adapters.IAdapterResult> {
         var url = this.options.baseUrl + controller;
 
         if (query)
             url = url + "?" + query.toQueryString();
 
-        return this.ajax(url);
+        return this.ajax(url).then(this.fixResult);
     }
     /** Get a single entity (GET) */
     public getOne(controller: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
@@ -68,13 +85,13 @@ class WebApiAdapter implements adapters.IAdapter {
         return this.ajax(url, "DELETE");
     }
 
-    public getRelation(controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<any> {
+    public getRelation(controller: string, relationName: string, id: any, query?: query.ODataQuery): JQueryPromise<adapters.IAdapterResult> {
         var url = this.options.baseUrl + controller + "/" + encodeURIComponent(id) + "/" + relationName;
 
         if (query)
             url = url + "?" + query.toQueryString();
 
-        return this.ajax(url);
+        return this.ajax(url).then(this.fixResult);
     }
     public action(controller: string, action: string, parameters: any, id?: any): JQueryPromise<any> {
         var url = this.options.baseUrl + controller + (id ? "/" + encodeURIComponent(id) : "") + "/" + action;
