@@ -55,7 +55,7 @@ export class Relation {
         }
         else if (this.type === relationTypes.many) {
             localProp = localSet.key;
-            foreignProp = this.foreignKey
+            foreignProp = this.foreignKey;
         }
 
         return new query.ODataQuery().where(foreignProp, query.operator.equal, item[localProp]);

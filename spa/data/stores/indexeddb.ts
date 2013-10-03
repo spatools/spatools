@@ -223,7 +223,7 @@ class IndexedDBStore implements stores.IDataStore {
                         filter = <_query.Filter>query.filters.find(f => !_.isString(f) && _.contains(ids, f.field()) && f.operator() === _query.operator.equal);
 
                     if (filter) {
-                        cursor = store.index(filter.field()).openCursor(new IDBKeyRange().only(filter.value()))
+                        cursor = store.index(filter.field()).openCursor(new IDBKeyRange().only(filter.value()));
                     }
                 }
 

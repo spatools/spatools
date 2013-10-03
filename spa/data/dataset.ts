@@ -202,7 +202,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                 var rmDfd;
                 if (!query || query.pageSize() === 0) {
                     var current = self.toArray();
-                    if (query && query.filters.size() > 0) 
+                    if (query && query.filters.size() > 0)
                         current = query.applyFilters(current);
 
                     var report = utils.arrayCompare(
