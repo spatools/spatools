@@ -2,10 +2,11 @@
 
 import utils = require("../utils");
 import context = require("./context");
+import query = require("./query");
 import MemoryStore = require("./stores/memory");
 
 var stores: { [key: string]: IDataStoreConstructor } = {
-    memory: MemoryStore
+    "memory": MemoryStore
 };
 
 export interface IDataStoreConstructor {
@@ -15,20 +16,18 @@ export interface IDataStoreConstructor {
 export interface IDataStore {
     context: context.DataContext;
 
-    init(): JQueryPromise<any>;
+    init(): JQueryPromise<void>;
 
-    getKey(setName: string, item: any): any;
-    getMemorySet(setName: string): {};
-    getAll(setName: string): any[];
-    getOne(setName: string, key: any): any;
+    getAll(setName: string, query?: query.ODataQuery): JQueryPromise<any[]>;
+    getOne(setName: string, key: any, query?: query.ODataQuery): JQueryPromise<any>;
 
-    add(setName: string, item: any): void;
-    update(setName: string, item: any): void;
-    remove(setName: string, key: any): void;
+    add(setName: string, item: any): JQueryPromise<void>;
+    update(setName: string, item: any): JQueryPromise<void>;
+    remove(setName: string, key: any): JQueryPromise<void>;
 
-    addRange(setName: string, items: any[]): void;
-    updateRange(setName: string, items: any[]): void;
-    removeRange(setName: string, keys: any[]): void;
+    addRange(setName: string, items: any[]): JQueryPromise<void>;
+    updateRange(setName: string, items: any[]): JQueryPromise<void>;
+    removeRange(setName: string, keys: any[]): JQueryPromise<void>;
 }
 
 export function getDefaultStore(context: context.DataContext): IDataStore {

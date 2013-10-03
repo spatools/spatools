@@ -2,6 +2,9 @@
 import stores = require("../stores");
 import context = require("../context");
 import dataset = require("../dataset");
+import _query = require("../query");
+import mapping = require("../mapping");
+import utils = require("../../utils");
 
 class MemoryStore implements stores.IDataStore {
     public memory = {};
@@ -11,58 +14,141 @@ class MemoryStore implements stores.IDataStore {
         this.context = context;
     }
 
-    init(): JQueryPromise<any> {
+    //#region Public Methods
+
+    init(): JQueryPromise<void> {
         return $.when();
     }
 
-    /* return set key or item key if specified */
-    getKey(setName: string, item: any): any {
-        return item ? this.context[setName].getKey(item) : this.context[setName].key;
+    getAll(setName: string, query?: _query.ODataQuery): JQueryPromise<any[]> {
+        return utils.timeout().then(() => {
+            var result = _.values(this.getMemorySet(setName));
+
+            if (query) {
+                result = query.apply(result);
+                
+                if (query.selects.size() > 0) {
+                    result = this.applySelectsRange(result, query.selects());
+                }
+
+                if (query.expands.size() > 0) {
+                    return this.applyExpandsRange(setName, query.expands(), result);
+                }
+            }
+
+            return result;
+        });
     }
-    getMemorySet(setName: string): {} {
+    getOne(setName: string, key: any, query?: _query.ODataQuery): JQueryPromise<any> {
+        return utils.timeout().then(() => {
+            var table = this.getMemorySet(setName),
+                item = table[key];
+
+            if (item && query) {
+                if (query.selects.size() > 0) {
+                    item = this.applySelects(item, query.selects());
+                }
+
+                if (query.expands.size() > 0) {
+                    return this.applyExpands(setName, query.expands(), item);
+                }
+            }
+
+            return item;
+        });
+    }
+
+    add(setName: string, item: any): JQueryPromise<void> {
+        return this.update(setName, item);
+    }
+    update(setName: string, item: any): JQueryPromise<void> {
+        return utils.timeout().then(() => {
+            var table = this.getMemorySet(setName),
+                key = this.getKey(setName, item);
+
+            table[key] = this.toJS(setName, item);
+        });
+    }
+    remove(setName: string, key: any): JQueryPromise<void> {
+        return utils.timeout().then(() => {
+            var table = this.getMemorySet(setName);
+            delete table[key];
+        });
+    }
+
+    addRange(setName: string, items: any[]): JQueryPromise<void> {
+        return this.updateRange(setName, items);
+    }
+    updateRange(setName: string, items: any[]): JQueryPromise<void> {
+        return utils.timeout().then(() => {
+            var table = this.getMemorySet(setName), key;
+
+            _.each(items, item => {
+                key = this.getKey(setName, item);
+                table[key] = this.toJS(setName, item);
+            });
+        });
+    }
+    removeRange(setName: string, keys: any[]): JQueryPromise<void> {
+        return utils.timeout().then(() => {
+            var table = this.getMemorySet(setName);
+            _.each(keys, key => { delete table[key]; });
+        });
+    }
+
+    //#endregion
+
+    //#region Private Methods
+
+    /* return set key or item key if specified */
+    private getKey(setName: string, item?: any): JQueryPromise<any> {
+        var dataset = this.context.getSet(setName);
+        return item ? dataset.getKey(item) : dataset.key;
+    }
+    private getMemorySet(setName: string): any {
         if (!this.memory[setName])
             this.memory[setName] = {};
 
         return this.memory[setName];
     }
-
-    getAll(setName: string): any[] {
-        return _.values(this.getMemorySet(setName));
-    }
-    getOne(setName: string, key: any): any {
-        var table = this.getMemorySet(setName);
-        return table[key];
+    private toJS(setName: string, entity: any): any {
+        var dataset = this.context.getSet(setName);
+        return dataset.toJS(entity, true);
     }
 
-    add(setName: string, item: any): void {
-        var table = this.getMemorySet(setName),
-            key = this.getKey(setName, item);
-
-        table[key] = item;
+    private applySelects(item: any, selects: string[]): any {
+        var args = [item, "$type", "odata.type", "EntityState"].concat(selects);
+        return _.pick.apply(_, args);
     }
-    /* Nothing because all observable but to override to update specific stores */
-    update(setName: string, item: any): void { return null; }
-    remove(setName: string, key: any): void {
-        var table = this.getMemorySet(setName);
-        delete table[key];
+    private applySelectsRange(items: any[], selects: string[]): any {
+        return _.map(items, item => this.applySelects(item, selects));
     }
 
-    addRange(setName: string, items: any[]): void {
-        var table = this.getMemorySet(setName);
+    private applyExpands(setName: string, expands: string[], item: any, _set?: dataset.DataSet<any, any>): JQueryPromise<any> {
+        var dataset = _set || this.context.getSet(setName),
+            conf = mapping.getMappingConfiguration(item, dataset),
 
-        _.each(items, function (item) {
-            var key = this.getKey(setName, item);
-            table[key] = item;
-        }, this);
+            dfds = _.filterMap(conf.relations, (relation: mapping.Relation) => {
+                if (_.contains(expands, relation.propertyName)) {
+                    return utils.timeout().then(() => {
+                        var q = relation.toQuery(item, dataset, this.context.getSet(relation.controllerName));
+                        return this.getAll(relation.controllerName, q).then(entities => {
+                            item[relation.propertyName] = entities;
+                        });
+                    });
+                }
+            });
+
+        return utils.whenAll(dfds).then(() => item);
     }
-    /* Nothing because all observable but to override to update specific stores */
-    updateRange(setName: string, items: any[]): void { return null; }
-    removeRange(setName: string, keys: any[]): void {
-        var table = this.getMemorySet(setName);
-        _.each(keys, function (key) {
-            delete table[key];
-        }, this);
+    private applyExpandsRange(setName: string, expands: string[], result: any[]): JQueryPromise<any[]> {
+        var dataset = this.context.getSet(setName),
+            dfds = _.map(result, item => this.applyExpands(setName, expands, item, dataset));
+
+        return utils.whenAll(dfds).then(() => result);
     }
+
+    //#endregion
 }
 
 export = MemoryStore;
