@@ -153,4 +153,22 @@ $RECYCLE.BIN/
 .DS_Store
 
 # Node
-nodes_modules/
+node_modules/
+
+# Typescript generated files
+base/*.js
+spa/*.js
+spa/data/*.js
+spa/data/adapters/*.js
+spa/data/stores/*.js
+spa/math/*.js
+spa/ui/*.js
+tests/*.js
+tests/data/*.js
+tests/data/adapters/*.js
+tests/data/stores/*.js
+tests/math/*.js
+tests/ui/*.js
+
+# NuGet generated packages
+nuget/*.nupkg
