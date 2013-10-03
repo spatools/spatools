@@ -5,6 +5,7 @@ import dataset = require("./dataset");
 import relationview = require("./relationview");
 import remoteview = require("./remoteview");
 import foreignview = require("./foreignview");
+import query = require("./query");
 
 //#region Enumerations / Defaults
 
@@ -44,6 +45,20 @@ export class Relation {
         public foreignKey: string,
         ensureRemote?: boolean) {
             this.ensureRemote = ensureRemote || false;
+    }
+
+    public toQuery(item: any, localSet: dataset.DataSet<any, any>, foreignSet: dataset.DataSet<any, any>): query.ODataQuery {
+        var localProp, foreignProp;
+        if (this.type === relationTypes.one) {
+            localProp = this.foreignKey;
+            foreignProp = foreignSet.key;
+        }
+        else if (this.type === relationTypes.many) {
+            localProp = localSet.key;
+            foreignProp = this.foreignKey
+        }
+
+        return new query.ODataQuery().where(foreignProp, query.operator.equal, item[localProp]);
     }
 }
 
@@ -125,14 +140,15 @@ function constructEntity(type: any) {
 function getEntityType(entity: any) {
     return entity.$type || entity["odata.type"];
 }
-function getMappingConfiguration<T, TKey>(entity: {}, dataSet: dataset.DataSet<T, TKey>): Configuration {
-    var type = getEntityType(entity) || dataSet.defaultType;
-    return (type && dataSet.context.getMappingConfiguration(type)) || new Configuration(type);
-}
 
 //#endregion
 
 //#region Public Methods
+
+export function getMappingConfiguration<T, TKey>(entity: {}, dataSet: dataset.DataSet<T, TKey>): Configuration {
+    var type = getEntityType(entity) || dataSet.defaultType;
+    return (type && dataSet.context.getMappingConfiguration(type)) || new Configuration(type);
+}
 
 /** Add mapping properties to an entity */
 export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataSet<T, TKey>, config?: Configuration, initialState: entityStates = entityStates.unchanged, data: any = null): any {
@@ -248,7 +264,7 @@ export function duplicateEntity<T, TKey>(entity: T, dataSet: dataset.DataSet<T, 
 }
 
 /** Update specified entity with specified data */
-export function updateEntity<T, TKey>(entity: any, data: any, commit: boolean, dataSet: dataset.DataSet<T, TKey>): any {
+export function updateEntity<T, TKey>(entity: T, data: any, commit: boolean, dataSet: dataset.DataSet<T, TKey>): T {
     if (!data) {
         if (!commit) {
             entity.EntityState(entityStates.unchanged);
@@ -290,7 +306,7 @@ export function updateEntity<T, TKey>(entity: any, data: any, commit: boolean, d
 }
 
 /** Reset specified entity with last remote data */
-export function resetEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TKey>): void {
+export function resetEntity<T, TKey>(entity: T, dataSet: dataset.DataSet<T, TKey>): T {
     var config = getMappingConfiguration(entity, dataSet),
         mappingRules = config.rules;
 
@@ -302,6 +318,8 @@ export function resetEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TK
     ko.mapping.fromJS(entity._lastData, mappingRules, entity);
 
     entity.EntityState(entityStates.unchanged);
+
+    return entity;
 }
 
 //#endregion

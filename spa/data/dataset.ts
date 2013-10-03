@@ -14,9 +14,8 @@ import utils = require("../utils");
 
 export interface DataSet<T, TKey> extends KnockoutUnderscoreArrayFunctions<T> { }
 export interface DataSet<T, TKey> extends KnockoutUnderscoreObjectsFunctions<T> { }
+export interface DataSet<T, TKey> extends KnockoutObservable<any> { }
 export interface DataSet<T, TKey> extends DataSetFunctions<T, TKey> {
-    (): {};
-
     setName: string;
     key: string;
     defaultType: string;
@@ -36,30 +35,43 @@ export interface DataSetFunctions<T, TKey> {
     setLocalStore(store: stores.IDataStore): void;
     /** Change remote adapter */
     setAdapter(adapter: adapters.IAdapter): void;
+    /** Reset this dataset by detaching all entities */
+    reset(): void;
 
     /** Create a new view of the current set with specified query */
     createView(query?: query.ODataQuery): dataview.DataView<T, TKey>;
 
     /** Refresh dataset from remote source */
-    refresh(): JQueryPromise<T[]>;
+    refresh(mode?: string): JQueryPromise<T[]>;
     /** Query server to refresh dataset */
-    query(query?: query.ODataQuery, refresh?: boolean);
+    query(query?: query.ODataQuery): JQueryPromise<T[]>;
+
     /** Load an entity by id from the remote source */
-    load(key: TKey, query?: query.ODataQuery): JQueryPromise<T>;
+    load(key: TKey): JQueryPromise<T>;
+    load(key: TKey, query: query.ODataQuery): JQueryPromise<T>;
+    load(key: TKey, mode: string): JQueryPromise<T>;
+    load(key: TKey, mode: string, query: query.ODataQuery): JQueryPromise<T>;
+    load(key: TKey, mode?: string, query?: query.ODataQuery): JQueryPromise<T>;
+
     /** Execute action on remote source */
     executeAction(action: string, params?: any, entity?: T): JQueryPromise<any>;
+
+    /** Gets the key associated with an entity */
+    getKey(entity: T): TKey;
+    /** Finds a matching entity in the set (by key) */
+    findByKey(key: TKey): T;
 
     /** Add entity to dataset, if buffer is false, entity will be instantly post on the server */
     add(entity: T): JQueryPromise<T>;
     /** Add entities to dataset, if buffer is false, entities will be instantly post on the server */
     addRange(entities: T[]): JQueryPromise<T[]>;
     /** Update entity on dataset, if buffer is false, entity will be instantly put on the server */
-    update(entity: T): void;
+    update(entity: T): JQueryPromise<T>;
     /** Remove entity from dataset, if buffer is false, entity will be instantly deleted on the server */
-    remove(entity: T): void;
+    remove(entity: T): JQueryPromise<T>;
 
     /** Reset entity to its original state */
-    resetEntity(entity: T): void;
+    resetEntity(entity: T): JQueryPromise<any>;
     /** Dispose and clean entity */
     disposeEntity(entity: T): void;
 
@@ -78,13 +90,6 @@ export interface DataSetFunctions<T, TKey> {
     /** Attach or update entities if existing with current data and commit changes if commit is set to true */
     attachOrUpdateRange(data: any[], commit?: boolean): JQueryPromise<T[]>;
 
-    /** Gets the key associated with an entity */
-    getKey(entity: T): TKey;
-    /** Finds a matching entity in the set (by key) */
-    findByEntity(entity: T): T;
-    /** Finds a matching entity in the set (by key) */
-    findByKey(key: TKey): T;
-
     /** Create a JS object from given entity */
     toJS(entity: T, keepstate?: boolean): any;
     /** Serialize given entity to JSON */
@@ -102,14 +107,44 @@ export interface DataSetFunctions<T, TKey> {
     /** Commits all Pending Operations (PUT, DELETE, POST) */
     saveChanges(): JQueryPromise<any>;
 
-    createOnStateChanged(entity: any): (newState: mapping.entityStates) => void;
-
     /** Submits an Entity to the Server (internal use) */
-    _remoteCreate(entity: any): JQueryPromise<any>;
+    _remoteCreate(entity: T): JQueryPromise<T>;
     /** Updates an Item to the Server (internal use */
-    _remoteUpdate(entity: any): JQueryPromise<any>;
+    _remoteUpdate(entity: T): JQueryPromise<T>;
     /** Deletes an Item from the Server (internal use) */
-    _remoteRemove(entity: any): JQueryPromise<any>;
+    _remoteRemove(entity: T): JQueryPromise<T>;
+}
+
+//#endregion
+
+//#region Private Methods
+
+function _createOnStateChanged(dataset: DataSet<any, any>, entity: any): (newState: mapping.entityStates) => void {
+    return (newState: mapping.entityStates) => {
+        if (newState === mapping.entityStates.modified) {
+            utils.timeout().then(() => {
+                dataset.store.update(dataset.setName, entity);
+                dataset._remoteUpdate(entity);
+            });
+        }
+        else if (newState === mapping.entityStates.removed) {
+            utils.timeout(100).then(() => dataset._remoteRemove(entity)); //hack : updates before removes
+        }
+    };
+}
+
+function _initAttachedEntity(dataset: DataSet<any, any>, entity: any): any {
+    if (dataset.context.buffer === false) {
+        entity.EntityState.subscribe(_createOnStateChanged(dataset, entity));
+    }
+
+    if (entity.EntityState() === mapping.entityStates.added) {
+        if (dataset.context.buffer === false)
+            return dataset._remoteCreate(entity);
+    }
+    else if (dataset.context.autoLazyLoading === true) {
+        return mapping.refreshRelations(entity, dataset).then(() => entity);
+    }
 }
 
 //#endregion
@@ -117,7 +152,7 @@ export interface DataSetFunctions<T, TKey> {
 //#region Model
 
 export function create<T, TKey>(setName: string, keyPropertyName: string, defaultType: string, dataContext: context.DataContext): DataSet<T, TKey> {
-    var result = ko.observable(dataContext.store.getMemorySet(setName)).extend({ notify: "reference" });
+    var result = ko.observable({}).extend({ notify: "reference" });
 
     result.setName = setName;
     result.key = keyPropertyName;
@@ -141,12 +176,17 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     /** Change local store */
     setLocalStore: function (store: stores.IDataStore): void {
         this.store = store;
-        this(store.getMemorySet(this.setName));
+        this.reset();
     },
-
     /** Change remote adapter */
     setAdapter: function (adapter: adapters.IAdapter): void {
         this.adapter = adapter;
+    },
+
+    /** Reset this dataset by detaching all entities */
+    reset: function () {
+        this.each(this.disposeEntity, this);
+        this({});
     },
 
     /** Create a new view of the current set with specified query */
@@ -155,73 +195,121 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     },
 
     /** Refresh dataset from remote source */
-    refresh: function (): JQueryPromise<any> {
-        return this.query(null, true);
-    },
-    /** Query server to refresh dataset */
-    query: function (query?: query.ODataQuery, refresh: boolean = false) {
-        /// <summary>Query server to refresh dataset</summary>
-        /// <param name="query" type="spa.odataQuery" optional="true">OData query for server</param>
-        /// <param name="refresh" type="Boolean" optional="true" default="false">check whether local entities must be refreshed with new values</param>
-        /// <returns type="$.Deffered">return a deffered object for async operations</returns>
-        
-        var self = this,
-            count = -1;
-        
-        return this.adapter
-            .getAll(self.setName, query)
-            .then(function (data) {
-                if (data["odata.metadata"]) {
-                    if (data["odata.count"])
-                        count = data["odata.count"];
+    refresh: function (mode: string = "remote", query?: query.ODataQuery): JQueryPromise<any[]> {
+        var self = <DataSet<any, any>>this;
+        if (mode === "remote") {
+            return self.adapter.getAll(self.setName, query).then(result => {
+                var rmDfd;
+                if (!query || query.pageSize() === 0) {
+                    var current = self.toArray();
+                    if (query && query.filters.size() > 0) 
+                        current = query.applyFilters(current);
 
-                    data = data.value;
-                }
-                else if (data.__count) {
-                    count = data.__count;
-                    data = data.results;
-                }
-                else if (!query) {
-                    count = data.length;
-                }
+                    var report = utils.arrayCompare(
+                        _.map(current, self.getKey, self),
+                        _.map(result.data, self.getKey, self)
+                    );
 
-                return data;
-            })
-            .then(function (data) {
-                if (refresh === true) {
-                    if (query && query.pageSize() === 0) {
-                        var actual = query.applyFilters(self.toArray()),
-                            report = utils.arrayCompare(actual, data);
-
-                        self.detachRange(report.removed);
+                    if (report.removed.length > 0) {
+                        rmDfd = self.store.removeRange(self.setName, report.removed)
+                                    .then(() => self.detachRange(report.removed));
                     }
+                }
 
-                    return self.attachOrUpdateRange(data);
-                }
-                else {
-                    return _.map(data, self.fromJS, self);
-                }
-            })
-            .done(function (result) {
-                if (count !== -1)
-                    self.remoteCount(count);
+                $.when(rmDfd).then(() => {
+                    if (result.count >= 0)
+                        self.remoteCount(result.count);
+
+                    return self.attachOrUpdateRange(result.data);
+                });
             });
+        }
+        else {
+            return self.store.getAll(self.setName, query).then(entities => {
+                var toUpdate = false,
+                    table = self(),
+                    key, entity,
+
+                    dfds = _.filterMap(entities, data => {
+                        entity = self.findByKey(self.getKey(data));
+                        if (!entity) {
+                            entity = self.fromJS(data);
+                            if (!toUpdate) {
+                                self.valueWillMutate();
+                                toUpdate = true;
+                            }
+
+                            key = self.getKey(entity);
+                            table[key] = entity;
+
+                            return _initAttachedEntity(self, entity);
+                        }
+
+                        return mapping.updateEntity(entity, data, false, self);
+                    });
+
+                return utils.whenAll(dfds).done(() => toUpdate && self.valueHasMutated());
+            });
+        }
+    },
+    /** Query remote source without attaching result to dataset */
+    query: function (query?: query.ODataQuery): JQueryPromise<any[]> {
+        var self = <DataSet<any, any>>this;
+        return self.adapter.getAll(self.setName, query).then(result => {
+            if (result.count >= 0)
+                self.remoteCount(result.count);
+
+            return _.map(result.data, e => self.fromJS(e));
+        });
     },
     /** Load an entity by id from the remote source */
-    load: function (key: any, query?: query.ODataQuery): JQueryPromise<any> {
-        var self = this;
-        return this.adapter.getOne(this.setName, key, query).then(data => self.attachOrUpdate(data));
+    load: function (key: any, mode?: any, query?: query.ODataQuery): JQueryPromise<any> {
+        var self = <DataSet<any, any>>this;
+        if (!query && mode && !_.isString(mode)) query = mode;
+
+        if (mode === "remote") {
+            return self.adapter.getOne(self.setName, key, query)
+                .then(data => self.attachOrUpdate(data));
+        }
+        else {
+            return self.store.getOne(self.setName, key, query).then(data => {
+                var table = self(),
+                    key = self.getKey(data),
+                    entity = self.findByKey(self.getKey(data));
+
+                if (!entity) {
+                    entity = self.fromJS(data);
+
+                    self.valueWillMutate();
+                    table[key] = entity;
+                    self.valueHasMutated();
+
+                    return _initAttachedEntity(self, entity);
+                }
+
+                return mapping.updateEntity(entity, data, false, self);
+            });
+        }
     },
     /** Execute action on remote source */
     executeAction: function (action: string, params?: any, entity?: any): JQueryPromise<any> {
+        if (!this.adapter.action) {
+            throw new Error("This adapter does not support custom actions");
+        }
+
         var id = entity ? this.getKey(entity) : null,
             data = ko.toJSON(params);
 
-        if (!this.adapter.action) {
-            throw "This adapter is not compatible with custom actions";
-        }
-
         return this.adapter.action(this.setName, action, data, id);
+    },
+
+    /** Gets the key associated with an entity */
+    getKey: function (entity: any): any {
+        return ko.unwrap(entity[this.key]);
+    },
+    /** Finds a matching entity in the set (by key) */
+    findByKey: function (key: any): any {
+        return this()[key];
     },
 
     /** Add entity to dataset, if buffer is false, entity will be instantly post on the server */
@@ -236,38 +324,42 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     },
     /** Add entities to dataset, if buffer is false, entities will be instantly post on the server */
     addRange: function (entities: any[]): JQueryPromise<any> {
-        _.each(entities, function (entity) {
+        _.each(entities, entity => {
             if (!entity.EntityState)
                 mapping.addMappingProperties(entity, this);
 
             entity.EntityState(mapping.entityStates.added);
             entity[this.key](guid.generateTemp());
-        }, this);
+        });
 
         return this.attachRange(entities);
     },
     /** Update entity on dataset, if buffer is false, entity will be instantly put on the server */
-    update: function (entity: any): void {
+    update: function (entity: any): JQueryPromise<any> {
         if (this.isAttached(entity)) {
             entity.EntityState(mapping.entityStates.modified);
-            this.store.update(this.setName, entity);
+            return this.store.update(this.setName, entity).then(() => entity);
         }
+
+        return $.when(entity);
     },
     /** Remove entity from dataset, if buffer is false, entity will be instantly deleted on the server */
-    remove: function (entity: any): void {
+    remove: function (entity: any): JQueryPromise<any> {
         var state = entity.EntityState && entity.EntityState();
         if (utils.isUndefined(state) || state === mapping.entityStates.added)
             this.detach(entity);
         else {
             entity.EntityState(mapping.entityStates.removed);
-            this.store.update(this.setName, entity);
+            return this.store.update(this.setName, entity).then(() => entity);
         }
+
+        return $.when(entity);
     },
 
     /** Reset entity to its original state */
-    resetEntity: function (entity: any): void {
+    resetEntity: function (entity: any): JQueryPromise<any> {
         mapping.resetEntity(entity, this);
-        this.store.update(this.setName, entity);
+        return this.store.update(this.setName, entity).then(() => entity);
     },
     /** Dispose and clean entity */
     disposeEntity: function (entity: any): void {
@@ -279,158 +371,138 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
 
     /** Get whether entity is attached or not */
     isAttached: function (entity: any): boolean {
-        return !!this.findByEntity(entity);
+        return !!this.findByKey(this.getKey(entity));
     },
     /** Attach an entity to the dataSet (commits immediately if buffer is false) */
     attach: function (entity: any): JQueryPromise<any> {
-        var self = this,
-            key = this.getKey(entity),
-            deferred;
+        var self = <DataSet<any, any>>this,
+            table = self(),
+            key = self.getKey(entity);
 
-        if (!this.isAttached(entity)) {
-            this.valueWillMutate();
+        if (!self.isAttached(entity)) {
+            self.valueWillMutate();
 
-            this.store.add(this.setName, entity);
-
-            if (this.context.buffer === false) {
-                entity.EntityState.subscribe(this.createOnStateChanged(entity), this);
-            }
-
-            if (entity.EntityState() === mapping.entityStates.added) {
-                if (this.context.buffer === false)
-                    deferred = this._remoteCreate(entity);
-            }
-            else if (this.context.autoLazyLoading === true) {
-                deferred = mapping.refreshRelations(entity, this).then(() => entity);
-            }
-        }
-
-        return $.when(deferred || entity)
+            return self.store.add(self.setName, entity)
+                .then(() => {
+                    table[key] = entity;
+                    return _initAttachedEntity(self, entity);
+                })
                 .then(() => self.valueHasMutated())
                 .then(() => entity);
+        }
+
+        return $.when(entity);
     },
     /** Attach an Array of entities to the dataSet */
-    attachRange: function (entities: any[]): JQueryPromise<any> {
-        var self = this,
+    attachRange: function (entities: any[]): JQueryPromise<any[]> {
+        var self = <DataSet<any, any>>this,
             toUpdate = false,
-            deferreds = [];
+            table = self(),
+            key, dfds = [];
 
-        var toStore = _.filter(entities, function (entity) {
-            if (!this.isAttached(entity)) {
+        var toStore = _.filter(entities, entity => {
+            if (!self.isAttached(entity)) {
                 if (!toUpdate) {
-                    this.valueWillMutate();
+                    self.valueWillMutate();
                     toUpdate = true;
                 }
 
-                if (this.context.buffer === false) {
-                    entity.EntityState.subscribe(this.createOnStateChanged(entity), this);
-                }
+                key = self.getKey(entity);
+                table[key] = entity;
 
-                if (entity.EntityState() === mapping.entityStates.added) {
-                    if (this.context.buffer === false) {
-                        deferreds.push(this._remoteCreate(entity));
-                    }
-                }
-                else if (this.context.autoLazyLoading === true) {
-                    deferreds.push(mapping.refreshRelations(entity, this));
-                }
+                dfds.push(_initAttachedEntity(self, entity));
 
                 return true;
             }
 
             return false;
-        }, this);
+        });
 
         if (toUpdate) {
-            this.store.addRange(this.setName, toStore);
-            this.valueHasMutated();
+            dfds.push(self.store.addRange(self.setName, toStore));
         }
 
-        return $.when.apply($, deferreds);
+        return utils.whenAll(dfds)
+            .then(() => toUpdate && self.valueHasMutated())
+            .then(() => entities);
     },
+
     /** Stop an entity from being tracked by the dataSet */
     detach: function (entity: any): void {
-        var key = this.getKey(entity);
-        if (this.isAttached(entity)) {
-            this.valueWillMutate();
+        var self = <DataSet<any, any>>this,
+            table = self(),
+            key = this.getKey(entity);
 
-            this.disposeEntity(entity);
-            this.store.remove(this.setName, key);
+        if (self.isAttached(entity)) {
+            self.valueWillMutate();
 
-            this.valueHasMutated();
+            self.disposeEntity(entity);
+            delete table[key];
+
+            self.valueHasMutated();
         }
     },
     /** Stop an array of entities from being tracked by the dataSet */
     detachRange: function (entityKeys: any[]): void {
-        var toUpdate = false;
+        var self = <DataSet<any, any>>this,
+            table = self(),
+            toUpdate = false;
 
-        var toRemove = _.filter(entityKeys, function (key) {
-            var entity = this.findByKey(key);
+        _.each(entityKeys, key => {
+            var entity = self.findByKey(key);
             if (entity) {
                 if (!toUpdate) {
-                    this.valueWillMutate();
+                    self.valueWillMutate();
                     toUpdate = true;
                 }
 
-                this.disposeEntity(entity);
-                return true;
+                self.disposeEntity(entity);
+                delete table[key];
             }
-
-            return false;
-        }, this);
+        });
 
         if (toUpdate) {
-            this.store.removeRange(this.setName, toRemove);
-            this.valueHasMutated();
+            self.valueHasMutated();
         }
     },
+
     /** Attach or update entity if existing with current data and commit changes if commit is set to true */
     attachOrUpdate: function (data: any, commit: boolean = false): JQueryPromise<any> {
-        var existing = this.findByEntity(data);
-        
+        var self = <DataSet<any, any>>this,
+            existing = self.findByKey(self.getKey(data));
+
         if (!existing) {
-            var newEntity = this.fromJS(data, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged);
-            return this.attach(newEntity);
+            var newEntity = self.fromJS(data, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged);
+            return self.attach(newEntity);
         }
 
-        mapping.updateEntity(existing, data, commit, this);
-        this.store.update(this.setName, existing);
+        mapping.updateEntity(existing, data, commit, self);
 
-        return $.when(existing);
+        return self.store.update(self.setName, existing).then(() => existing);
     },
     /** Attach or update entities if existing with current data and commit changes if commit is set to true */
     attachOrUpdateRange: function (data: any[], commit: boolean = false): JQueryPromise<any[]> {
-        var toAttach = [], toUpdate = [],
-            result = _.map(data, function (item) {
-                var existing = this.findByEntity(item);
+        var self = <DataSet<any, any>>this,
+            toAttach = [], toUpdate = [],
+            result = _.map(data, item => {
+                var existing = self.findByKey(self.getKey(item));
 
                 if (!existing) {
-                    var newEntity = this.fromJS(item, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged);
+                    var newEntity = self.fromJS(item, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged);
                     toAttach.push(newEntity);
                     return newEntity;
                 }
 
                 toUpdate.push(existing);
-                return mapping.updateEntity(existing, item, commit, this);
-            }, this);
+                return mapping.updateEntity(existing, item, commit, self);
+            });
 
-        return $.when(this.store.updateRange(this.setName, toUpdate), this.attachRange(toAttach)).then(() => result);
+        return $.when(
+            self.store.updateRange(self.setName, toUpdate),
+            self.attachRange(toAttach)
+        ).then(() => result);
     },
 
-    /** Gets the key associated with an entity */
-    getKey: function (entity: any): any {
-        return ko.utils.unwrapObservable(entity[this.key]);
-    },
-    /** Finds a matching entity in the set (by key) */
-    findByEntity: function (entity: any): any {
-        var key = this.getKey(entity);
-        return this.findByKey(key);
-    },
-    /** Finds a matching entity in the set (by key) */
-    findByKey: function (key: any): any {
-        return this.store.getOne(this.setName, key);
-    },
-    
     /** Create a JS object from given entity */
     toJS: function (entity: any, keepstate: boolean = false): any {
         return mapping.mapEntityToJS(entity, keepstate, this);
@@ -451,80 +523,66 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
 
     /** Get a report of changes in the dataSet */
     getChanges: function () {
-        return _.groupBy(this.store.getAll(this.setName), (e) => e.EntityState());
+        return (<DataSet<any, any>>this).groupBy(e => e.EntityState());
     },
     /** Save changes of an entity to the server */
     saveEntity: function (entity: any): JQueryPromise<any> {
-        var state = entity.EntityState(),
+        var self = <DataSet<any, any>>this,
+            state = entity.EntityState(),
             states = mapping.entityStates;
 
         switch (state) {
             case states.added:
-                return this._remoteCreate(entity);
+                return self._remoteCreate(entity);
             case states.modified:
-                return this._remoteUpdate(entity);
+                return self._remoteUpdate(entity);
             case states.removed:
-                return this._remoteRemove(entity);
+                return self._remoteRemove(entity);
         }
 
-        return $.when();
+        return $.when(entity);
     },
     /** Commits all Pending Operations (PUT, DELETE, POST) */
     saveChanges: function (): JQueryPromise<any> {
-        var changes = this.getChanges(),
+        var self = <DataSet<any, any>>this,
+            changes = self.getChanges(),
             states = mapping.entityStates,
+
             deferreds = _.union(
-                _.map(changes[states.added], e => this._remoteCreate(e)),
-                _.map(changes[states.modified], e => this._remoteUpdate(e)),
-                _.map(changes[states.removed], e => this._remoteRemove(e))
+                _.map(changes[states.added], e => self._remoteCreate(e)),
+                _.map(changes[states.modified], e => self._remoteUpdate(e)),
+                _.map(changes[states.removed], e => self._remoteRemove(e))
             );
 
-        return $.when.apply($, deferreds);
-    },
-
-    createOnStateChanged: function (entity: any): (newState: mapping.entityStates) => void {
-        var self = this;
-        return function (newState: mapping.entityStates) {
-            if (newState === mapping.entityStates.modified) {
-                self.store.update(self.setName, entity);
-                setTimeout(function () { self._remoteUpdate(entity); }, 0);
-            }
-            else if (newState === mapping.entityStates.removed) {
-                setTimeout(function () { self._remoteRemove(entity); }, 100); //hack : updates before removes
-            }
-        };
+        return utils.whenAll(deferreds);
     },
 
     /** Submits an Entity to the Server (internal use) */
     _remoteCreate: function (entity: any): JQueryPromise<any> {
-        var self = this,
-            oldkey = this.getKey(entity);
+        var self = <DataSet<any, any>>this,
+            oldkey = self.getKey(entity);
 
         if (entity.EntityState() === mapping.entityStates.added) {
             if (entity.IsSubmitting() === false) {
                 entity.IsSubmitting(true);
 
-                return this.adapter
-                    .post(this.setName, this.toJSON(entity), oldkey)
-                    .then(function (data) {
-                        mapping.updateEntity(entity, data, false, self);
-                    })
-                    .then(function () {
+                return self.adapter.post(self.setName, self.toJSON(entity))
+                    .then(data => mapping.updateEntity(entity, data, false, self))
+                    .then(() => {
                         if (oldkey !== self.getKey(entity)) {
                             self.valueWillMutate();
 
-                            self.store.remove(self.setName, oldkey);
-                            self.store.add(self.setName, entity);
-
-                            self.valueHasMutated();
+                            return self.store.remove(self.setName, oldkey)
+                                .then(() => self.store.add(self.setName, entity))
+                                .then(() => self.valueHasMutated());
                         }
                     })
-                    .then(function () {
+                    .then(() => {
                         if (self.context.autoLazyLoading === true)
                             return mapping.refreshRelations(entity, self);
                     })
                     .then(() => entity)
-                    .always(function () { entity.IsSubmitting(false); });
+                    .always(() => { entity.IsSubmitting(false); });
             }
         }
 
@@ -532,38 +590,33 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     },
     /** Updates an Item to the Server (internal use */
     _remoteUpdate: function (entity: any): JQueryPromise<any> {
-        var self = this,
-            key = this.getKey(entity);
+        var self = <DataSet<any, any>>this,
+            key = self.getKey(entity);
 
         if (entity.IsSubmitting() === false) {
             entity.IsSubmitting(true);
 
-            return this.adapter
-                .put(this.setName, key, this.toJSON(entity))
-                .then(function (data) {
-                    mapping.updateEntity(entity, data, false, self);
-                    return entity;
-                })
-                .always(function () { entity.IsSubmitting(false); });
+            return self.adapter.put(self.setName, key, self.toJSON(entity))
+                .then(data => mapping.updateEntity(entity, data, false, self))
+                .then(() => self.store.update(self.setName, entity))
+                .then(() => entity)
+                .always(() => { entity.IsSubmitting(false); });
         }
 
-        return $.when();
+        return $.when(entity);
     },
     /** Deletes an Item from the Server (internal use) */
     _remoteRemove: function (entity: any): JQueryPromise<any> {
-        var self = this,
-            key = this.getKey(entity);
+        var self = <DataSet<any, any>>this,
+            key = self.getKey(entity);
 
         if (entity.IsSubmitting() === false) {
             entity.IsSubmitting(true);
 
-            return this.adapter
-                .remove(this.setName, key)
-                .then(function () {
-                    self.detach(entity);
-                    return entity;
-                })
-                .always(function () { entity.IsSubmitting(false); });
+            return self.adapter.remove(self.setName, key)
+                .then(() => self.store.remove(self.setName, key))
+                .then(() => self.detach(entity))
+                .always(() => { entity.IsSubmitting(false); });
         }
 
         return $.when();

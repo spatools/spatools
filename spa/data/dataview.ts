@@ -8,20 +8,19 @@ import _query = require("./query");
 
 //#region Interfaces 
 
-export interface DataView<T, TKey> extends KnockoutUnderscoreArrayFunctions<T> {
-    (): T[];
-
+export interface DataView<T, TKey> extends KnockoutUnderscoreArrayFunctions<T> { }
+export interface DataView<T, TKey> extends KnockoutComputed<T> { }
+export interface DataView<T, TKey> extends DataViewFunctions<T, TKey> {
     set: dataset.DataSet<T, TKey>;
     query: _query.ODataQuery;
     lastResult: KnockoutObservableArray<T>;
 }
-export interface DataView<T, TKey> extends DataViewFunctions<T, TKey> { }
 
 export interface DataViewFunctions<T, TKey> {
     /** Refresh the view from the server */
-    refresh(): JQueryPromise<any>;
+    refresh(mode?: string): JQueryPromise<any>;
     /** Load a remote entity by key */
-    load(key: TKey, query?: _query.ODataQuery): JQueryPromise<any>;
+    load(key: TKey, mode?: string): JQueryPromise<T>;
 
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */
     add(entity: T): JQueryPromise<any>;
@@ -71,16 +70,16 @@ export function create<T, TKey>(dataSet: dataset.DataSet<T, TKey>, query?: _quer
 
 export var dataViewFunctions: DataViewFunctions<any, any> = {
     /** Refresh the view from the server */
-    refresh: function (): JQueryPromise<any> {
-        var self = this;
-        return this.set.query(this.query, true).done(function (data) {
+    refresh: function (mode: string = "remote"): JQueryPromise<any> {
+        var self = <DataView<any, any>>this;
+        return self.set.refresh(mode, self.query).done(function (data) {
             if (self.query.pageSize() > 0)
                 self.lastResult(data);
         });
     },
     /** Load a remote entity by key */
-    load: function (key: any, query?: _query.ODataQuery): JQueryPromise<any> {
-        return this.set.load(key, query);
+    load: function (key: any, mode: string = "remote"): JQueryPromise<any> {
+        return this.set.load(key, mode, this.query);
     },
 
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */
@@ -88,12 +87,12 @@ export var dataViewFunctions: DataViewFunctions<any, any> = {
         return this.set.add(entity);
     },
     /** Update entity on view, if buffer is false, entity will be instantly put on the server */
-    update: function (entity: any): void {
-        this.set.update(entity);
+    update: function (entity: any): JQueryPromise<any> {
+        return this.set.update(entity);
     },
     /** Remove entity from dataset, if buffer is false, entity will be instantly deleted on the server */
-    remove: function (entity: any): void {
-        this.set.remove(entity);
+    remove: function (entity: any): JQueryPromise<any> {
+        return this.set.remove(entity);
     },
 
     findByKey: function (key: any): any {
@@ -105,20 +104,20 @@ export var dataViewFunctions: DataViewFunctions<any, any> = {
         return this.set.saveEntity(entity);
     },
     /** Reset entity to its original state */
-    resetEntity: function (entity: any): void {
-        this.set.resetEntity(entity);
+    resetEntity: function (entity: any): JQueryPromise<any> {
+        return this.set.resetEntity(entity);
     },
 
     /** Get a report of changes in the dataview */
     getChanges: function (): any {
-        return _.groupBy(this(), e => e.EntityState());
+        return this.groupBy(e => e.EntityState());
     },
     /** Commits all Pending Operations (PUT, DELETE, POST) */
     saveChanges: function (): JQueryPromise<any> {
         /// <summary>Commits all Pending Operations (PUT, DELETE, POST)</summary>
         /// <returnss type="$.Deffered">return a deffered object for async operations</returnss>
         var changes = this.getChanges(),
-            set = this.set,
+            set = (<DataView<any, any>>this).set,
             states = mapping.entityStates,
             deferreds = _.union(
                 _.map(changes[states.added], e => set._remoteCreate(e)),
@@ -129,6 +128,7 @@ export var dataViewFunctions: DataViewFunctions<any, any> = {
         return $.when.apply($, deferreds);
     }
 };
+
 ko.utils.extend(dataViewFunctions, underscore.collections);
 
 //#endregion
