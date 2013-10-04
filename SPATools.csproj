@@ -202,6 +202,7 @@
     <TypeScriptCompile Include="tests\changeTracker.ts" />
     <TypeScriptCompile Include="tests\commands.ts" />
     <TypeScriptCompile Include="tests\data\common.ts" />
+    <TypeScriptCompile Include="tests\data\mapping.ts" />
     <TypeScriptCompile Include="tests\data\query.ts" />
     <TypeScriptCompile Include="tests\messenger.ts" />
     <TypeScriptCompile Include="tests\path.ts" />

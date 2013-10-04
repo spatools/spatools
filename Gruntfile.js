@@ -143,8 +143,7 @@
             }
         },
         qunit: {
-            tests: ["<%= paths.output %>/tests/all.html"],
-            btests: ["http://localhost:8080/build/<%= paths.output %>/all.html"]
+            tests: ["<%= paths.output %>/tests/all.html"]
         },
 
         nugetdeps: {
@@ -234,7 +233,7 @@
     grunt.registerTask("build", buildTasks);
     grunt.registerTask("samples", ["typescript:samples", "copy:samples"]);
     grunt.registerTask("test", ["typescript:tests", "copy:tests", "qunit:tests"]);
-    grunt.registerTask("btest", ["typescript:tests", "copy:tests", "connect:test", "qunit:btests"]);
+    grunt.registerTask("btest", ["typescript:tests", "copy:tests", "connect:test:keepalive"]);
     grunt.registerTask("default", defaultTask);
     grunt.registerTask("publish", ["nugetdeps", "nugetpack", "nugetpush"]);
 };

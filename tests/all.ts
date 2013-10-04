@@ -28,7 +28,8 @@ var modules = [
     "timers",
     "utils",
     "data/guid",
-    "data/query"
+    "data/query",
+    "data/mapping"
 ];
 
 require(modules, function () {

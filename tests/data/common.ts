@@ -3,6 +3,8 @@
 
 import context = require("../../spa/data/context");
 import dataset = require("../../spa/data/dataset");
+import relationview = require("../../spa/data/relationview");
+import foreignview = require("../../spa/data/foreignview");
 import stores = require("../../spa/data/stores");
 import adapters = require("../../spa/data/adapters");
 import mapping = require("../../spa/data/mapping");
@@ -14,8 +16,7 @@ import utils = require("../../spa/utils");
 
 export module models {
     export class Parent {
-        public "odata.type" = "SPATools.Models.Parent";
-
+        public "odata.type";
         public ParentId = ko.observable<string>();
         public Title = ko.observable("");
 
@@ -25,29 +26,47 @@ export module models {
 
         public ForeignId = ko.observable<string>();
 
+        // Navigation properties
+        public Children: relationview.RelationView<Parent, string, Child, string>;
+        public Foreign: foreignview.ForeignView<Parent, string, Foreign, string>;
+
         constructor() {
+            this["odata.type"] = "SPATools.Models.Parent";
             this.TitleUpper = ko.computed(() => this.Title().toUpperCase());
             this.TitleLower = ko.computed(() => this.Title().toLowerCase());
         }
     }
     export class Child {
-        public "odata.type" = "SPATools.Models.Child";
+        public "odata.type";
 
         public ChildId = ko.observable<string>();
         public Content = ko.observable("");
 
         public ParentId = ko.observable<string>();
+
+        constructor() {
+            this["odata.type"] = "SPATools.Models.Child";
+        }
     }
     export class ChildDerived extends Child {
-        public "odata.type" = "SPATools.Models.ChildDerived";
+        public "odata.type";
 
         public Date = ko.observable<string>().extend({ moment: { utc: true } });
+
+        constructor() {
+            super();
+            this["odata.type"] = "SPATools.Models.ChildDerived";
+        }
     }
     export class Foreign {
-        public "odata.type" = "SPATools.Models.Foreign";
+        public "odata.type";
 
         public ForeignId = ko.observable<string>();
         public Index = ko.observable<number>(-1);
+
+        constructor() {
+            this["odata.type"] = "SPATools.Models.Foreign";
+        }
     }
 }
 
@@ -56,6 +75,7 @@ export module models {
 //#region DataContext Configuration
 
 export var datacontext = new context.DataContext();
+datacontext.buffer = true;
 datacontext.addSet<models.Parent, string>("Parents", "ParentId", "SPATools.Models.Parent");
 datacontext.addSet<models.Child, string>("Childs", "ChildId", "SPATools.Models.Child");
 datacontext.addSet<models.Foreign, string>("Foreigns", "ForeignId", "SPATools.Models.Foreign");
@@ -97,9 +117,9 @@ var parentIds = [
 
 function generateData(): any {
     return {
-        Parents: this.generateParents(),
-        Childs: this.generateChilds(),
-        Foreigns: this.generateForeigns()
+        Parents: generateParents(),
+        Childs: generateChilds(),
+        Foreigns: generateForeigns()
     };
 }
 
@@ -316,14 +336,19 @@ export class FakeDataStore {
 
 //#region Utility Methods
 
-export function initDataContext(store?: stores.IDataStore, adapter?: adapters.IAdapter): JQueryPromise<any> {
-    var dfds = [];
+var initialized = false;
+export function initDataContext(store?: stores.IDataStore, adapter?: adapters.IAdapter, force?: boolean): JQueryPromise<any> {
+    if (initialized && !force)
+        return $.when();
+
+    initialized = true;
+
+    var dfds = [
+        datacontext.setAdapter(adapter || new FakeDataAdapter(datacontext, true))
+    ];
 
     if (store)
         dfds.push(datacontext.setLocalStore(store));
-
-    if (adapter)
-        dfds.push(datacontext.setAdapter(adapter));
 
     return utils.whenAll(dfds);
 }
