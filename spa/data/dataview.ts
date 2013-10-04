@@ -22,6 +22,9 @@ export interface DataViewFunctions<T, TKey> {
     /** Load a remote entity by key */
     load(key: TKey, mode?: string): JQueryPromise<T>;
 
+    /** Synchronize data store with remote source content filtered with view's query */
+    sync(): JQueryPromise<void>;
+
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */
     add(entity: T): JQueryPromise<any>;
     /** Update entity on view, if buffer is false, entity will be instantly put on the server */
@@ -80,6 +83,11 @@ export var dataViewFunctions: DataViewFunctions<any, any> = {
     /** Load a remote entity by key */
     load: function (key: any, mode?: string): JQueryPromise<any> {
         return this.set.load(key, mode, this.query);
+    },
+
+    /** Synchronize data store with remote source content filtered with view's query */
+    sync: function(): JQueryPromise<void> {
+        return this.set.sync(this.query);
     },
 
     /** Add entity to view, if buffer is false, entity will be instantly post on the server */

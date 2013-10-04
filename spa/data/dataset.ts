@@ -59,6 +59,10 @@ export interface DataSetFunctions<T, TKey> {
     load(key: TKey, mode: string, query: query.ODataQuery): JQueryPromise<T>;
     load(key: TKey, mode?: string, query?: query.ODataQuery): JQueryPromise<T>;
 
+    /** Synchronize data store with remote source content */
+    sync(): JQueryPromise<void>;
+    sync(query: query.ODataQuery): JQueryPromise<void>;
+
     /** Get relation by ensuring using specific remote action and not filter */
     refreshRelation<U>(entity: T, propertyName: string): JQueryPromise<U>;
     refreshRelation<U>(entity: T, propertyName: string, query: query.ODataQuery): JQueryPromise<U>;
@@ -320,6 +324,14 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                 return mapping.updateEntity(entity, data, false, self);
             });
         }
+    },
+
+    sync: function(query?: query.ODataQuery): JQueryPromise<void> {
+        var self = <DataSet<any, any>>this;
+        return self.adapter.getAll(self.setName, query).then(result => {
+            var entities = _.map(result, item => _.extend(item, { EntityState: mapping.entityStates.unchanged }));
+            return self.store.updateRange(self.setName, entities);
+        });
     },
 
     /** Get relation by ensuring using specific remote action and not filter */

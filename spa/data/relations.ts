@@ -114,6 +114,8 @@ export interface Foreign<TForeign> extends ForeignView<any, TForeign> { }
 export interface RelationForeignViewFunctions<T, TKey, TForeign, TForeignKey> {
     /** Refresh the foreign entity from the server */
     refresh(mode?: string): JQueryPromise<TForeign[]>;
+    /** Synchronize foreign with local store */
+    sync(): JQueryPromise<void>;
     /** Update entity into dataSet, if buffer is false, changes will be instantly committed to the server */
     update(): void;
     /** Change actual related entity with new one and delete if specified */
@@ -176,6 +178,10 @@ var foreignViewFunctions: RelationForeignViewFunctions<any, any, any, any> = {
         else {
             return self.view.refresh(mode);
         }
+    },
+    /** Synchronize foreign with local store */
+    sync: function (): JQueryPromise<void> {
+        return this.view.sync();
     },
     /** Update entity into dataSet, if buffer is false, changes will be instantly committed to the server */
     update: function (): void {
