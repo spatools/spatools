@@ -58,6 +58,12 @@ export interface DataSetFunctions<T, TKey> {
     load(key: TKey, mode: string, query: query.ODataQuery): JQueryPromise<T>;
     load(key: TKey, mode?: string, query?: query.ODataQuery): JQueryPromise<T>;
 
+    /** Get relation by ensuring using specific remote action and not filter */
+    refreshRelation<U>(entity: T, propertyName: string): JQueryPromise<U[]>;
+    refreshRelation<U>(entity: T, propertyName: string, query: query.ODataQuery): JQueryPromise<U[]>;
+    refreshRelation<U>(entity: T, propertyName: string, mode: string): JQueryPromise<U[]>;
+    refreshRelation<U>(entity: T, propertyName: string, mode: string, query: query.ODataQuery): JQueryPromise<U[]>;
+
     /** Execute action on remote source */
     executeAction(action: string, params?: any, entity?: T): JQueryPromise<any>;
 
@@ -156,6 +162,60 @@ function _initAttachedEntity(dataset: DataSet<any, any>, entity: any): any {
     }
 }
 
+function _updateDataSet(dataset: DataSet<any, any>, result: adapters.IAdapterResult, query?: query.ODataQuery): JQueryPromise<any[]> {
+    var rmDfd;
+    if (!query || query.pageSize() === 0) {
+        var current = dataset.toArray();
+        if (query && query.filters.size() > 0)
+            current = query.applyFilters(current);
+
+        var report = utils.arrayCompare(
+            _.map(current, dataset.getKey, dataset),
+            _.map(result.data, dataset.getKey, dataset)
+        );
+
+        if (report.removed.length > 0) {
+            rmDfd = dataset.store.removeRange(dataset.setName, report.removed)
+                .then(() => dataset.detachRange(report.removed));
+        }
+    }
+
+    return $.when(rmDfd).then(() => {
+        if (result.count >= 0 && (!query || query.filters.size() === 0))
+            dataset.remoteCount(result.count);
+
+        return dataset.attachOrUpdateRange(result.data);
+    });
+}
+
+function _updateFromStore(dataset: DataSet<any, any>, query?: query.ODataQuery): JQueryPromise<any[]> {
+    return dataset.store.getAll(dataset.setName, query).then(entities => {
+        var toUpdate = false,
+            table = dataset(),
+            key, entity,
+
+            dfds = _.filterMap(entities, data => {
+                entity = dataset.findByKey(dataset.getKey(data));
+                if (!entity) {
+                    entity = dataset.fromJS(data);
+                    if (!toUpdate) {
+                        dataset.valueWillMutate();
+                        toUpdate = true;
+                    }
+
+                    key = dataset.getKey(entity);
+                    table[key] = entity;
+
+                    return _initAttachedEntity(dataset, entity);
+                }
+
+                return mapping.updateEntity(entity, data, false, dataset);
+            });
+
+        return utils.whenAll(dfds).done(() => toUpdate && dataset.valueHasMutated());
+    });
+}
+
 //#endregion
 
 //#region Model
@@ -207,58 +267,11 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     refresh: function (mode: string = "remote", query?: query.ODataQuery): JQueryPromise<any[]> {
         var self = <DataSet<any, any>>this;
         if (mode === "remote") {
-            return self.adapter.getAll(self.setName, query).then(result => {
-                var rmDfd;
-                if (!query || query.pageSize() === 0) {
-                    var current = self.toArray();
-                    if (query && query.filters.size() > 0)
-                        current = query.applyFilters(current);
-
-                    var report = utils.arrayCompare(
-                        _.map(current, self.getKey, self),
-                        _.map(result.data, self.getKey, self)
-                    );
-
-                    if (report.removed.length > 0) {
-                        rmDfd = self.store.removeRange(self.setName, report.removed)
-                                    .then(() => self.detachRange(report.removed));
-                    }
-                }
-
-                $.when(rmDfd).then(() => {
-                    if (result.count >= 0)
-                        self.remoteCount(result.count);
-
-                    return self.attachOrUpdateRange(result.data);
-                });
-            });
+            return self.adapter.getAll(self.setName, query)
+                .then(result => _updateDataSet(self, result, query));
         }
         else {
-            return self.store.getAll(self.setName, query).then(entities => {
-                var toUpdate = false,
-                    table = self(),
-                    key, entity,
-
-                    dfds = _.filterMap(entities, data => {
-                        entity = self.findByKey(self.getKey(data));
-                        if (!entity) {
-                            entity = self.fromJS(data);
-                            if (!toUpdate) {
-                                self.valueWillMutate();
-                                toUpdate = true;
-                            }
-
-                            key = self.getKey(entity);
-                            table[key] = entity;
-
-                            return _initAttachedEntity(self, entity);
-                        }
-
-                        return mapping.updateEntity(entity, data, false, self);
-                    });
-
-                return utils.whenAll(dfds).done(() => toUpdate && self.valueHasMutated());
-            });
+            return _updateFromStore(self, query);
         }
     },
     /** Query remote source without attaching result to dataset */
@@ -274,7 +287,11 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     /** Load an entity by id from the remote source */
     load: function (key: any, mode?: any, query?: query.ODataQuery): JQueryPromise<any> {
         var self = <DataSet<any, any>>this;
-        if (!query && mode && !_.isString(mode)) query = mode;
+        if (!mode) mode = "remote";
+        if (!query && !_.isString(mode)) {
+            query = mode;
+            mode = "remote";
+        }
 
         if (mode === "remote") {
             return self.adapter.getOne(self.setName, key, query)
@@ -300,6 +317,35 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             });
         }
     },
+
+    /** Get relation by ensuring using specific remote action and not filter */
+    refreshRelation: function (entity: any, propertyName: string, mode?: any, query?: query.ODataQuery): JQueryPromise<any[]> {
+        if (!this.adapter.getRelation) {
+            throw new Error("This adapter does not support custom relations");
+        }
+
+        if (!mode) mode = "remote";
+        if (!query && !_.isString(mode)) {
+            query = mode;
+            mode = "remote";
+        }
+
+        var self = <DataSet<any, any>>this,
+            config = mapping.getMappingConfiguration(entity, self),
+            relation = _.find(config.relations, r => r.propertyName === propertyName);
+
+        if (!relation)
+            throw "This relation is not configured on this entity type";
+
+        if (mode === "remote") {
+            return self.adapter.getRelation(self.setName, propertyName, self.getKey(entity), query) 
+                .then(result => _updateDataSet(self.context.getSet(relation.controllerName), result, query));
+        }
+        else {
+            return _updateFromStore(self.context.getSet(relation.controllerName), query);
+        }
+    },
+
     /** Execute action on remote source */
     executeAction: function (action: string, params?: any, entity?: any): JQueryPromise<any> {
         if (!this.adapter.action) {

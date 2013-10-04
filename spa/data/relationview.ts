@@ -56,61 +56,21 @@ export function create<T, TKey, TForeign, TForeignKey>(propertyName: string, loc
 
 var relationViewFunctions = {
     /** Refresh foreign entities from the server */
-    refresh: function (): JQueryPromise<any> {
-        if (this.ensureRemote) {
-            var foreignSet = this.set,
-                localSet = this.localSet,
-                query = this.query,
-                self = this,
-                count;
-
-            return localSet.adapter
-                .getRelation(localSet.setName, self.propertyName, ko.utils.unwrapObservable(self.parent[self.localId]))
-                .then(function (data) {
-                    if (data["odata.metadata"]) {
-                        if (data["odata.count"])
-                            count = data["odata.count"];
-
-                        data = data.value;
-                    }
-                    else if (data.__count) {
-                        count = data.__count;
-                        data = data.results;
-                    }
-                    else if (!query) {
-                        count = data.length;
-                    }
-
-                    return data;
-                })
-                .then(function (data) {
-                    var existings = self.map(function (entity) { return foreignSet.getKey(entity); }),
-                        news = _.map(data, function (entity) { return foreignSet.getKey(entity); }),
-                        filter, args, hasToDelete, toDelete;
-
-                    if (query) {
-                        filter = query.toLocalFilter();
-                        if (filter)
-                            existings = _.filter(existings, filter);
-
-                        hasToDelete = (query.pageSize() <= 0); //TODO: exec view function to check if item is in query
-                    }
-
-                    if (hasToDelete) {
-                        args = news; args.unshift(existings);
-                        toDelete = _.without.apply(_, args);
-                        foreignSet.detachRange(toDelete);
-                    }
-
-                    return foreignSet.attachOrUpdateRange(data);
-                });
+    refresh: function (mode: string = "remote"): JQueryPromise<any[]> {
+        var self = <RelationView<any, any, any, any>>this;
+        if (self.ensureRemote) {
+            return self.set.refreshRelation(parent, self.propertyName, mode, self.query);
         }
-        else
-            return dataview.dataViewFunctions.refresh.call(this);
+        else {
+            return self.set.refresh(mode, self.query).done(data => {
+                if (self.query.pageSize() > 0)
+                    self.lastResult(data);
+            });
+        }
     },
     /** Add entity to foreign entities and set it good value in foreign key, if buffer is false, entity will be instantly post on the server */
     add: function (entity: any): JQueryPromise<any> {
-        entity[this.foreignId](ko.utils.unwrapObservable(this.parent[this.localId]));
+        entity[this.foreignId](ko.unwrap(this.parent[this.localId]));
         return this.set.add(entity);
     }
 };
