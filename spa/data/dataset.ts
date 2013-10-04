@@ -45,19 +45,21 @@ export interface DataSetFunctions<T, TKey> {
 
     /** Refresh dataset from remote source */
     refresh(): JQueryPromise<T[]>;
+    refresh(query: query.ODataQuery): JQueryPromise<T[]>;
     refresh(mode: string): JQueryPromise<T[]>;
     refresh(mode: string, query: query.ODataQuery): JQueryPromise<T[]>;
 
     /** Query server to refresh dataset */
     query(): JQueryPromise<T[]>;
     query(query: query.ODataQuery): JQueryPromise<T[]>;
+    query(mode: string): JQueryPromise<T[]>;
+    query(mode: string, query: query.ODataQuery): JQueryPromise<T[]>;
 
     /** Load an entity by id from the remote source */
     load(key: TKey): JQueryPromise<T>;
     load(key: TKey, query: query.ODataQuery): JQueryPromise<T>;
     load(key: TKey, mode: string): JQueryPromise<T>;
     load(key: TKey, mode: string, query: query.ODataQuery): JQueryPromise<T>;
-    load(key: TKey, mode?: string, query?: query.ODataQuery): JQueryPromise<T>;
 
     /** Synchronize data store with remote source content */
     sync(): JQueryPromise<void>;
@@ -270,20 +272,35 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     },
 
     /** Query remote source without attaching result to dataset */
-    query: function (query?: query.ODataQuery): JQueryPromise<any[]> {
-        var self = <DataSet<any, any>>this;
-        return self.adapter.getAll(self.setName, query).then(result => {
-            if (result.count >= 0)
-                self.remoteCount(result.count);
+    query: function (mode?: any, query?: query.ODataQuery): JQueryPromise<any[]> {
+        var self = <DataSet<any, any>>this,
+            dfd: JQueryPromise<any[]>;
 
-            return _.map(result.data, e => self.fromJS(e));
-        });
+        if (!mode) mode = self.refreshMode;
+        if (!query && !_.isString(mode)) {
+            query = mode;
+            mode = self.refreshMode;
+        }
+
+        if (mode === "remote") {
+            dfd = self.adapter.getAll(self.setName, query).then(result => result.data);
+        }
+        else {
+            dfd = self.store.getAll(self.setName, query);
+        }
+
+        return dfd.then(data => _.map(data, e => self.fromJS(e)));
     },
 
     /** Refresh dataset from remote source */
-    refresh: function (mode?: string, query?: query.ODataQuery): JQueryPromise<any[]> {
+    refresh: function (mode?: any, query?: query.ODataQuery): JQueryPromise<any[]> {
         var self = <DataSet<any, any>>this;
         if (!mode) mode = self.refreshMode;
+        if (!query && !_.isString(mode)) {
+            query = mode;
+            mode = self.refreshMode;
+        }
+
         if (mode === "remote") {
             return self.adapter.getAll(self.setName, query)
                 .then(result => _updateDataSet(self, result, query));
@@ -298,7 +315,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         if (!mode) mode = self.refreshMode;
         if (!query && !_.isString(mode)) {
             query = mode;
-            mode = "remote";
+            mode = self.refreshMode;
         }
 
         if (mode === "remote") {
@@ -326,10 +343,11 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         }
     },
 
+    /** Synchronize data store with remote source content */
     sync: function(query?: query.ODataQuery): JQueryPromise<void> {
         var self = <DataSet<any, any>>this;
         return self.adapter.getAll(self.setName, query).then(result => {
-            var entities = _.map(result, item => _.extend(item, { EntityState: mapping.entityStates.unchanged }));
+            var entities = _.map(result.data, item => _.extend(item, { EntityState: mapping.entityStates.unchanged }));
             return self.store.updateRange(self.setName, entities);
         });
     },
@@ -586,6 +604,11 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
 
     /** Instanciate an entity from a JS object */
     fromJS: function (data: any, state?: mapping.entityStates): any {
+        if (!_.isUndefined(data.EntityState)) {
+            state = data.EntityState;
+            delete data.EntityState;
+        }
+
         return mapping.mapEntityFromJS(data, state || mapping.entityStates.unchanged, this);
     },
     /** Instanciate an entity from a JSON string */
