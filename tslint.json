@@ -24,7 +24,7 @@
     ],
     "noconstruct": true,
     "nounreachable": true,
-    "noempty": true,
+    "noempty": false,
     "oneline": [false,
         "check-open-brace",
         "check-catch",

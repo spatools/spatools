@@ -338,11 +338,12 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             config = mapping.getMappingConfiguration(entity, self),
             relation = _.find(config.relations, r => r.propertyName === propertyName);
 
-        if (!relation)
-            throw "This relation is not configured on this entity type";
+        if (!relation) {
+            throw new Error("This relation is not configured on this entity type");
+        }
 
         if (mode === "remote") {
-            return self.adapter.getRelation(self.setName, propertyName, self.getKey(entity), query) 
+            return self.adapter.getRelation(self.setName, propertyName, self.getKey(entity), query)
                 .then(result => _updateDataSet(self.context.getSet(relation.controllerName), result, query));
         }
         else {
