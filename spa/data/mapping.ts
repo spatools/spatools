@@ -21,7 +21,7 @@ export enum entityStates {
     unchanged,
     added,
     modified,
-    removed,
+    removed
 }
 
 /** Default mapping rules (internal usage) */
@@ -64,24 +64,14 @@ export class Relation {
 
 /** Class representing a mapping configuration for serialization / deserialization scenarios */
 export class Configuration {
-    public rules: KnockoutMappingOptions = {
-        copy: defaultRules.copy.slice(0),
-        ignore: defaultRules.ignore.slice(0)
-    };
+    public _rules: KnockoutMappingOptions;
 
     constructor(
         public type: string,
         public object: any = null,
         public relations: Relation[] = [],
-        rules: KnockoutMappingOptions = null,
+        public rules: KnockoutMappingOptions = {},
         public actions: string[] = []) {
-            if (rules) {
-                if (rules.ignore)
-                    _.each(rules.ignore, rule => this.rules.ignore.push(rule));
-
-                if (rules.copy)
-                    _.each(rules.copy, rule => this.rules.copy.push(rule));
-            }
     }
 }
 
@@ -138,7 +128,29 @@ function constructEntity(type: any) {
     }
 }
 function getEntityType(entity: any) {
-    return entity.$type || entity["odata.type"];
+    return entity && (entity.$type || entity["odata.type"]);
+}
+
+function ensureRules(config: Configuration, entity?: any, keepState?: boolean): KnockoutMappingOptions {
+    var result = _.clone(config._rules);
+    if (!result) {
+        result = _.clone(config.rules);
+        var relations = _.map(config.relations, r => r.propertyName);
+
+        result.copy = _.union<string>(config.rules.copy || [], defaultRules.copy);
+        result.ignore = _.union<string>(config.rules.ignore || [], relations, config.actions, defaultRules.ignore);
+
+        config._rules = result;
+    }
+
+    if (keepState)
+        result.ignore = _.without(result.ignore, "EntityState");
+
+    if (entity && entity.__ko_mapping__) {
+        entity.__ko_mapping__ = result;
+    }
+
+    return result;
 }
 
 //#endregion
@@ -153,64 +165,56 @@ export function getMappingConfiguration<T, TKey>(entity: {}, dataSet: dataset.Da
 /** Add mapping properties to an entity */
 export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataSet<T, TKey>, config?: Configuration, initialState: entityStates = entityStates.unchanged, data: any = null): any {
     if (model.EntityState) {
-        throw "Model already has mapping properties";
+        throw new Error("Model already has mapping properties");
     }
 
     if (!config)
         config = getMappingConfiguration(model, dataSet);
 
-    var mappingRules = config.rules,
-        isModified = initialState !== entityStates.unchanged,
-        foreignPropertyNames: string[] = [], foreignSet;
+    var isModified = initialState !== entityStates.unchanged,
+        foreignSet;
 
-    if (config.actions) {
-        _.each(config.actions, action => {
-            model[action] = params => dataSet.executeAction(action, params, model);
-        });
-        mappingRules.ignore = _.union(mappingRules.ignore, config.actions);
-    }
+    _.each(config.actions, action => {
+        model[action] = params => dataSet.executeAction(action, params, model);
+    });
 
     //Relations
-    if (config.relations) {
-        _.each(config.relations, relation => {
-            foreignPropertyNames.push(relation.propertyName);
-            foreignSet = dataSet.context[relation.controllerName];
+    _.each(config.relations, relation => {
+        foreignSet = dataSet.context[relation.controllerName];
 
-            switch (relation.type) {
-                case relationTypes.one:
-                    model[relation.propertyName] = foreignview.create(relation.propertyName, dataSet, model, foreignSet, relation.foreignKey, relation.ensureRemote);
+        switch (relation.type) {
+            case relationTypes.one:
+                model[relation.propertyName] = foreignview.create(relation.propertyName, dataSet, model, foreignSet, relation.foreignKey, relation.ensureRemote);
 
-                    if (data && data[relation.propertyName])
-                        foreignSet.attachOrUpdate(data[relation.propertyName], initialState !== entityStates.unchanged);
+                if (data && data[relation.propertyName])
+                    foreignSet.attachOrUpdate(data[relation.propertyName], initialState !== entityStates.unchanged);
 
-                    break;
+                break;
 
-                case relationTypes.many:
-                    model[relation.propertyName] = relationview.create(relation.propertyName, dataSet, model, foreignSet, dataSet.key, relation.foreignKey, relation.ensureRemote);
+            case relationTypes.many:
+                model[relation.propertyName] = relationview.create(relation.propertyName, dataSet, model, foreignSet, dataSet.key, relation.foreignKey, relation.ensureRemote);
 
-                    if (data && data[relation.propertyName])
-                        foreignSet.attachOrUpdateRange(data[relation.propertyName], initialState !== entityStates.unchanged);
+                if (data && data[relation.propertyName])
+                    foreignSet.attachOrUpdateRange(data[relation.propertyName], initialState !== entityStates.unchanged);
 
-                    break;
+                break;
 
-                case relationTypes.remote:
-                    model[relation.propertyName] = remoteview.create(relation.propertyName, dataSet, model, foreignSet, dataSet.key);
+            case relationTypes.remote:
+                model[relation.propertyName] = remoteview.create(relation.propertyName, dataSet, model, foreignSet, dataSet.key);
 
-                    if (data && data[relation.propertyName]) {
-                        var mapped = foreignSet.attachOrUpdateRange(data[relation.propertyName], initialState !== entityStates.unchanged);
-                        model[relation.propertyName](mapped);
-                    }
+                if (data && data[relation.propertyName]) {
+                    var mapped = foreignSet.attachOrUpdateRange(data[relation.propertyName], initialState !== entityStates.unchanged);
+                    model[relation.propertyName](mapped);
+                }
 
-                    break;
-            }
-        });
-    }
-    mappingRules.ignore = _.union(mappingRules.ignore, foreignPropertyNames);
+                break;
+        }
+    });
 
     model._lastData = data || {};
     model.EntityState = ko.observable(initialState);
     model.IsSubmitting = ko.observable(false);
-    model.ChangeTracker = new changeTracker(model, isModified, ko.mapping.toJSON, mappingRules);
+    model.ChangeTracker = new changeTracker(model, isModified, ko.mapping.toJSON, ensureRules(config, model, false));
     model.HasChanges = ko.computed(function () {
         var state = model.EntityState();
         if (model.ChangeTracker.hasChanges()) {
@@ -233,7 +237,7 @@ export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataS
 }
 
 /** Refresh all entity relations */
-export function refreshRelations<T, TKey>(entity: T, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<any> {
+export function refreshRelations<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<any> {
     var config = getMappingConfiguration(entity, dataSet),
         deferreds, prop;
 
@@ -248,14 +252,9 @@ export function refreshRelations<T, TKey>(entity: T, dataSet: dataset.DataSet<T,
 }
 
 /** Duplicate specified entity and return copy */
-export function duplicateEntity<T, TKey>(entity: T, dataSet: dataset.DataSet<T, TKey>): T {
+export function duplicateEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TKey>): T {
     var config = getMappingConfiguration(entity, dataSet),
-        mappingRules = config.rules;
-
-    if (config.relations) {
-        var foreignPropertyNames = _.map(config.relations, (relation) => relation.propertyName);
-        mappingRules.ignore = _.union(mappingRules.ignore, foreignPropertyNames);
-    }
+        mappingRules = ensureRules(config, entity);
 
     var copy = ko.mapping.toJS(entity, mappingRules);
     copy[dataSet.key] = null;
@@ -264,7 +263,7 @@ export function duplicateEntity<T, TKey>(entity: T, dataSet: dataset.DataSet<T, 
 }
 
 /** Update specified entity with specified data */
-export function updateEntity<T, TKey>(entity: T, data: any, commit: boolean, dataSet: dataset.DataSet<T, TKey>): T {
+export function updateEntity<T, TKey>(entity: any, data: any, commit: boolean, dataSet: dataset.DataSet<T, TKey>): T {
     if (!data) {
         if (!commit) {
             entity.EntityState(entityStates.unchanged);
@@ -275,24 +274,22 @@ export function updateEntity<T, TKey>(entity: T, data: any, commit: boolean, dat
     }
 
     var config = getMappingConfiguration(entity, dataSet),
-        foreignPropertyNames = [], mappingRules = config.rules,
-        relProp, relValue, set;
+        mappingRules = ensureRules(config, entity),
+        relValue, set: dataset.DataSet<any, any>;
 
     if (config.relations) {
         _.each(config.relations, function (relation) {
-            foreignPropertyNames.push(relation.propertyName);
             relValue = data[relation.propertyName];
-            set = dataSet.context[relation.controllerName];
 
             if (relValue) {
+                set = dataSet.context.getSet(relation.controllerName);
+
                 if (relation.type === relationTypes.one)
                     set.attachOrUpdate(relValue, commit);
                 else if (relation.type === relationTypes.many)
                     set.attachOrUpdateRange(relValue, commit);
             }
         });
-
-        mappingRules.ignore = _.union(mappingRules.ignore, foreignPropertyNames);
     }
 
     ko.mapping.fromJS(data, mappingRules, entity);
@@ -308,16 +305,12 @@ export function updateEntity<T, TKey>(entity: T, data: any, commit: boolean, dat
 /** Reset specified entity with last remote data */
 export function resetEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TKey>): T {
     var config = getMappingConfiguration(entity, dataSet),
-        mappingRules = config.rules;
-
-    if (config.relations) {
-        var foreignPropertyNames = _.map(config.relations, (relation) => relation.propertyName);
-        mappingRules.ignore = _.union(mappingRules.ignore, foreignPropertyNames);
-    }
+        mappingRules = ensureRules(config, entity);
 
     ko.mapping.fromJS(entity._lastData, mappingRules, entity);
 
     entity.EntityState(entityStates.unchanged);
+    entity.ChangeTracker.reset();
 
     return entity;
 }
@@ -338,23 +331,9 @@ export function mapEntityFromJS<T, TKey>(data: any, initialState: entityStates, 
 
 export function mapEntityToJS<T, TKey>(entity: any, keepState: boolean, dataSet: dataset.DataSet<T, TKey>): any {
     var config = getMappingConfiguration(entity, dataSet),
-        mappingRules = config.rules;
-
-    if (config.relations) {
-        var foreignPropertyNames = _.map(config.relations, (relation) => relation.propertyName);
-        mappingRules.ignore = _.union(mappingRules.ignore, foreignPropertyNames);
-
-        if (keepState) {
-            mappingRules.ignore = _.without<string>(mappingRules.ignore, "EntityState");
-            if (entity.__ko_mapping__) {
-                entity.__ko_mapping__.ignore = _.without(entity.__ko_mapping__.ignore, "EntityState");
-                entity.__ko_mapping__.mappedProperties.EntityState = true;
-            }
-        }
-    }
+        mappingRules = ensureRules(config, entity, keepState);
 
     var data = ko.mapping.toJS(entity, mappingRules);
-    entity._lastData = data;
 
     return data;
 }
@@ -366,7 +345,7 @@ export function mapEntityFromJSON<T, TKey>(json: string, initialState: entitySta
 
 export function mapEntityToJSON<T, TKey>(entity: any, keepstate: boolean, dataSet: dataset.DataSet<T, TKey>): string {
     var obj = mapEntityToJS(entity, keepstate, dataSet);
-    return ko.utils.stringifyJson.call(null, obj);
+    return ko.utils.stringifyJson(obj);
 }
 
 //#endregion
