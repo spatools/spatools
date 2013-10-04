@@ -3,8 +3,7 @@
 
 import context = require("../../spa/data/context");
 import dataset = require("../../spa/data/dataset");
-import relationview = require("../../spa/data/relationview");
-import foreignview = require("../../spa/data/foreignview");
+import relations = require("../../spa/data/relations");
 import stores = require("../../spa/data/stores");
 import adapters = require("../../spa/data/adapters");
 import mapping = require("../../spa/data/mapping");
@@ -27,8 +26,8 @@ export module models {
         public ForeignId = ko.observable<string>();
 
         // Navigation properties
-        public Children: relationview.RelationView<Parent, string, Child, string>;
-        public Foreign: foreignview.ForeignView<Parent, string, Foreign, string>;
+        public Children: relations.Collection<Child>;
+        public Foreign: relations.Foreign<Foreign>;
 
         constructor() {
             this["odata.type"] = "SPATools.Models.Parent";
