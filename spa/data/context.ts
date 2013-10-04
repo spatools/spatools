@@ -37,24 +37,33 @@ export class DataContext {
     public getSet<T, TKey>(name: string): dataset.DataSet<T, TKey> {
         return this.sets[name];
     }
-    /** Add a new Data Set to the Data Context */
+    /** Add a new Data Set to current Data Context */
     public addSet<T, TKey>(name: string, keyProperty: string, defaultType: string): dataset.DataSet<T, TKey> {
         if (!this.sets[name])
             this[name] = this.sets[name] = dataset.create<T, TKey>(name, keyProperty, defaultType, this);
 
         return this.sets[name];
     }
-    
+
     /** change local store type */
-    public setLocalStore(storeType: string): JQueryPromise<any> {
-        return stores.getStore(storeType, this).then(store => {
+    public setLocalStore(storeType: string): JQueryPromise<any>;
+    public setLocalStore(storeType: stores.IDataStore): JQueryPromise<any>;
+    public setLocalStore(storeType: any): JQueryPromise<any> {
+        var dfd = _.isString(storeType) ? stores.getStore(storeType, this) : storeType.init().then(() => storeType);
+
+        return $.when<stores.IDataStore>(dfd).then(store => {
             this.store = store;
             _.each(this.getSets(), set => set.setLocalStore(store));
         });
     }
+
     /** change remote adapter type */
-    public setAdapter(adapterType: string): JQueryPromise<any> {
-        return adapters.getAdapter(adapterType).then(adapter => {
+    public setAdapter(adapterType: string): JQueryPromise<any>;
+    public setAdapter(adapterType: adapters.IAdapter): JQueryPromise<any>;
+    public setAdapter(adapterType: any): JQueryPromise<any> {
+        var dfd = _.isString(adapterType) ? adapters.getAdapter(adapterType) : adapterType;
+
+        return $.when<adapters.IAdapter>(dfd).then(adapter => {
             this.adapter = adapter;
             _.each(this.getSets(), set => set.setAdapter(adapter));
         });
