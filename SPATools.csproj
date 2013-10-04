@@ -90,16 +90,17 @@
     <TypeScriptCompile Include="spa\math\base.ts" />
     <TypeScriptCompile Include="spa\math\matrix.ts" />
     <TypeScriptCompile Include="spa\data\adapters\prefilter.ts" />
-    <Content Include="spa\ui\editor.ts" />
+    <TypeScriptCompile Include="spa\ui\editor.ts" />
+    <TypeScriptCompile Include="tests\data\guid.ts" />
     <Content Include="tslint.json" />
     <TypeScriptCompile Include="spa\math\matrix3.ts" />
     <TypeScriptCompile Include="spa\math\matrix4.ts" />
     <TypeScriptCompile Include="spa\math\vector2.ts" />
     <TypeScriptCompile Include="spa\math\vector3.ts" />
     <TypeScriptCompile Include="spa\ui\slider.ts" />
-    <Content Include="spa\ui\tree.ts" />
-    <Content Include="spa\ui\ribbon.ts" />
-    <Content Include="spa\ui\draggable.ts" />
+    <TypeScriptCompile Include="spa\ui\tree.ts" />
+    <TypeScriptCompile Include="spa\ui\ribbon.ts" />
+    <TypeScriptCompile Include="spa\ui\draggable.ts" />
     <Content Include="nuget\SPATools.Modules.Base.nuspec" />
     <Content Include="nuget\SPATools.Modules.Advanced.nuspec" />
     <Content Include="nuget\SPATools.Modules.Interactions.nuspec" />
@@ -151,11 +152,11 @@
     <Content Include="Scripts\typings\knockout.mapping\knockout.mapping.d.ts" />
     <Content Include="Scripts\typings\knockout.validation\knockout.validation.d.ts" />
     <Content Include="Scripts\typings\knockout\knockout.d.ts" />
-    <Content Include="spa\changeTracker.ts" />
-    <Content Include="spa\animation.ts" />
-    <Content Include="spa\cache.ts" />
-    <Content Include="spa\commands.ts" />
-    <Content Include="spa\moment.ts" />
+    <TypeScriptCompile Include="spa\changeTracker.ts" />
+    <TypeScriptCompile Include="spa\animation.ts" />
+    <TypeScriptCompile Include="spa\cache.ts" />
+    <TypeScriptCompile Include="spa\commands.ts" />
+    <TypeScriptCompile Include="spa\moment.ts" />
     <Content Include="base\underscore.ts" />
     <TypeScriptCompile Include="spa\observable.ts" />
     <Content Include="spa\_definitions.d.ts" />
@@ -175,38 +176,40 @@
     <TypeScriptCompile Include="spa\data\remoteview.ts" />
     <TypeScriptCompile Include="spa\data\stores\localstorage.ts" />
     <TypeScriptCompile Include="spa\data\stores\indexeddb.ts" />
-    <Content Include="spa\event.ts" />
+    <TypeScriptCompile Include="spa\event.ts" />
     <Content Include="base\handlers.ts" />
-    <Content Include="spa\fullscreen.ts" />
-    <Content Include="spa\keyboard.ts" />
-    <Content Include="spa\messenger.ts" />
-    <Content Include="spa\store.ts" />
-    <Content Include="spa\navigator.ts" />
-    <Content Include="spa\path.ts" />
-    <Content Include="spa\router.ts" />
-    <Content Include="spa\timers.ts" />
+    <TypeScriptCompile Include="spa\fullscreen.ts" />
+    <TypeScriptCompile Include="spa\keyboard.ts" />
+    <TypeScriptCompile Include="spa\messenger.ts" />
+    <TypeScriptCompile Include="spa\store.ts" />
+    <TypeScriptCompile Include="spa\navigator.ts" />
+    <TypeScriptCompile Include="spa\path.ts" />
+    <TypeScriptCompile Include="spa\router.ts" />
+    <TypeScriptCompile Include="spa\timers.ts" />
     <Content Include="base\moment.ts" />
-    <Content Include="spa\loader.ts" />
-    <Content Include="spa\base64.ts" />
-    <Content Include="spa\underscore.ts" />
-    <Content Include="spa\operation.ts" />
-    <Content Include="spa\ui.ts" />
-    <Content Include="spa\ui\templateEngine.ts" />
-    <Content Include="spa\ui\contextmenu.ts" />
-    <Content Include="spa\utils.ts" />
+    <TypeScriptCompile Include="spa\loader.ts" />
+    <TypeScriptCompile Include="spa\base64.ts" />
+    <TypeScriptCompile Include="spa\underscore.ts" />
+    <TypeScriptCompile Include="spa\operation.ts" />
+    <TypeScriptCompile Include="spa\ui.ts" />
+    <TypeScriptCompile Include="spa\ui\templateEngine.ts" />
+    <TypeScriptCompile Include="spa\ui\contextmenu.ts" />
+    <TypeScriptCompile Include="spa\utils.ts" />
     <Content Include="tests\all.html" />
-    <Content Include="tests\all.ts" />
-    <Content Include="tests\base.ts" />
-    <Content Include="tests\base64.ts" />
-    <Content Include="tests\changeTracker.ts" />
-    <Content Include="tests\commands.ts" />
-    <Content Include="tests\messenger.ts" />
-    <Content Include="tests\path.ts" />
-    <Content Include="tests\store.ts" />
-    <Content Include="tests\timers.ts" />
-    <Content Include="tests\utils.ts" />
-    <Content Include="_references.d.ts" />
-    <Content Include="spa\main.ts" />
+    <TypeScriptCompile Include="tests\all.ts" />
+    <TypeScriptCompile Include="tests\base.ts" />
+    <TypeScriptCompile Include="tests\base64.ts" />
+    <TypeScriptCompile Include="tests\changeTracker.ts" />
+    <TypeScriptCompile Include="tests\commands.ts" />
+    <TypeScriptCompile Include="tests\data\common.ts" />
+    <TypeScriptCompile Include="tests\data\query.ts" />
+    <TypeScriptCompile Include="tests\messenger.ts" />
+    <TypeScriptCompile Include="tests\path.ts" />
+    <TypeScriptCompile Include="tests\store.ts" />
+    <TypeScriptCompile Include="tests\timers.ts" />
+    <TypeScriptCompile Include="tests\utils.ts" />
+    <TypeScriptCompile Include="_references.d.ts" />
+    <TypeScriptCompile Include="spa\main.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -226,10 +229,11 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="spa\knockout.ts" />
+    <TypeScriptCompile Include="spa\knockout.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="base\extenders.ts" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" />
 </Project>

@@ -26,7 +26,9 @@ var modules = [
     "path",
     "store",
     "timers",
-    "utils"
+    "utils",
+    "data/guid",
+    "data/query"
 ];
 
 require(modules, function () {
