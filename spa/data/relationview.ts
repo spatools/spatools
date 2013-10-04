@@ -59,7 +59,7 @@ var relationViewFunctions = {
     refresh: function (mode: string = "remote"): JQueryPromise<any[]> {
         var self = <RelationView<any, any, any, any>>this;
         if (self.ensureRemote) {
-            return self.set.refreshRelation(parent, self.propertyName, mode, self.query);
+            return self.localSet.refreshRelation(parent, self.propertyName, mode, self.query);
         }
         else {
             return self.set.refresh(mode, self.query).done(data => {

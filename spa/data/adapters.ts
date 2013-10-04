@@ -21,7 +21,7 @@ export interface IAdapter {
 }
 
 export interface IAdapterResult {
-    data: any[];
+    data: any;
     count: number;
 }
 

@@ -59,10 +59,10 @@ export interface DataSetFunctions<T, TKey> {
     load(key: TKey, mode?: string, query?: query.ODataQuery): JQueryPromise<T>;
 
     /** Get relation by ensuring using specific remote action and not filter */
-    refreshRelation<U>(entity: T, propertyName: string): JQueryPromise<U[]>;
-    refreshRelation<U>(entity: T, propertyName: string, query: query.ODataQuery): JQueryPromise<U[]>;
-    refreshRelation<U>(entity: T, propertyName: string, mode: string): JQueryPromise<U[]>;
-    refreshRelation<U>(entity: T, propertyName: string, mode: string, query: query.ODataQuery): JQueryPromise<U[]>;
+    refreshRelation<U>(entity: T, propertyName: string): JQueryPromise<U>;
+    refreshRelation<U>(entity: T, propertyName: string, query: query.ODataQuery): JQueryPromise<U>;
+    refreshRelation<U>(entity: T, propertyName: string, mode: string): JQueryPromise<U>;
+    refreshRelation<U>(entity: T, propertyName: string, mode: string, query: query.ODataQuery): JQueryPromise<U>;
 
     /** Execute action on remote source */
     executeAction(action: string, params?: any, entity?: T): JQueryPromise<any>;
@@ -163,8 +163,8 @@ function _initAttachedEntity(dataset: DataSet<any, any>, entity: any): any {
 }
 
 function _updateDataSet(dataset: DataSet<any, any>, result: adapters.IAdapterResult, query?: query.ODataQuery): JQueryPromise<any[]> {
-    var rmDfd;
-    if (!query || query.pageSize() === 0) {
+    var rmDfd, isArray = _.isArray(result.data);
+    if (isArray && !query || query.pageSize() === 0) {
         var current = dataset.toArray();
         if (query && query.filters.size() > 0)
             current = query.applyFilters(current);
@@ -184,7 +184,7 @@ function _updateDataSet(dataset: DataSet<any, any>, result: adapters.IAdapterRes
         if (result.count >= 0 && (!query || query.filters.size() === 0))
             dataset.remoteCount(result.count);
 
-        return dataset.attachOrUpdateRange(result.data);
+        return isArray ? dataset.attachOrUpdateRange(result.data) : dataset.attachOrUpdate(result.data);
     });
 }
 

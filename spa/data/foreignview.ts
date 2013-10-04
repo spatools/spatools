@@ -81,35 +81,14 @@ export function create<T, TKey, TForeign, TForeignKey>(propertyName: string, loc
 
 var foreignViewFunctions: ForeignViewFunctions<any, any, any, any> = {
     /** Refresh the foreign entity from the server */
-    refresh: function (): JQueryPromise<any> {
-        if (this.ensureRemote) {
-            var deferred = $.Deferred(),
-                foreignSet = this.view.set,
-                localSet = this.localSet,
-                self = this, result;
-
-            localSet.adapter
-                .getRelation(localSet.setName, self.propertyName, ko.utils.unwrapObservable(self.parent[self.localId]))
-                .done(function (data) {
-                    var count = -1;
-
-                    if (data["odata.metadata"]) {
-                        if (data["odata.count"])
-                            count = data["odata.count"];
-
-                        data = data.value;
-                    }
-
-                    result = foreignSet.attachOrUpdate(data);
-
-                    deferred.resolve(result, count === -1 ? data.length : count);
-                })
-                .fail(deferred.reject);
-
-            return deferred.promise();
+    refresh: function (mode: string = "remote"): JQueryPromise<any> {
+        var self = <ForeignView<any, any, any, any>>this;
+        if (self.ensureRemote) {
+            return self.foreignSet.refreshRelation(parent, self.propertyName, mode, self.view.query);
         }
-        else
-            return this.view.refresh(true);
+        else {
+            return self.view.refresh(mode);
+        }
     },
     /** Update entity into dataSet, if buffer is false, changes will be instantly committed to the server */
     update: function (): void {
