@@ -21,6 +21,15 @@ class LocalStorageStore implements stores.IDataStore {
     init(): JQueryPromise<void> {
         return $.when();
     }
+    reset(): JQueryPromise<void> {
+        var dfds = _.map(this.context.getSets(), dataset => {
+            return utils.timeout().then(() => {
+                localStorage.removeItem(cachePrefix + dataset.setName);
+            });
+        });
+
+        return utils.whenAll(dfds);
+    }
 
     getAll(setName: string, query?: _query.ODataQuery): JQueryPromise<any[]> {
         return this.getStoreTable(setName).then(table => {

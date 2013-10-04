@@ -19,6 +19,11 @@ class MemoryStore implements stores.IDataStore {
     init(): JQueryPromise<void> {
         return $.when();
     }
+    reset(): JQueryPromise<void> {
+        return utils.timeout().then(() => {
+            this.memory = {};
+        });
+    }
 
     getAll(setName: string, query?: _query.ODataQuery): JQueryPromise<any[]> {
         return utils.timeout().then(() => {

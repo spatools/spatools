@@ -17,6 +17,7 @@ export interface IDataStore {
     context: context.DataContext;
 
     init(): JQueryPromise<void>;
+    reset(): JQueryPromise<void>;
 
     getAll(setName: string, query?: query.ODataQuery): JQueryPromise<any[]>;
     getOne(setName: string, key: any, query?: query.ODataQuery): JQueryPromise<any>;

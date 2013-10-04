@@ -37,6 +37,16 @@ class IndexedDBStore implements stores.IDataStore {
             });
         });
     }
+    reset(): JQueryPromise<void> {
+        if (this.db)
+            this.db.close();
+
+        return $.Deferred(dfd => {
+            var req = indexedDB.deleteDatabase(this.database);
+            req.onsuccess = dfd.resolve;
+            req.onerror = dfd.reject;
+        });
+    }
 
     getAll(setName: string, query?: _query.ODataQuery): JQueryPromise<any[]> {
         return this.getStoreTable(setName, query).then(result => {
