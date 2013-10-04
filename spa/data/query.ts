@@ -115,7 +115,7 @@ export class Filter {
                 case operator.greaterThan:
                     return itemField > value;
                 case operator.greaterThanOrEqual:
-                    return itemField <= value;
+                    return itemField >= value;
                 case operator.lessThan:
                     return itemField < value;
                 case operator.lessThanOrEqual:
@@ -260,7 +260,7 @@ export class Ordering {
     public field: KnockoutObservable<string>;
     public ascending: KnockoutObservable<boolean>;
 
-    constructor(field: any, ascending: any) {
+    constructor(field: any, ascending?: any) {
         this.field = utils.createObservable<string>(field);
         this.ascending = utils.createObservable<boolean>(ascending, true);
     }
@@ -317,7 +317,7 @@ export class ODataQuery {
     }
 
     public where(field: string): ODataQuery;
-    public where(field: string, operator: string, value: string): ODataQuery;
+    public where(field: string, operator: string, value: any): ODataQuery;
     public where(fn: string, field: string): ODataQuery;
     public where(fn: string, field: string, args: any[]): ODataQuery;
     public where(fn: string, field: string, operator: string, value: string): ODataQuery;
