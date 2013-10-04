@@ -25,7 +25,7 @@ export enum entityStates {
 /** Default mapping rules (internal usage) */
 export var defaultRules: KnockoutMappingOptions = {
     copy: ["$type", "odata.type"],
-    ignore: ["_lastData", "EntityState", "IsSubmitting", "HasChanges", "ChangeTracker", "IsRemoved", "isValid", "errors", "hasChanges", "subscription"]
+    ignore: ["_lastData", "EntityState", "IsSubmitting", "HasChanges", "ChangeTracker", "IsRemoved", "isValid", "errors", "hasChanges", "subscription", "__ko_mapping__"]
 };
 
 //#endregion

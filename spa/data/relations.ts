@@ -269,7 +269,7 @@ export var remoteViewFunctions: RelationRemoteViewFunctions<any, any, any, any> 
             return $.when([]);
         }
 
-        return self.localSet.refreshRelation(self.parent, self.propertyName, mode, self.query).then(result => { self(result.data); });
+        return self.localSet.refreshRelation(self.parent, self.propertyName, mode, self.query).done(self);
     },
     /** Add entity to foreign entities and set it good value in foreign key, if buffer is false, entity will be instantly post on the server */
     add: function (entity: any): JQueryPromise<any> {
