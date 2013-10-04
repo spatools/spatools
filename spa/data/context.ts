@@ -45,6 +45,13 @@ export class DataContext {
         return this.sets[name];
     }
 
+    public reset(): void {
+        _.each(this.sets, dataset => { dataset.reset(); });
+    }
+    public resetStore(): JQueryPromise<void> {
+        return this.store.reset();
+    }
+
     /** change local store type */
     public setLocalStore(storeType: string): JQueryPromise<any>;
     public setLocalStore(storeType: stores.IDataStore): JQueryPromise<any>;
@@ -53,7 +60,7 @@ export class DataContext {
 
         return $.when<stores.IDataStore>(dfd).then(store => {
             this.store = store;
-            _.each(this.getSets(), set => set.setLocalStore(store));
+            _.each(this.sets, dataset => dataset.setLocalStore(store));
         });
     }
 
@@ -65,7 +72,7 @@ export class DataContext {
 
         return $.when<adapters.IAdapter>(dfd).then(adapter => {
             this.adapter = adapter;
-            _.each(this.getSets(), set => set.setAdapter(adapter));
+            _.each(this.sets, set => set.setAdapter(adapter));
         });
     }
 }
