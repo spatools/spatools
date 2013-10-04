@@ -22,6 +22,7 @@ export interface DataSet<T, TKey> extends DataSetFunctions<T, TKey> {
     context: context.DataContext;
     adapter: adapters.IAdapter;
     store: stores.IDataStore;
+    refreshMode: string;
 
     localCount: KnockoutComputed<number>;
     remoteCount: KnockoutObservable<number>;
@@ -229,6 +230,7 @@ export function create<T, TKey>(setName: string, keyPropertyName: string, defaul
     result.context = dataContext;
     result.adapter = dataContext.adapter;
     result.store = dataContext.store;
+    result.refreshMode = dataContext.refreshMode;
 
     ko.utils.extend(result, dataSetFunctions);
 
@@ -263,17 +265,6 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         return dataview.create(this, query);
     },
 
-    /** Refresh dataset from remote source */
-    refresh: function (mode: string = "remote", query?: query.ODataQuery): JQueryPromise<any[]> {
-        var self = <DataSet<any, any>>this;
-        if (mode === "remote") {
-            return self.adapter.getAll(self.setName, query)
-                .then(result => _updateDataSet(self, result, query));
-        }
-        else {
-            return _updateFromStore(self, query);
-        }
-    },
     /** Query remote source without attaching result to dataset */
     query: function (query?: query.ODataQuery): JQueryPromise<any[]> {
         var self = <DataSet<any, any>>this;
@@ -284,10 +275,23 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             return _.map(result.data, e => self.fromJS(e));
         });
     },
+
+    /** Refresh dataset from remote source */
+    refresh: function (mode?: string, query?: query.ODataQuery): JQueryPromise<any[]> {
+        var self = <DataSet<any, any>>this;
+        if (!mode) mode = self.refreshMode;
+        if (mode === "remote") {
+            return self.adapter.getAll(self.setName, query)
+                .then(result => _updateDataSet(self, result, query));
+        }
+        else {
+            return _updateFromStore(self, query);
+        }
+    },
     /** Load an entity by id from the remote source */
     load: function (key: any, mode?: any, query?: query.ODataQuery): JQueryPromise<any> {
         var self = <DataSet<any, any>>this;
-        if (!mode) mode = "remote";
+        if (!mode) mode = self.refreshMode;
         if (!query && !_.isString(mode)) {
             query = mode;
             mode = "remote";
@@ -324,7 +328,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             throw new Error("This adapter does not support custom relations");
         }
 
-        if (!mode) mode = "remote";
+        if (!mode) mode = self.refreshMode;
         if (!query && !_.isString(mode)) {
             query = mode;
             mode = "remote";

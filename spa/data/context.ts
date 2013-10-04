@@ -14,6 +14,7 @@ export class DataContext {
     public buffer: boolean = false;
     public autoLazyLoading: boolean = false;
     public mapping = new mapping.Configurations();
+    public refreshMode = "remote";
 
     constructor() {
         this.store = stores.getDefaultStore(this);
@@ -50,6 +51,12 @@ export class DataContext {
     }
     public resetStore(): JQueryPromise<void> {
         return this.store.reset();
+    }
+
+    /** Change refresh mode for all sets */
+    public setRefreshMode(mode: string): void {
+        this.refreshMode = mode;
+        _.each(this.sets, dataset => { dataset.refreshMode = mode; });
     }
 
     /** change local store type */

@@ -70,7 +70,7 @@ export function create<T, TKey>(dataSet: dataset.DataSet<T, TKey>, query?: _quer
 
 export var dataViewFunctions: DataViewFunctions<any, any> = {
     /** Refresh the view from the server */
-    refresh: function (mode: string = "remote"): JQueryPromise<any> {
+    refresh: function (mode?: string): JQueryPromise<any> {
         var self = <DataView<any, any>>this;
         return self.set.refresh(mode, self.query).done(function (data) {
             if (self.query.pageSize() > 0)
@@ -78,7 +78,7 @@ export var dataViewFunctions: DataViewFunctions<any, any> = {
         });
     },
     /** Load a remote entity by key */
-    load: function (key: any, mode: string = "remote"): JQueryPromise<any> {
+    load: function (key: any, mode?: string): JQueryPromise<any> {
         return this.set.load(key, mode, this.query);
     },
 
