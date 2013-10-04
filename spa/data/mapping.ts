@@ -2,9 +2,7 @@
 
 import changeTracker = require("../changeTracker");
 import dataset = require("./dataset");
-import relationview = require("./relationview");
-import remoteview = require("./remoteview");
-import foreignview = require("./foreignview");
+import relations = require("./relations");
 import query = require("./query");
 
 //#region Enumerations / Defaults
@@ -172,6 +170,7 @@ export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataS
         config = getMappingConfiguration(model, dataSet);
 
     var isModified = initialState !== entityStates.unchanged,
+        commit = initialState !== entityStates.unchanged,
         foreignSet;
 
     _.each(config.actions, action => {
@@ -181,33 +180,22 @@ export function addMappingProperties<T, TKey>(model: any, dataSet: dataset.DataS
     //Relations
     _.each(config.relations, relation => {
         foreignSet = dataSet.context[relation.controllerName];
+        model[relation.propertyName] = relations.create(dataSet, foreignSet, relation, model);
 
-        switch (relation.type) {
-            case relationTypes.one:
-                model[relation.propertyName] = foreignview.create(relation.propertyName, dataSet, model, foreignSet, relation.foreignKey, relation.ensureRemote);
+        if (data && data[relation.propertyName]) {
+            switch (relation.type) {
+                case relationTypes.one:
+                    foreignSet.attachOrUpdate(data[relation.propertyName], commit);
+                    break;
 
-                if (data && data[relation.propertyName])
-                    foreignSet.attachOrUpdate(data[relation.propertyName], initialState !== entityStates.unchanged);
+                case relationTypes.many:
+                    foreignSet.attachOrUpdateRange(data[relation.propertyName], commit);
+                    break;
 
-                break;
-
-            case relationTypes.many:
-                model[relation.propertyName] = relationview.create(relation.propertyName, dataSet, model, foreignSet, dataSet.key, relation.foreignKey, relation.ensureRemote);
-
-                if (data && data[relation.propertyName])
-                    foreignSet.attachOrUpdateRange(data[relation.propertyName], initialState !== entityStates.unchanged);
-
-                break;
-
-            case relationTypes.remote:
-                model[relation.propertyName] = remoteview.create(relation.propertyName, dataSet, model, foreignSet, dataSet.key);
-
-                if (data && data[relation.propertyName]) {
-                    var mapped = foreignSet.attachOrUpdateRange(data[relation.propertyName], initialState !== entityStates.unchanged);
-                    model[relation.propertyName](mapped);
-                }
-
-                break;
+                case relationTypes.remote:
+                    foreignSet.attachOrUpdateRange(data[relation.propertyName], commit).then(model[relation.propertyName]);
+                    break;
+            }
         }
     });
 
