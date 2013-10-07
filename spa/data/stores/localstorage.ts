@@ -154,6 +154,9 @@ class LocalStorageStore implements stores.IDataStore {
                         var q = relation.toQuery(item, dataset, this.context.getSet(relation.controllerName));
 
                         return this.getAll(relation.controllerName, q).then(entities => {
+                            if (relation.type === mapping.relationTypes.one)
+                                entities = entities[0];
+
                             item[relation.propertyName] = entities;
                         });
                     });
