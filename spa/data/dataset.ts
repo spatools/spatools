@@ -172,6 +172,8 @@ function _initAttachedEntity(dataset: DataSet<any, any>, entity: any): any {
     else if (dataset.context.autoLazyLoading === true) {
         return mapping.refreshRelations(entity, dataset).then(() => entity);
     }
+
+    return entity;
 }
 
 function _updateDataSet(dataset: DataSet<any, any>, result: adapters.IAdapterResult, query?: query.ODataQuery): JQueryPromise<any[]> {
@@ -224,7 +226,9 @@ function _updateFromStore(dataset: DataSet<any, any>, query?: query.ODataQuery):
                 return mapping.updateEntity(entity, data, false, dataset);
             });
 
-        return utils.whenAll(dfds).done(() => toUpdate && dataset.valueHasMutated());
+        return utils.whenAll(dfds)
+            .then(function () { return Array.prototype.slice.call(arguments); })
+            .done(() => toUpdate && dataset.valueHasMutated());
     });
 }
 
