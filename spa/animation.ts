@@ -18,16 +18,67 @@ export interface TransitionOptions {
     easing: string;
 }
 
+//#region Private Methods
+var prefix = null;
+var names = {
+    animation: { style: null, event: null },
+    transition: { style: null, event: null }
+};
+
+function upperFirst(input: string): string {
+    return input.slice(0, 1).toUpperCase() + input.slice(1);
+}
+
+function ensureNames(type: string) {
+    var current = names[type], tmp;
+    if (current.style && current.event) {
+        return;
+    }
+
+    if (!current.style)
+        current.style = utils.prefixStyle(type);
+
+    tmp = type + "end";
+    if (event.check(tmp)) {
+        current.event = tmp;
+    }
+    else {
+        if (!prefix) prefix = utils.getVendorPrefix();
+
+        tmp = prefix + upperFirst(type) + "End";
+        if (event.check(tmp)) current.event = tmp;
+
+        tmp = upperFirst(tmp);
+        if (event.check(tmp)) current.event = tmp;
+    }
+
+    if (!current.event) {
+        current.event = "timeout";
+    }
+}
+function ensureEvent(type: string, element: HTMLElement, options: TransitionOptions, callback: () => any) {
+    ensureNames(type);
+    var current = names[type];
+
+    if (current.event === "timeout") {
+        setTimeout(callback, (options.delay || 0) + options.duration);
+    }
+    else {
+        event.once(element, current.event, callback);
+    }
+}
+
+//#endregion
+
 /** Launch given animation on the given element */
 export function launch(element: HTMLElement, animationName: string, options: AnimationOptions, completed?: () => any): void {
     if (!options || !options.duration) {
-        throw "An animation duration must be set";
+        throw new Error("An animation duration must be set");
     }
 
-    var animProp = utils.prefixStyle("animation"),
-        prefix = utils.getVendorPrefix(),
-        eventName = prefix && prefix !== "" ? prefix + "AnimationEnd" : "animationend",
-        animStyle = [];
+    ensureNames("animation");
+    var animStyle = [],
+        animProp = names.animation.style;
 
     animStyle.push(animationName);
     animStyle.push(options.duration + "ms");
@@ -47,7 +98,7 @@ export function launch(element: HTMLElement, animationName: string, options: Ani
     if (options.fill)
         animStyle.push(options.fill);
 
-    event.once(element, eventName, function () {
+    ensureEvent("animation", element, options, function () {
         if (options.fill !== "forwards")
             element.style[animProp] = "";
 
@@ -66,13 +117,12 @@ export function launch(element: HTMLElement, animationName: string, options: Ani
 /** Launch given animation on the given element */
 export function transitionTo(element: HTMLElement, from: { [key: string]: any }, to: { [key: string]: any }, options: TransitionOptions, completed?: () => any): void {
     if (!options || !options.duration) {
-        throw "A transition duration must be set";
+        throw new Error("A transition duration must be set");
     }
 
-    var transitionProp = utils.prefixStyle("transition"),
-        transitionStyle = [],
-        prefix = utils.getVendorPrefix(),
-        eventName = prefix && prefix !== "" ? prefix + "TransitionEnd" : "transitionend";
+    ensureNames("transition");
+    var transitionStyle = [],
+        transitionProp = names.transition.style;
 
     transitionStyle.push(options.duration + "ms");
     
@@ -86,7 +136,7 @@ export function transitionTo(element: HTMLElement, from: { [key: string]: any },
         _.each(from, (value, prop) => element.style[utils.prefixStyle(prop)] = value);
     }
 
-    event.once(element, eventName, function () {
+    ensureEvent("transition", element, options, function () {
         element.style[transitionProp] = "";
         completed && completed.apply(this, arguments);
     });
