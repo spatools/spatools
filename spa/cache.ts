@@ -93,8 +93,9 @@ export function loadJSON<T>(key: string, url: string, force: boolean = false): J
 function cache(key: string, url: string, mime: string, force?: boolean): JQueryPromise<CacheResult> {
     if (!deferreds[key]) {
         deferreds[key] = loadCache(key).then(result => {
-            if (result && !force)
+            if (result && !force) {
                 return result;
+            }
 
             return downloadAndEncode(key, url, mime, result);
         }).always(() => { delete deferreds[key]; });

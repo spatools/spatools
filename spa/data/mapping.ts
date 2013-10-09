@@ -192,7 +192,7 @@ function updateRelationsRange(models: any[], datas: any[], config: Configuration
                         break;
 
                     case relationTypes.many:
-                        toAttach = _.union(toAttach, relValue)
+                        toAttach = _.union(toAttach, relValue);
                         break;
 
                     case relationTypes.remote:
@@ -366,8 +366,9 @@ export function resetEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TK
 //#region Mapping Methods
 
 export function mapEntitiesFromJS<T, TKey>(datas: any[], initialState: entityStates, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): T[] {
-    if (datas.length === 0)
+    if (datas.length === 0) {
         return datas;
+    }
 
     var config, model,
         result = _.map(datas, data => {
