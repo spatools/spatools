@@ -67,12 +67,12 @@ export function run() {
                 update = { Title: "Test" };
 
             return dataset.load(common.getFirstParentId()).then(parent => {
-                mapping.updateEntity(parent, update, false, dataset);
+                mapping.updateEntity(parent, update, false, false, true, dataset);
                 equal(parent.Title(), "Test", "After update, parent's Title must be equal to 'Test'");
                 equal(parent.EntityState(), mapping.entityStates.unchanged, "Since updates are not committed, EntityState must be unchanged");
 
                 update = { Title: "Test2", Foreign: { ForeignId: "ecb69146-7a18-443d-9270-787d59db3794", Index: 12 } };
-                mapping.updateEntity(parent, update, true, dataset);
+                mapping.updateEntity(parent, update, true, true, true, dataset);
 
                 equal(parent.Title(), "Test2", "After second update, parent's Title must be equal to 'Test2'");
                 equal(parent.Foreign().Index(), 12, "After second update, parent's foreign's Title must be equal to '12'");
@@ -106,7 +106,7 @@ export function run() {
 
             dataset.reset();
             return dataset.load(common.getFirstParentId()).then(parent => {
-                mapping.updateEntity(parent, update, true, dataset);
+                mapping.updateEntity(parent, update, true, false, true, dataset);
 
                 equal(parent.Title(), "Test", "After update, parent's Title must be equal to 'Test'");
                 equal(parent.HasChanges(), true, "After update, since committed, HasChanges must be true");
@@ -131,9 +131,9 @@ export function run() {
                 _child = { ChildId: "045dcb64-c328-48d2-8be2-0d895da2ed55", Content: "Child #2", ParentId: "" },
                 _derived = { "odata.type": "SPATools.Models.ChildDerived", ChildId: "c0be0988-1e06-49c0-baec-21570a12b718", Content: "DerivedChild #0", Date: new Date().toJSON(), ParentId: "" },
 
-                parent = mapping.mapEntityFromJS(_parent, mapping.entityStates.unchanged, common.datacontext.getSet("Parents")),
-                child = mapping.mapEntityFromJS(_child, mapping.entityStates.unchanged, common.datacontext.getSet("Childs")),
-                derived = mapping.mapEntityFromJS(_derived, mapping.entityStates.unchanged, common.datacontext.getSet("Childs"));
+                parent = mapping.mapEntityFromJS(_parent, mapping.entityStates.unchanged, false, true, common.datacontext.getSet("Parents")),
+                child = mapping.mapEntityFromJS(_child, mapping.entityStates.unchanged, false, true, common.datacontext.getSet("Childs")),
+                derived = mapping.mapEntityFromJS(_derived, mapping.entityStates.unchanged, false, true, common.datacontext.getSet("Childs"));
 
             ok(parent instanceof common.models.Parent, "After getting _parent from JS, it must be an instance of models.Parent");
             ok(child instanceof common.models.Child, "After getting _child from JS, it must be an instance of models.Child");
