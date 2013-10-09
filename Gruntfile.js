@@ -30,6 +30,10 @@
                 //    declaration: true
                 //}
             },
+            common: {
+                src: "spa/*.ts",
+                dest: "<%= paths.output %>/"
+            },
             modules: {
                 src: "spa/**/*.ts",
                 dest: "<%= paths.output %>/"
