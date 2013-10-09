@@ -6,9 +6,7 @@ import store = require("./store");
 import utils = require("./utils");
 
 var cacheKeyPrefix: string = "__SPA_CACHE__",
-    cacheEntries: { [key: string]: boolean } = {},
-    memory: { [key: string]: CacheResult } = {},
-    deferreds: { [key: string]: JQueryPromise<any> } = {},
+    deferreds: { [key: string]: JQueryPromise<CacheResult> } = {},
     doc = document, head = doc.head;
 
 export interface CacheResult {
@@ -24,15 +22,16 @@ export interface CacheResult {
 /** Reset entire cache resources */
 export function reset(): JQueryPromise<void> {
     return utils.timeout().then(() => {
-        var entries = JSON.parse(store.getItem(cacheKeyPrefix)) || [],
-            dfds = _.map(entries, key => utils.timeout().then(() => store.removeItem(cacheKeyPrefix + key)));
+        var keys = [], key, dfds;
+        for (var i = 0; i < store.length; i++) {
+            key = store.key(i);
+            if (key.indexOf(cacheKeyPrefix) !== -1)
+                keys.push(key);
+        }
 
-        dfds.push(utils.timeout().then(() => store.removeItem(cacheKeyPrefix)));
-
-        cacheEntries = {};
-        memory = {};
         deferreds = {};
 
+        dfds = _.map(keys, key => utils.timeout().then(() => store.removeItem(key)));
         return utils.whenAll(dfds);
     });
 }
@@ -92,59 +91,48 @@ export function loadJSON<T>(key: string, url: string, force: boolean = false): J
 //#region Private Methods
 
 function cache(key: string, url: string, mime: string, force?: boolean): JQueryPromise<CacheResult> {
-    if (cacheEntries[key] === true && !force) {
-        return $.when(memory[key]);
-    } else {
-        return downloadAndEncode(key, url, mime);
-    }
-}
-
-function downloadAndEncode(key: string, url: string, mime: string): JQueryPromise<CacheResult> {
     if (!deferreds[key]) {
-        cacheEntries[key] = false;
-        var opts: JQueryAjaxSettings = { url: url, dataType: "text" };
-        if (memory[key])
-            opts.data = { date: memory[key].date };
+        deferreds[key] = loadCache(key).then(result => {
+            if (result && !force)
+                return result;
 
-        deferreds[key] = $.ajax(opts).then(content => {
-            cacheEntries[key] = true;
-
-            if (!content && memory[key]) {
-                return memory[key];
-            }
-
-            memory[key] = {
-                key: key,
-                mime: mime,
-                url: url,
-                content: base64.encode(content),
-                date: new Date().toJSON()
-            };
-
-            return save().then(() => memory[key]);
+            return downloadAndEncode(key, url, mime, result);
         }).always(() => { delete deferreds[key]; });
     }
 
     return deferreds[key];
 }
 
-function save(): JQueryPromise<void> {
+function downloadAndEncode(key: string, url: string, mime: string, cache?: CacheResult): JQueryPromise<CacheResult> {
+    var opts: JQueryAjaxSettings = { url: url, dataType: "text" };
+    if (cache)
+        opts.data = { date: cache.date };
+
+    return $.ajax(opts).then(content => {
+        if (!content && cache) {
+            return cache;
+        }
+
+        cache = {
+            key: key,
+            mime: mime,
+            url: url,
+            content: base64.encode(content),
+            date: new Date().toJSON()
+        };
+
+        return saveCache(key, cache).then(() => cache);
+    });
+}
+
+function loadCache(key: string): JQueryPromise<CacheResult> {
+    return utils.timeout().then(() => JSON.parse(store.getItem(cacheKeyPrefix + key)));
+}
+
+function saveCache(key: string, content: CacheResult): JQueryPromise<void> {
     return utils.timeout().then(() => {
-        var entries = _.filterMap(cacheEntries, (value, key) => { if (value === true) return key; });
-        store.setItem(cacheKeyPrefix, JSON.stringify(entries));
-
-        var dfds = _.map(memory, (value, key) => {
-            return utils.timeout().then(() => {
-                store.setItem(cacheKeyPrefix + key, JSON.stringify(value));
-            });
-        });
-
-        return utils.whenAll(dfds);
+        store.setItem(cacheKeyPrefix + key, JSON.stringify(content));
     });
 }
 
 //#endregion
-
-var entries = JSON.parse(store.getItem(cacheKeyPrefix)) || [];
-_.each(entries, key => cacheEntries[key] = true);
-_.each(entries, key => memory[key] = JSON.parse(store.getItem(cacheKeyPrefix + key)));
