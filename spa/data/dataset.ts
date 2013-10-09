@@ -95,18 +95,30 @@ export interface DataSetFunctions<T, TKey> {
 
     /** Get whether entity is attached or not */
     isAttached(entity: T): boolean;
+
     /** Attach an entity to the dataSet (commits immediately if buffer is false) */
     attach(entity: T): JQueryPromise<T>;
+    attach(entity: T, store: boolean): JQueryPromise<T>;
     /** Attach an Array of entities to the dataSet */
     attachRange(entities: T[]): JQueryPromise<T[]>;
+    attachRange(entities: T[], store: boolean): JQueryPromise<T[]>;
     /** Stop an entity from being tracked by the dataSet */
+
     detach(entity: T): void;
     /** Stop an array of entities from being tracked by the dataSet */
     detachRange(entityKeys: TKey[]): void;
+
     /** Attach or update entity if existing with current data and commit changes if commit is set to true */
-    attachOrUpdate(data: any, commit?: boolean): JQueryPromise<T>;
+    attachOrUpdate(data: any): JQueryPromise<T>;
+    attachOrUpdate(data: any, commit: boolean): JQueryPromise<T>;
+    attachOrUpdate(data: any, commit: boolean, expand: boolean): JQueryPromise<T>;
+    attachOrUpdate(data: any, commit: boolean, expand: boolean, store: boolean): JQueryPromise<T>;
+
     /** Attach or update entities if existing with current data and commit changes if commit is set to true */
-    attachOrUpdateRange(data: any[], commit?: boolean): JQueryPromise<T[]>;
+    attachOrUpdateRange(data: any): JQueryPromise<T>;
+    attachOrUpdateRange(data: any, commit: boolean): JQueryPromise<T>;
+    attachOrUpdateRange(data: any, commit: boolean, expand: boolean): JQueryPromise<T>;
+    attachOrUpdateRange(data: any, commit: boolean, expand: boolean, store: boolean): JQueryPromise<T>;
 
     /** Store entity to local store without attaching to datacontext */
     store(entity: any): JQueryPromise<any>;
@@ -120,12 +132,21 @@ export interface DataSetFunctions<T, TKey> {
     toJSON(entity: T): string;
     toJSON(entity: T, keepstate: boolean): string;
 
+    /** Instanciate entities from a JS array */
+    fromJSRange(data: any[]): T;
+    fromJSRange(data: any[], state: mapping.entityStates): T;
+    fromJSRange(data: any[], state: mapping.entityStates, expand: boolean): T;
+    fromJSRange(data: any[], state: mapping.entityStates, expand: boolean, store: boolean): T;
     /** Instanciate an entity from a JS object */
     fromJS(data: any): T;
     fromJS(data: any, state: mapping.entityStates): T;
+    fromJS(data: any, state: mapping.entityStates, expand: boolean): T;
+    fromJS(data: any, state: mapping.entityStates, expand: boolean, store: boolean): T;
     /** Instanciate an entity from a JSON string */
     fromJSON(json: string): T;
     fromJSON(json: string, state: mapping.entityStates): T;
+    fromJSON(json: string, state: mapping.entityStates, expand: boolean): T;
+    fromJSON(json: string, state: mapping.entityStates, expand: boolean, store: boolean): T;
 
     /** Get a report of changes in the dataSet */
     getChanges(): any;
@@ -176,7 +197,7 @@ function _initAttachedEntity(dataset: DataSet<any, any>, entity: any): any {
     return entity;
 }
 
-function _updateDataSet(dataset: DataSet<any, any>, result: adapters.IAdapterResult, query?: query.ODataQuery): JQueryPromise<any[]> {
+function _updateDataSet(dataset: DataSet<any, any>, result: adapters.IAdapterResult, query: query.ODataQuery): JQueryPromise<any[]> {
     var rmDfd, isArray = _.isArray(result.data);
     if (isArray && !query || query.pageSize() === 0) {
         var current = dataset.toArray();
@@ -198,37 +219,9 @@ function _updateDataSet(dataset: DataSet<any, any>, result: adapters.IAdapterRes
         if (result.count >= 0 && (!query || query.filters.size() === 0))
             dataset.remoteCount(result.count);
 
-        return isArray ? dataset.attachOrUpdateRange(result.data) : dataset.attachOrUpdate(result.data);
-    });
-}
-
-function _updateFromStore(dataset: DataSet<any, any>, query?: query.ODataQuery): JQueryPromise<any[]> {
-    return dataset.localstore.getAll(dataset.setName, query).then(entities => {
-        var toUpdate = false,
-            table = dataset(),
-            key, entity,
-
-            dfds = _.filterMap(entities, data => {
-                entity = dataset.findByKey(dataset.getKey(data));
-                if (!entity) {
-                    entity = dataset.fromJS(data);
-                    if (!toUpdate) {
-                        dataset.valueWillMutate();
-                        toUpdate = true;
-                    }
-
-                    key = dataset.getKey(entity);
-                    table[key] = entity;
-
-                    return _initAttachedEntity(dataset, entity);
-                }
-
-                return mapping.updateEntity(entity, data, false, dataset);
-            });
-
-        return utils.whenAll(dfds)
-            .then(function () { return Array.prototype.slice.call(arguments); })
-            .done(() => toUpdate && dataset.valueHasMutated());
+        return isArray ?
+            dataset.attachOrUpdateRange(result.data, false, !!query && query.expands.size() > 0) :
+            dataset.attachOrUpdate(result.data, false, !!query && query.expands.size() > 0);
     });
 }
 
@@ -298,7 +291,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             dfd = self.localstore.getAll(self.setName, query);
         }
 
-        return dfd.then(data => _.map(data, e => self.fromJS(e)));
+        return dfd.then(data => self.fromJSRange(data, null, !!query && query.expands.size() > 0, false));
     },
 
     /** Refresh dataset from remote source */
@@ -315,12 +308,15 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                 .then(result => _updateDataSet(self, result, query));
         }
         else {
-            return _updateFromStore(self, query);
+            return self.localstore.getAll(self.setName, query)
+                .then(entities => self.attachOrUpdateRange(entities, false, !!query && query.expands.size() > 0, false));
         }
     },
     /** Load an entity by id from the remote source */
     load: function (key: any, mode?: any, query?: query.ODataQuery): JQueryPromise<any> {
-        var self = <DataSet<any, any>>this;
+        var self = <DataSet<any, any>>this,
+            dfd: JQueryPromise<any>;
+
         if (!mode) mode = self.refreshMode;
         if (!query && !_.isString(mode)) {
             query = mode;
@@ -328,32 +324,17 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         }
 
         if (mode === "remote") {
-            return self.adapter.getOne(self.setName, key, query)
-                .then(data => self.attachOrUpdate(data));
+            dfd = self.adapter.getOne(self.setName, key, query);
         }
         else {
-            return self.localstore.getOne(self.setName, key, query).then(data => {
-                var table = self(),
-                    key = self.getKey(data),
-                    entity = self.findByKey(self.getKey(data));
-
-                if (!entity) {
-                    entity = self.fromJS(data);
-
-                    self.valueWillMutate();
-                    table[key] = entity;
-                    self.valueHasMutated();
-
-                    return _initAttachedEntity(self, entity);
-                }
-
-                return mapping.updateEntity(entity, data, false, self);
-            });
+            dfd = self.localstore.getOne(self.setName, key, query);
         }
+
+        return dfd.then(data => self.attachOrUpdate(data, false, !!query && query.expands.size() > 0, mode === "remote"));
     },
 
     /** Synchronize data store with remote source content */
-    sync: function(query?: query.ODataQuery): JQueryPromise<void> {
+    sync: function (query?: query.ODataQuery): JQueryPromise<void> {
         var self = <DataSet<any, any>>this;
         return self.adapter.getAll(self.setName, query)
             .then(result => self.storeRange(result.data));
@@ -379,12 +360,14 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             throw new Error("This relation is not configured on this entity type");
         }
 
+        var foreignSet = self.context.getSet(relation.controllerName);
         if (mode === "remote") {
             return self.adapter.getRelation(self.setName, propertyName, self.getKey(entity), query)
-                .then(result => _updateDataSet(self.context.getSet(relation.controllerName), result, query));
+                .then(result => _updateDataSet(foreignSet, result, query));
         }
         else {
-            return _updateFromStore(self.context.getSet(relation.controllerName), query);
+            return self.localstore.getAll(foreignSet.setName, query)
+                .then(entities => foreignSet.attachOrUpdateRange(entities, false, !!query && query.expands.size() > 0, false));
         }
     },
 
@@ -471,7 +454,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         return !!this.findByKey(this.getKey(entity));
     },
     /** Attach an entity to the dataSet (commits immediately if buffer is false) */
-    attach: function (entity: any): JQueryPromise<any> {
+    attach: function (entity: any, store: boolean = true): JQueryPromise<any> {
         var self = <DataSet<any, any>>this,
             table = self(),
             key = self.getKey(entity);
@@ -479,7 +462,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         if (!self.isAttached(entity)) {
             self.valueWillMutate();
 
-            return self.localstore.add(self.setName, entity)
+            return $.when(store && self.localstore.add(self.setName, entity))
                 .then(() => {
                     table[key] = entity;
                     return _initAttachedEntity(self, entity);
@@ -491,7 +474,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         return $.when(entity);
     },
     /** Attach an Array of entities to the dataSet */
-    attachRange: function (entities: any[]): JQueryPromise<any[]> {
+    attachRange: function (entities: any[], store: boolean = true): JQueryPromise<any[]> {
         var self = <DataSet<any, any>>this,
             toUpdate = false,
             table = self(),
@@ -515,11 +498,8 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             return false;
         });
 
-        if (toUpdate) {
-            dfds.push(self.localstore.addRange(self.setName, toStore));
-        }
-
         return utils.whenAll(dfds)
+            .then(() => toUpdate && store && self.localstore.addRange(self.setName, toStore))
             .then(() => toUpdate && self.valueHasMutated())
             .then(() => entities);
     },
@@ -564,40 +544,41 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     },
 
     /** Attach or update entity if existing with current data and commit changes if commit is set to true */
-    attachOrUpdate: function (data: any, commit: boolean = false): JQueryPromise<any> {
+    attachOrUpdate: function (data: any, commit: boolean = false, expand: boolean = false, store: boolean = true): JQueryPromise<any> {
         var self = <DataSet<any, any>>this,
             existing = self.findByKey(self.getKey(data));
 
         if (!existing) {
-            var newEntity = self.fromJS(data, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged);
-            return self.attach(newEntity);
+            var newEntity = self.fromJS(data, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged, expand, store);
+            return self.attach(newEntity, store);
         }
 
-        mapping.updateEntity(existing, data, commit, self);
+        mapping.updateEntity(existing, data, commit, expand, store, self);
 
-        return this.store(existing);
+        return $.when(store && this.store(existing)).then(() => existing);
     },
     /** Attach or update entities if existing with current data and commit changes if commit is set to true */
-    attachOrUpdateRange: function (data: any[], commit: boolean = false): JQueryPromise<any[]> {
+    attachOrUpdateRange: function (data: any[], commit: boolean = false, expand: boolean = false, store: boolean = true): JQueryPromise<any[]> {
         var self = <DataSet<any, any>>this,
-            toAttach = [], toUpdate = [],
-            result = _.map(data, item => {
-                var existing = self.findByKey(self.getKey(item));
+            toAttach = [], toUpdateData = [], toUpdate = [];
 
-                if (!existing) {
-                    var newEntity = self.fromJS(item, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged);
-                    toAttach.push(newEntity);
-                    return newEntity;
-                }
-
+        _.each(data, item => {
+            var existing = self.findByKey(self.getKey(item));
+            if (existing) {
+                toUpdateData.push(item);
                 toUpdate.push(existing);
-                return mapping.updateEntity(existing, item, commit, self);
-            });
+            }
+            else {
+                toAttach.push(item);
+            }
+        });
 
-        return $.when(
-            self.storeRange(toUpdate),
-            self.attachRange(toAttach)
-        ).then(() => result);
+        toAttach = self.fromJSRange(toAttach, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged, expand, store);
+        toUpdate = mapping.updateEntities(toUpdate, toUpdateData, commit, expand, store, self);
+
+        return $.when(store && self.storeRange(toUpdate))
+            .then(() => self.attachRange(toAttach, store))
+            .then(() => _.union(toAttach, toUpdate));
     },
 
     /** Store entity to local store without attaching to datacontext */
@@ -626,18 +607,17 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         return mapping.mapEntityToJSON(entity, keepstate, this);
     },
 
+    /** Instanciate an entities from a JS array */
+    fromJSRange: function (data: any, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): any {
+        return mapping.mapEntitiesFromJS(data, state || mapping.entityStates.unchanged, expand, store, this);
+    },
     /** Instanciate an entity from a JS object */
-    fromJS: function (data: any, state?: mapping.entityStates): any {
-        if (!_.isUndefined(data.EntityState)) {
-            state = data.EntityState;
-            delete data.EntityState;
-        }
-
-        return mapping.mapEntityFromJS(data, state || mapping.entityStates.unchanged, this);
+    fromJS: function (data: any, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): any {
+        return mapping.mapEntityFromJS(data, state || mapping.entityStates.unchanged, expand, store, this);
     },
     /** Instanciate an entity from a JSON string */
-    fromJSON: function (json: string, state?: mapping.entityStates): any {
-        return mapping.mapEntityFromJSON(json, state || mapping.entityStates.unchanged, this);
+    fromJSON: function (json: string, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): any {
+        return mapping.mapEntityFromJSON(json, state || mapping.entityStates.unchanged, expand, store, this);
     },
 
     /** Get a report of changes in the dataSet */
@@ -671,7 +651,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                 _.map(changes[states.added], e => self._remoteCreate(e)),
                 _.map(changes[states.modified], e => self._remoteUpdate(e)),
                 _.map(changes[states.removed], e => self._remoteRemove(e))
-            );
+                );
 
         return utils.whenAll(deferreds);
     },
@@ -686,7 +666,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                 entity.IsSubmitting(true);
 
                 return self.adapter.post(self.setName, self.toJSON(entity))
-                    .then(data => mapping.updateEntity(entity, data, false, self))
+                    .then(data => mapping.updateEntity(entity, data, false, false, true, self))
                     .then(() => {
                         if (oldkey !== self.getKey(entity)) {
                             self.valueWillMutate();
@@ -716,7 +696,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             entity.IsSubmitting(true);
 
             return self.adapter.put(self.setName, key, self.toJSON(entity))
-                .then(data => mapping.updateEntity(entity, data, false, self))
+                .then(data => mapping.updateEntity(entity, data, false, false, true, self))
                 .then(() => self.store(entity))
                 .always(() => { entity.IsSubmitting(false); });
         }
