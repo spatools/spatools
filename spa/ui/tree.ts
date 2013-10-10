@@ -81,6 +81,7 @@ export interface TreeOptions {
 
 export interface TreeContainer {
     children: KnockoutObservableArray<TreeNode>;
+    remember: KnockoutObservable<boolean>;
     name?: KnockoutObservable<string>;
     type?: KnockoutObservable<string>;
     parent?: KnockoutObservable<TreeContainer>;
@@ -302,6 +303,7 @@ export class TreeNode implements TreeContainer {
     public cssClass: KnockoutObservable<string>;
     public iconCssClass: KnockoutObservable<string>;
     public index: KnockoutObservable<number>;
+    public remember: KnockoutObservable<boolean>;
 
     public isOpen: KnockoutObservable<boolean>;
     public isSelected: KnockoutObservable<boolean>;
@@ -332,6 +334,7 @@ export class TreeNode implements TreeContainer {
         this.cssClass = utils.createObservable(options.cssClass, this.type());
         this.iconCssClass = utils.createObservable(options.iconCssClass, "");
         this.index = utils.createObservable(options.index, utils.isUndefined(index) ? parent.children().length : index);
+        this.remember = parent.remember;
 
         this.isOpen = utils.createObservable(options.isOpen, false);
         this.isSelected = utils.createObservable(options.isSelected, false);
@@ -588,6 +591,9 @@ export class TreeNode implements TreeContainer {
     }
 
     public loadState(): void {
+        if (!this.remember())
+            return;
+
         var state = JSON.parse(store.getItem(stateCacheKey)),
             uid = this.uniqueIdentifier();
 
@@ -604,6 +610,9 @@ export class TreeNode implements TreeContainer {
         }
     }
     public saveState(): void {
+        if (!this.remember())
+            return;
+
         var state = JSON.parse(store.getItem(stateCacheKey)) || {},
             uid = this.uniqueIdentifier();
 
@@ -637,7 +646,7 @@ export class TreeNode implements TreeContainer {
 
 ui.addTemplate(
     "text!ui-tree-item-template.html",
-	"<li data-bind=\"contextMenu: contextMenu, css: { empty: !hasChildren(), open: isOpen, rename: isRenaming }, hover: 'hover', classes: cssClass, attr: { 'data-id': id() }\">" +
+	"<li data-bind=\"contextmenu: contextMenu, css: { empty: !hasChildren(), open: isOpen, rename: isRenaming }, hover: 'hover', classes: cssClass, attr: { 'data-id': id() }\">" +
         "<!-- ko if: showAddBefore() --><div class=\"node-order top\" data-bind=\"hover: 'hover', treenodedrop: { active : true, onDropComplete: moveBefore }\"></div><!-- /ko -->" +
 		"<div class=\"node\" data-bind=\"treenodedrag: isDraggable(), treenodedrop: { active : isDropTarget(), onDropComplete: move }, css: { selected: isSelected }, hover: 'hover', event: { dblclick: doubleClick, mousedown: clicked }\">" +
 			"<!-- ko if: hasChildren() --><span class=\"handle\" data-bind=\"click: toggle, hover : 'hover'\"></span><!-- /ko -->" +
