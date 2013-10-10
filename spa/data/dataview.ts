@@ -1,10 +1,10 @@
 /// <reference path="_data.d.ts" />
-
-import utils = require("../utils");
-import dataset = require("./dataset");
+/// <amd-dependency path="../underscore" />
 import mapping = require("./mapping");
+import dataset = require("./dataset");
+import query = require("./query");
 import underscore = require("../underscore");
-import _query = require("./query");
+import utils = require("../utils");
 
 //#region Interfaces 
 
@@ -12,7 +12,7 @@ export interface DataView<T, TKey> extends KnockoutUnderscoreArrayFunctions<T> {
 export interface DataView<T, TKey> extends KnockoutComputed<T> { }
 export interface DataView<T, TKey> extends DataViewFunctions<T, TKey> {
     set: dataset.DataSet<T, TKey>;
-    query: _query.ODataQuery;
+    query: query.ODataQuery;
     lastResult: KnockoutObservableArray<T>;
 }
 
@@ -50,9 +50,9 @@ export interface DataViewFunctions<T, TKey> {
 //#region Model
 
 /** Creates a data view for the given data set */
-export function create<T, TKey>(dataSet: dataset.DataSet<T, TKey>, query?: _query.ODataQuery): DataView<T, TKey> {
+export function create<T, TKey>(dataSet: dataset.DataSet<T, TKey>, _query?: query.ODataQuery): DataView<T, TKey> {
     var self = {
-        query: query || new _query.ODataQuery(),
+        query: _query || new query.ODataQuery(),
         set: dataSet,
         lastResult: ko.observableArray()
     };
@@ -71,7 +71,7 @@ export function create<T, TKey>(dataSet: dataset.DataSet<T, TKey>, query?: _quer
     return result;
 }
 
-export var dataViewFunctions: DataViewFunctions<any, any> = {
+var dataViewFunctions: DataViewFunctions<any, any> = {
     /** Refresh the view from the server */
     refresh: function (mode?: string): JQueryPromise<any> {
         var self = <DataView<any, any>>this;
@@ -137,6 +137,8 @@ export var dataViewFunctions: DataViewFunctions<any, any> = {
     }
 };
 
-ko.utils.extend(dataViewFunctions, underscore.collections);
+// to replace in underscore when Typescript issue resolved 1.0?
+// Typescript issue: remove underscore from define if no amd-dependency
+require("../underscore").addToPrototype(dataViewFunctions);
 
 //#endregion

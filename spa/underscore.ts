@@ -113,12 +113,7 @@ _.each(["keys", "values", "clone", "isEmpty"], function (method: string) {
         return _[method].apply(_, arguments);
     };
 });
-_.each(
-    [
-        "each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any",
-        "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"
-    ],
-    function (method: string) {
+_.each(["each", "map", "filterMap", "reduce", "find", "filter", "reject", "sum", "average", "all", "any", "contains", "max", "min", "sortBy", "groupBy", "toArray", "count", "size", "index"], function (method: string) {
         collections["_" + method] = function () {
             var args = arguments;
             return ko.computed(function () {
@@ -130,12 +125,7 @@ _.each(
             return _[method].apply(_, arguments);
         };
     });
-_.each(
-    [
-        "first", "initial", "last", "rest", "compact", "flatten", "without", "union", "intersection", "difference",
-        "uniq", "zip", "indexOf", "lastIndexOf"
-    ],
-    function (method: string) {
+_.each(["first", "initial", "last", "rest", "compact", "flatten", "without", "union", "intersection", "difference", "uniq", "zip", "indexOf", "lastIndexOf"], function (method: string) {
         collections["_" + method] = function () {
             var args = arguments;
             return ko.computed(function () {
@@ -150,6 +140,10 @@ _.each(
     });
 
 export function addToSubscribable<T>(val: KnockoutSubscribable<T>): void {
+    ko.utils.extend(val, collections);
+}
+
+export function addToPrototype(val: any): void {
     ko.utils.extend(val, collections);
 }
 
