@@ -133,20 +133,20 @@ export interface DataSetFunctions<T, TKey> {
     toJSON(entity: T, keepstate: boolean): string;
 
     /** Instanciate entities from a JS array */
-    fromJSRange(data: any[]): T;
-    fromJSRange(data: any[], state: mapping.entityStates): T;
-    fromJSRange(data: any[], state: mapping.entityStates, expand: boolean): T;
-    fromJSRange(data: any[], state: mapping.entityStates, expand: boolean, store: boolean): T;
+    fromJSRange(data: any[]): JQueryPromise<T[]>;
+    fromJSRange(data: any[], state: mapping.entityStates): JQueryPromise<T[]>;
+    fromJSRange(data: any[], state: mapping.entityStates, expand: boolean): JQueryPromise<T[]>;
+    fromJSRange(data: any[], state: mapping.entityStates, expand: boolean, store: boolean): JQueryPromise<T[]>;
     /** Instanciate an entity from a JS object */
-    fromJS(data: any): T;
-    fromJS(data: any, state: mapping.entityStates): T;
-    fromJS(data: any, state: mapping.entityStates, expand: boolean): T;
-    fromJS(data: any, state: mapping.entityStates, expand: boolean, store: boolean): T;
+    fromJS(data: any): JQueryPromise<T>;
+    fromJS(data: any, state: mapping.entityStates): JQueryPromise<T>;
+    fromJS(data: any, state: mapping.entityStates, expand: boolean): JQueryPromise<T>;
+    fromJS(data: any, state: mapping.entityStates, expand: boolean, store: boolean): JQueryPromise<T>;
     /** Instanciate an entity from a JSON string */
     fromJSON(json: string): T;
-    fromJSON(json: string, state: mapping.entityStates): T;
-    fromJSON(json: string, state: mapping.entityStates, expand: boolean): T;
-    fromJSON(json: string, state: mapping.entityStates, expand: boolean, store: boolean): T;
+    fromJSON(json: string, state: mapping.entityStates): JQueryPromise<T>;
+    fromJSON(json: string, state: mapping.entityStates, expand: boolean): JQueryPromise<T>;
+    fromJSON(json: string, state: mapping.entityStates, expand: boolean, store: boolean): JQueryPromise<T>;
 
     /** Get a report of changes in the dataSet */
     getChanges(): any;
@@ -549,13 +549,13 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             existing = self.findByKey(self.getKey(data));
 
         if (!existing) {
-            var newEntity = self.fromJS(data, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged, expand, store);
-            return self.attach(newEntity, store);
+            return self.fromJS(data, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged, expand, store)
+                .then(entity => self.attach(entity, store));
         }
 
-        mapping.updateEntity(existing, data, commit, expand, store, self);
-
-        return $.when(store && this.store(existing)).then(() => existing);
+        return mapping.updateEntity(existing, data, commit, expand, store, self)
+            .then(() => store && self.store(existing))
+            .then(() => existing);
     },
     /** Attach or update entities if existing with current data and commit changes if commit is set to true */
     attachOrUpdateRange: function (data: any[], commit: boolean = false, expand: boolean = false, store: boolean = true): JQueryPromise<any[]> {
@@ -573,12 +573,25 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
             }
         });
 
-        toAttach = self.fromJSRange(toAttach, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged, expand, store);
-        toUpdate = mapping.updateEntities(toUpdate, toUpdateData, commit, expand, store, self);
+        return mapping.updateEntities(toUpdate, toUpdateData, commit, expand, store, self)
+            .then(result => {
+                toUpdate = result;
 
-        return $.when(store && self.storeRange(toUpdate))
-            .then(() => self.attachRange(toAttach, store))
+                if (store)
+                    return self.storeRange(result);
+            })
+            .then(() => self.fromJSRange(toAttach, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged, expand, store))
+            .then((result: any[]) => {
+                toAttach = result;
+                return self.attachRange(result, store);
+            })
             .then(() => _.union(toAttach, toUpdate));
+
+        //return self.fromJSRange(toAttach, commit === true ? mapping.entityStates.added : mapping.entityStates.unchanged, expand, store).then(result => { toAttach = result; })
+        //    .then(() => mapping.updateEntities(toUpdate, toUpdateData, commit, expand, store, self)).then(result => { toUpdate = result; })
+        //    .then(() => store && self.storeRange(toUpdate))
+        //    .then(() => self.attachRange(toAttach, store))
+        //    .then(() => _.union(toAttach, toUpdate));
     },
 
     /** Store entity to local store without attaching to datacontext */
@@ -608,15 +621,15 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     },
 
     /** Instanciate an entities from a JS array */
-    fromJSRange: function (data: any, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): any {
+    fromJSRange: function (data: any, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): JQueryPromise<any> {
         return mapping.mapEntitiesFromJS(data, state || mapping.entityStates.unchanged, expand, store, this);
     },
     /** Instanciate an entity from a JS object */
-    fromJS: function (data: any, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): any {
+    fromJS: function (data: any, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): JQueryPromise<any> {
         return mapping.mapEntityFromJS(data, state || mapping.entityStates.unchanged, expand, store, this);
     },
     /** Instanciate an entity from a JSON string */
-    fromJSON: function (json: string, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): any {
+    fromJSON: function (json: string, state?: mapping.entityStates, expand: boolean = true, store: boolean = true): JQueryPromise<any> {
         return mapping.mapEntityFromJSON(json, state || mapping.entityStates.unchanged, expand, store, this);
     },
 

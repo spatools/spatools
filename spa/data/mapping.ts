@@ -4,6 +4,7 @@ import changeTracker = require("../changeTracker");
 import dataset = require("./dataset");
 import relations = require("./relations");
 import query = require("./query");
+import utils = require("../utils");
 
 //#region Enumerations / Defaults
 
@@ -151,60 +152,74 @@ function ensureRules(config: Configuration, entity?: any, keepState?: boolean): 
     return result;
 }
 
-function updateRelations(model: any, data: any, config: Configuration, commit: boolean, store: boolean, dataSet: dataset.DataSet<any, any>): void {
-    var foreignSet, relValue;
-    _.each(config.relations, relation => {
-        foreignSet = dataSet.context.getSet(relation.controllerName);
-        relValue = data && data[relation.propertyName];
-
-        if (relValue) {
-            switch (relation.type) {
-                case relationTypes.one:
-                    foreignSet.attachOrUpdate(relValue, commit, store);
-                    break;
-
-                case relationTypes.many:
-                    foreignSet.attachOrUpdateRange(relValue, commit, store);
-                    break;
-
-                case relationTypes.remote:
-                    foreignSet.attachOrUpdateRange(relValue, commit, store).then(model[relation.propertyName]);
-                    break;
-            }
-        }
-    });
-}
-
-function updateRelationsRange(models: any[], datas: any[], config: Configuration, commit: boolean, store: boolean, dataSet: dataset.DataSet<any, any>): void {
-    var foreignSet, data, toAttach, relValue, dfd = $.when();
-    _.each(config.relations, relation => {
-        toAttach = [];
-        foreignSet = dataSet.context.getSet(relation.controllerName);
-
-        _.each(models, (model, i) => {
-            data = datas[i];
-            relValue = data[relation.propertyName];
+function updateRelations(model: any, data: any, config: Configuration, commit: boolean, store: boolean, dataSet: dataset.DataSet<any, any>): JQueryPromise<void> {
+    var foreignSet, relValue,
+        dfds = _.filterMap(config.relations, relation => {
+            foreignSet = dataSet.context.getSet(relation.controllerName);
+            relValue = data && data[relation.propertyName];
 
             if (relValue) {
                 switch (relation.type) {
                     case relationTypes.one:
-                        toAttach.push(relValue);
-                        break;
+                        return foreignSet.attachOrUpdate(relValue, commit, false, store);
 
                     case relationTypes.many:
-                        toAttach = _.union(toAttach, relValue);
-                        break;
+                        return foreignSet.attachOrUpdateRange(relValue, commit, false, store);
 
                     case relationTypes.remote:
-                        dfd = dfd.then(() => foreignSet.attachOrUpdateRange(relValue, commit, store).then(model[relation.propertyName]));
-                        break;
+                        return foreignSet.attachOrUpdateRange(relValue, commit, false, store).then(model[relation.propertyName]);
                 }
             }
         });
 
-        if (toAttach.length > 0)
-            foreignSet.attachOrUpdateRange(toAttach, commit, store);
-    });
+    return utils.whenAll(dfds);
+}
+
+function updateRelationsRange(models: any[], datas: any[], config: Configuration, commit: boolean, store: boolean, dataSet: dataset.DataSet<any, any>): JQueryPromise<void> {
+    var foreignSet, data, toAttach, remoteAttach, remoteAttachTo, relValue, relProp, dfd = $.when(),
+        dfds =  _.filterMap(config.relations, relation => {
+            toAttach = [];
+            remoteAttach = [];
+            remoteAttachTo = [];
+            foreignSet = dataSet.context.getSet(relation.controllerName);
+
+            _.each(models, (model, i) => {
+                data = datas[i];
+                relValue = data[relation.propertyName];
+
+                if (relValue) {
+                    switch (relation.type) {
+                        case relationTypes.one:
+                            toAttach.push(relValue);
+                            break;
+
+                        case relationTypes.many:
+                            toAttach = _.union(toAttach, relValue);
+                            break;
+
+                        case relationTypes.remote:
+                            remoteAttach.push(relValue);
+                            remoteAttachTo.push(model[relation.propertyName]);
+                            break;
+                    }
+                }
+            });
+
+            if (remoteAttach.length > 0) {
+                _.each(remoteAttach, (entities, i) => {
+                    relProp = remoteAttachTo[i];
+                    dfd = dfd.then(() => foreignSet.attachOrUpdateRange(entities, commit, false, store).then(relProp));
+                });
+            }
+
+            if (toAttach.length > 0) {
+                dfd = dfd.then(() => foreignSet.attachOrUpdateRange(toAttach, commit, false, store));
+            }
+
+            return dfd;
+        });
+
+    return utils.whenAll(dfds);
 }
 
 //#endregion
@@ -289,14 +304,14 @@ export function duplicateEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T
 }
 
 /** Update specified entity with given data */
-export function updateEntity<T, TKey>(entity: any, data: any, commit: boolean, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): T {
+export function updateEntity<T, TKey>(entity: any, data: any, commit: boolean, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<T> {
     if (!data) {
         if (!commit) {
             entity.EntityState(entityStates.unchanged);
             entity.ChangeTracker.reset();
         }
 
-        return entity;
+        return $.when(entity);
     }
 
     var config = getMappingConfiguration(entity, dataSet),
@@ -304,19 +319,20 @@ export function updateEntity<T, TKey>(entity: any, data: any, commit: boolean, e
 
     ko.mapping.fromJS(data, mappingRules, entity);
 
-    if (expand)
-        updateRelations(entity, data, config, commit, store, dataSet);
-
     if (!commit) {
         entity.EntityState(entityStates.unchanged);
         entity.ChangeTracker.reset();
     }
 
-    return entity;
+    if (expand) {
+        return updateRelations(entity, data, config, commit, store, dataSet).then(() => entity);
+    }
+
+    return $.when(entity);
 }
 
 /** Update specified set of entities with given data array */
-export function updateEntities<T, TKey>(entities: any[], datas: any[], commit: boolean, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): T[] {
+export function updateEntities<T, TKey>(entities: any[], datas: any[], commit: boolean, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<T[]> {
     if (datas.length === 0) {
         if (!commit) {
             _.each(entities, entity => {
@@ -325,7 +341,7 @@ export function updateEntities<T, TKey>(entities: any[], datas: any[], commit: b
             });
         }
 
-        return datas;
+        return $.when(entities);
     }
 
     var config, data, mappingRules;
@@ -342,10 +358,11 @@ export function updateEntities<T, TKey>(entities: any[], datas: any[], commit: b
         }
     });
 
-    if (expand)
-        updateRelationsRange(entities, datas, config, commit, store, dataSet);
+    if (expand) {
+        return updateRelationsRange(entities, datas, config, commit, store, dataSet).then(() => entities);
+    }
 
-    return entities;
+    return $.when(entities);
 }
 
 /** Reset specified entity with last remote data */
@@ -365,9 +382,9 @@ export function resetEntity<T, TKey>(entity: any, dataSet: dataset.DataSet<T, TK
 
 //#region Mapping Methods
 
-export function mapEntitiesFromJS<T, TKey>(datas: any[], initialState: entityStates, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): T[] {
+export function mapEntitiesFromJS<T, TKey>(datas: any[], initialState: entityStates, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<T[]> {
     if (datas.length === 0) {
-        return datas;
+        return $.when(datas);
     }
 
     var config, model,
@@ -386,13 +403,14 @@ export function mapEntitiesFromJS<T, TKey>(datas: any[], initialState: entitySta
             return model;
         });
 
-    if (expand)
-        updateRelationsRange(result, datas, config, initialState !== entityStates.unchanged, store, dataSet);
+    if (expand) {
+        return updateRelationsRange(result, datas, config, initialState !== entityStates.unchanged, store, dataSet).then(() => result);
+    }
 
-    return result;
+    return $.when(result);
 }
 
-export function mapEntityFromJS<T, TKey>(data: any, initialState: entityStates, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): T {
+export function mapEntityFromJS<T, TKey>(data: any, initialState: entityStates, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<T> {
     var config = getMappingConfiguration(data, dataSet),
         model = config.object ? constructEntity(config.object) : {};
 
@@ -404,10 +422,11 @@ export function mapEntityFromJS<T, TKey>(data: any, initialState: entityStates, 
     ko.mapping.fromJS(data, config.rules, model);
     addMappingProperties(model, dataSet, config, initialState, data);
 
-    if (expand)
-        updateRelations(model, data, config, initialState !== entityStates.unchanged, store, dataSet);
+    if (expand) {
+        return updateRelations(model, data, config, initialState !== entityStates.unchanged, store, dataSet).then(() => model);
+    }
 
-    return model;
+    return $.when(model);
 }
 
 export function mapEntityToJS<T, TKey>(entity: any, keepState: boolean, dataSet: dataset.DataSet<T, TKey>): any {
@@ -419,7 +438,7 @@ export function mapEntityToJS<T, TKey>(entity: any, keepState: boolean, dataSet:
     return data;
 }
 
-export function mapEntityFromJSON<T, TKey>(json: string, initialState: entityStates, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): T {
+export function mapEntityFromJSON<T, TKey>(json: string, initialState: entityStates, expand: boolean, store: boolean, dataSet: dataset.DataSet<T, TKey>): JQueryPromise<T> {
     var obj = ko.utils.parseJson(json);
     return mapEntityFromJS(obj, initialState, expand, store, dataSet);
 }
