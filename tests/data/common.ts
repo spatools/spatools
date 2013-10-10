@@ -16,6 +16,8 @@ import utils = require("../../spa/utils");
 export module models {
     export class Parent {
         public "odata.type";
+        public EntityState: KnockoutObservable<mapping.entityStates>;
+
         public ParentId = ko.observable<string>();
         public Title = ko.observable("");
 
