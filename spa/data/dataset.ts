@@ -681,8 +681,12 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                 return self.adapter.post(self.setName, self.toJSON(entity))
                     .then(data => mapping.updateEntity(entity, data, false, false, true, self))
                     .then(() => {
-                        if (oldkey !== self.getKey(entity)) {
+                        var key = self.getKey(entity), table;
+                        if (oldkey !== key) {
+                            table = self();
                             self.valueWillMutate();
+
+                            table[key] = entity;
 
                             return self.localstore.remove(self.setName, oldkey)
                                 .then(() => self.localstore.add(self.setName, entity))
