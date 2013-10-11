@@ -687,6 +687,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
                             self.valueWillMutate();
 
                             table[key] = entity;
+                            delete table[oldkey];
 
                             return self.localstore.remove(self.setName, oldkey)
                                 .then(() => self.localstore.add(self.setName, entity))
