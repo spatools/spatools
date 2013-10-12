@@ -48,13 +48,19 @@ if (reg.test(ua)) {
     }
 
     if (!name) { //IE
-        var regIe = /MSIE ([0-9.]+)/,
+        var regIe = /MSIE ([0-9.]+)/, 
+            regIE11 = /rv:([0-9.]+)\)\s+like\s+Gecko/,
             regEng = /Trident\/([0-9.]+)/;
 
         if (regIe.test(ua)) {
             name = "Internet Explorer";
             version = ua.match(regIe)[1];
         }
+        else if (regIE11.test(ua)) {
+          name = "Internet Explorer";
+          version = ua.match(regIE11)[1];
+        }
+
         if (regEng.test(ua)) {
             engine = "Trident";
             engineVersion = ua.match(regEng)[1];
