@@ -70,6 +70,7 @@ export interface DataSetFunctions<T, TKey> {
     refreshRelation<U>(entity: T, propertyName: string, query: query.ODataQuery): JQueryPromise<U>;
     refreshRelation<U>(entity: T, propertyName: string, mode: string): JQueryPromise<U>;
     refreshRelation<U>(entity: T, propertyName: string, mode: string, query: query.ODataQuery): JQueryPromise<U>;
+    refreshRelation<U>(entity: T, propertyName: string, mode: string, query: query.ODataQuery, nostore: boolean): JQueryPromise<U>;
 
     /** Execute action on remote source */
     executeAction(action: string, params?: any, entity?: T): JQueryPromise<any>;
@@ -341,7 +342,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
     },
 
     /** Get relation by ensuring using specific remote action and not filter */
-    refreshRelation: function (entity: any, propertyName: string, mode?: any, query?: query.ODataQuery): JQueryPromise<any[]> {
+    refreshRelation: function (entity: any, propertyName: string, mode?: any, query?: query.ODataQuery, nostore?: boolean): JQueryPromise<any[]> {
         if (!this.adapter.getRelation) {
             throw new Error("This adapter does not support custom relations");
         }
@@ -349,7 +350,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         if (!mode) mode = self.refreshMode;
         if (!query && !_.isString(mode)) {
             query = mode;
-            mode = "remote";
+            mode = self.refreshMode;
         }
 
         var self = <DataSet<any, any>>this,
@@ -363,7 +364,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         var foreignSet = self.context.getSet(relation.controllerName);
         if (mode === "remote") {
             return self.adapter.getRelation(self.setName, propertyName, self.getKey(entity), query)
-                .then(result => _updateDataSet(foreignSet, result, query));
+                .then(result => nostore ? result.data : _updateDataSet(foreignSet, result, query));
         }
         else {
             return self.localstore.getAll(foreignSet.setName, query)
