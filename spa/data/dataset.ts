@@ -364,7 +364,7 @@ var dataSetFunctions: DataSetFunctions<any, any> = {
         var foreignSet = self.context.getSet(relation.controllerName);
         if (mode === "remote") {
             return self.adapter.getRelation(self.setName, propertyName, self.getKey(entity), query)
-                .then(result => nostore ? result.data : _updateDataSet(foreignSet, result, query));
+                .then(result => nostore ? foreignSet.attachOrUpdateRange(result.data, false, !!query && query.expands.size() > 0, false) : _updateDataSet(foreignSet, result, query));
         }
         else {
             return self.localstore.getAll(foreignSet.setName, query)
