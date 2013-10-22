@@ -1,7 +1,11 @@
 /// <reference path="_definitions.d.ts" />
 
+import utils = require("./utils");
+
 export interface ISimpleStorage {
     length: number;
+
+    init? (): JQueryPromise<void>;
 
     key(index: any): any;
     getItem(key: any): any;
@@ -47,6 +51,78 @@ class MemoryStorage implements ISimpleStorage {
 }
 createFromIStorage("memory", new MemoryStorage());
 
+class WebSQLStorage implements ISimpleStorage {
+    private memory = {};
+    private db = null;
+
+    public length: number = 0;
+    public dbname = "spastore";
+    public tablename = "storetable";
+    public dbsize = 10 * 1024 * 1024;
+
+    private transaction(db): JQueryPromise<any> {
+        return $.Deferred(dfd => { db.transaction(dfd.resolve, dfd.reject); }).promise();
+    } 
+    private executeSql(db, req: string, values?: any[]): JQueryPromise<any> {
+        return this.transaction(db).then(tx => $.Deferred(dfd => { tx.executeSql(req, values || [], (tx, result) => { dfd.resolve(result, tx); }, dfd.reject); }));
+    }
+    private ensureDb(): JQueryPromise<any> {
+        if (!this.db) {
+            var db = this.db = (<any>window).openDatabase(this.dbname, "1.0", "SPA Store Database", this.dbsize);
+            return this.executeSql(db, "CREATE TABLE IF NOT EXISTS " + this.tablename + " (id unique, data)").then(() => db);
+        }
+
+        return $.when(this.db);
+    }
+
+    public init(): JQueryPromise<any> {
+        return this.ensureDb().then(db => {
+            return this.executeSql(db, "SELECT * FROM " + this.tablename).then(result => {
+                var len = result.rows.length, i, item;
+                for (i = 0; i < len; i++) {
+                    item = result.rows.item(i);
+                    this.memory[item.id] = item.data;
+                }
+
+                this.length = len;
+            });
+        });
+    }
+    public clear() {
+        this.memory = {};
+        this.length = 0;
+        return this.ensureDb().then(db => this.executeSql(db, "DELETE FROM " + this.tablename + " WHERE 1=1"));
+    }
+
+    public key(index: number) {
+        return _.find(_.values(this.memory), (val, i) => i === index) || null;
+    }
+    public getItem(key: string) {
+        return this.memory[key] || null;
+    }
+    public setItem(key: string, value: any) {
+        var toUpdate = !!this.memory[key];
+        this.memory[key] = value;
+
+        return this.ensureDb().then(db => {
+            if (toUpdate)
+                return this.executeSql(db, "UPDATE " + this.tablename + " SET data=? WHERE id=?", [value, key]);
+            else {
+                return this.executeSql(db, "INSERT INTO " + this.tablename + " (id, data) VALUES (?, ?)", [key, value]);
+                this.length++;
+            }
+        });
+    }
+    public removeItem(key: string) {
+        if (this.memory[key]) {
+            delete this.memory[key];
+            this.length--;
+
+            return this.ensureDb().then(db => this.executeSql(db, "DELETE FROM " + this.tablename + " WHERE id=?", [key]));
+        }
+    }
+}
+createFromIStorage("websql", new WebSQLStorage());
 
 _.each(["localStorage", "sessionStorage"], function (storageType: string): void {
     try {
@@ -114,15 +190,19 @@ export function clear(): void {
     length = _store.length;
 }
 
-export function changeStore(type: string): void {
+export function changeStore(type: string): JQueryPromise<void> {
     if (stores[type]) {
         _store = stores[type];
         length = _store.length;
+
+        return _store.init && _store.init()
     }
+
+    return utils.wrapError("NOT FOUND");
 }
-export function addStorageType(type: string, store: ISimpleStorage, change: boolean) {
+export function addStorageType(type: string, store: ISimpleStorage, change: boolean): JQueryPromise<void> {
     if (stores[type]) {
-        throw "This store already exists !";
+        throw new Error("This store already exists !");
     }
 
     if (_.isNumber(store.length) && store.clear && store.getItem && store.setItem && store.key && store.removeItem) {
@@ -130,8 +210,10 @@ export function addStorageType(type: string, store: ISimpleStorage, change: bool
     }
 
     if (change === true) {
-        changeStore(type);
+        return changeStore(type);
     }
+
+    return $.when();
 }
 
 //#endregion
