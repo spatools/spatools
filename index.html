@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="SPA Tools : Single Page Applications tools and framework" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>SPA Tools</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/spatools/spatools">View on GitHub</a>
+
+          <h1 id="project_title">SPA Tools</h1>
+          <h2 id="project_tagline">Single Page Applications tools and framework</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/spatools/spatools/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/spatools/spatools/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="spa-tools" class="anchor" href="#spa-tools"><span class="octicon octicon-link"></span></a>SPA Tools</h1>
+
+<p>SPA Tools is a set of tools and modules to help building Single Page Applications and other modern web applications.</p>
+
+<h2>
+<a name="base-library" class="anchor" href="#base-library"><span class="octicon octicon-link"></span></a>Base Library</h2>
+
+<p>The base library must be included in your document. It extends some usefull framework and make them work together. It includes extensions for :</p>
+
+<ul>
+<li>KnockoutJS
+
+<ul>
+<li>Many usefull binding handlers</li>
+<li>Many extenders</li>
+<li>Some other extensions</li>
+</ul>
+</li>
+<li>UnderscoreJS
+
+<ul>
+<li>Add some methods to underscoreJS</li>
+<li>Integrate with knockout's observableArray and can be integrated to any observable / computed observable.</li>
+</ul>
+</li>
+<li>MomentJS
+
+<ul>
+<li>Integrate with Knockout JS
+
+<ul>
+<li>Binding Handler</li>
+<li>Extender</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h2>
+<a name="modules" class="anchor" href="#modules"><span class="octicon octicon-link"></span></a>Modules</h2>
+
+<p>SPA Tools provides a lot of additionnal modules to add functionnalities to your applications.</p>
+
+<ul>
+<li>
+<strong>Commanding</strong> MVVM concept of command and async command to help building better View Models.</li>
+<li>
+<strong>Change Tracker</strong> Configurable object change tracker.</li>
+<li>
+<strong>Messenger</strong> Messaging mechanism for inter View Model communication</li>
+<li>
+<strong>Timers</strong> Timers to help creating recurring tasks. Timer and AsyncTimer is provided.</li>
+<li>
+<strong>Events</strong> Utility to manage HTML events.</li>
+<li>
+<strong>Stores</strong> Provide mechanisms to store data for your application.</li>
+<li>
+<strong>Utilities</strong> Many other utility functions.</li>
+</ul><h2>
+<a name="data" class="anchor" href="#data"><span class="octicon octicon-link"></span></a>Data</h2>
+
+<p>Javascript ORM to connect to REST / OData Web Service.</p>
+
+<h2>
+<a name="release-history" class="anchor" href="#release-history"><span class="octicon octicon-link"></span></a>Release History</h2>
+
+<ul>
+<li>0.1.0 Initial Release</li>
+<li>0.2.0 
+
+<ul>
+<li>Append UI framework</li>
+</ul>
+</li>
+<li>0.2.1
+
+<ul>
+<li>Fix issues in Tree widget</li>
+</ul>
+</li>
+<li>0.2.2
+
+<ul>
+<li>Fix issues in data/adapters</li>
+<li>Fix issues in data/stores</li>
+</ul>
+</li>
+<li>0.2.3
+
+<ul>
+<li>Fix issues in Command binding handlers</li>
+</ul>
+</li>
+<li>0.2.4
+
+<ul>
+<li>Fix issues in Ribbon widget</li>
+</ul>
+</li>
+<li>0.2.5
+
+<ul>
+<li>Fix issues in base64 module</li>
+</ul>
+</li>
+<li>0.3.0
+
+<ul>
+<li>Append $expand and $select options in data framework</li>
+<li>Add ODataQuery options in load operations in data framework</li>
+</ul>
+</li>
+<li>0.3.1
+
+<ul>
+<li>Fix missing return value in utils.unsafe</li>
+<li>Fix issues in templateEngine for Windows 8</li>
+<li>Fix issue in Tree binding handler</li>
+<li>Fix issue in DataSet.saveChanges and DataView.saveChanges</li>
+<li>Fix issue in DataSet.remove</li>
+<li>Fix RibbonForm.inline not working and Add class to RibbonInput</li>
+<li>Fix missing empty guid</li>
+</ul>
+</li>
+<li>0.4.0
+
+<ul>
+<li>Remove base library (all is now require based)</li>
+<li>Optimize bad string EOL on widget</li>
+<li>Optimize data framework</li>
+<li>TS Lint &amp; JS Hint all modules</li>
+<li>Upgrade NuGet packages</li>
+<li>Append slider widget</li>
+</ul>
+</li>
+<li>0.4.1
+
+<ul>
+<li>Change project location in NuGet</li>
+</ul>
+</li>
+<li>0.4.2
+
+<ul>
+<li>Fix compatibility issue with new moment version</li>
+</ul>
+</li>
+<li>0.5.0
+
+<ul>
+<li>Make cache and loader Windows 8 Compliant</li>
+<li>Append ISO 8601 moment duration parser</li>
+<li>Improve startup modules</li>
+<li>Append Math Framework
+
+<ul>
+<li>Separate package</li>
+<li>Geometry Helpers</li>
+<li>Vector2, Vector3, Matrix3, Matrix4 calculation</li>
+<li>Very useful in 3d and canvas applications</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>0.5.1
+
+<ul>
+<li>Optimize Knockout handler by using ko.unwrap</li>
+<li>Fix issue in pad binding handler</li>
+<li>Fix issue in ODataQuery FunctionFilter</li>
+</ul>
+</li>
+<li>0.5.2
+
+<ul>
+<li>Fix issue in data store getStore method</li>
+<li>Fix issues in localstorage data store</li>
+<li>Fix issues in loader.loadStylesheet</li>
+<li>Append some promise related methods into utils module</li>
+<li>Make utils.unsafe method generic</li>
+</ul>
+</li>
+<li>0.5.3
+
+<ul>
+<li>Make MemoryStore and ODataAdapter respectively default data store and adapter</li>
+<li>Optimize adapters size by factorizing ajax calls</li>
+<li>Avoid circular dependency by creating alone prefilter module</li>
+<li>Remove unused initDefault method from DataContext class</li>
+<li>Optimize store and adapter change in DataSet class</li>
+<li>Fix issue in utils.whenAll definition</li>
+</ul>
+</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">SPA Tools maintained by <a href="https://github.com/spatools">spatools</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
