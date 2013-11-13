@@ -38,8 +38,8 @@
       Javascript
     </tags>
     <dependencies>
-      <dependency id="SPATools.UI.Base" version="0.5.3" />
-      <dependency id="SPATools.UI.ContextMenu" version="0.5.3" />
+      <dependency id="SPATools.UI.Base" version="0.6.0" />
+      <dependency id="SPATools.UI.ContextMenu" version="0.6.0" />
     </dependencies>
   </metadata>
   <files>
