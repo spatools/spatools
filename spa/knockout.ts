@@ -304,7 +304,6 @@ ko.bindingHandlers.editable = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
         var options = ko.unwrap(valueAccessor()),
             value = ko.unwrap(options.value),
-            toValid = ko.unwrap(options.toValid || true),
             isEdit = ko.unwrap(options.isEdit || false),
             type = ko.unwrap(options.type || "text"),
             input = null;
@@ -421,17 +420,14 @@ ko.bindingHandlers.clipboard = {
 ko.bindingHandlers.debug = {
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any, bindingContext: KnockoutBindingContext) {
         var options = ko.unwrap(valueAccessor()),
-            message = "Debug Binding", value = options, sub = false;
+            message = "Debug Binding", value = options;
 
-        if (options.name && options.value) {
+        if (options.message && options.value) {
             value = ko.unwrap(options.value);
             message = ko.unwrap(options.message) || "Debug Binding";
-            sub = ko.unwrap(options.sub) || false;
         }
 
-        sub === true ?
-        console.log(message, value) :
-        console.log(message, " : ", value);
+        console.log(message, value);
     }
 };
 
