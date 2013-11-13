@@ -1,0 +1,15 @@
+{
+  "name": "spatools",
+  "version": "0.6.0",
+  "description": "SPA Tools is a set of tools to help Single Page Application development",
+  "author": "Somatic",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-typescript": "~0.2.2",
+    "grunt-contrib": "~0.7.0",
+    "grunt-nuget": "~0.1.1",
+    "grunt-tslint": "~0.2.2"
+  }
+}
