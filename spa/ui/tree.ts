@@ -591,8 +591,9 @@ export class TreeNode implements TreeContainer {
     }
 
     public loadState(): void {
-        if (!this.remember())
+        if (!this.remember()) {
             return;
+        }
 
         var state = JSON.parse(store.getItem(stateCacheKey)),
             uid = this.uniqueIdentifier();
@@ -610,8 +611,9 @@ export class TreeNode implements TreeContainer {
         }
     }
     public saveState(): void {
-        if (!this.remember())
+        if (!this.remember()) {
             return;
+        }
 
         var state = JSON.parse(store.getItem(stateCacheKey)) || {},
             uid = this.uniqueIdentifier();

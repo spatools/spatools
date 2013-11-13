@@ -48,7 +48,7 @@ if (reg.test(ua)) {
     }
 
     if (!name) { //IE
-        var regIe = /MSIE ([0-9.]+)/, 
+        var regIe = /MSIE ([0-9.]+)/,
             regIE11 = /rv:([0-9.]+)\)\s+like\s+Gecko/,
             regEng = /Trident\/([0-9.]+)/;
 

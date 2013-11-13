@@ -62,7 +62,7 @@ class WebSQLStorage implements ISimpleStorage {
 
     private transaction(db): JQueryPromise<any> {
         return $.Deferred(dfd => { db.transaction(dfd.resolve, dfd.reject); }).promise();
-    } 
+    }
     private executeSql(db, req: string, values?: any[]): JQueryPromise<any> {
         return this.transaction(db).then(tx => $.Deferred(dfd => { tx.executeSql(req, values || [], (tx, result) => { dfd.resolve(result, tx); }, dfd.reject); }));
     }
@@ -105,11 +105,11 @@ class WebSQLStorage implements ISimpleStorage {
         this.memory[key] = value;
 
         return this.ensureDb().then(db => {
-            if (toUpdate)
+            if (toUpdate) {
                 return this.executeSql(db, "UPDATE " + this.tablename + " SET data=? WHERE id=?", [value, key]);
+            }
             else {
-                return this.executeSql(db, "INSERT INTO " + this.tablename + " (id, data) VALUES (?, ?)", [key, value]);
-                this.length++;
+                return this.executeSql(db, "INSERT INTO " + this.tablename + " (id, data) VALUES (?, ?)", [key, value]).done(() => { this.length++; });
             }
         });
     }
@@ -195,7 +195,7 @@ export function changeStore(type: string): JQueryPromise<void> {
         _store = stores[type];
         length = _store.length;
 
-        return _store.init && _store.init()
+        return _store.init && _store.init();
     }
 
     return utils.wrapError("NOT FOUND");
