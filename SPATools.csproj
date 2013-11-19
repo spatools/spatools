@@ -83,8 +83,8 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="samples\contextmenu.html" />
-    <Content Include="Scripts\qunit-1.12.0.js" />
-    <Content Include="Scripts\typings\qunit\qunit.d.ts" />
+    <Content Include="scripts\qunit-1.12.0.js" />
+    <Content Include="scripts\typings\qunit\qunit.d.ts" />
     <TypeScriptCompile Include="spa\data\relations.ts" />
     <TypeScriptCompile Include="spa\data\stores\memory.ts" />
     <TypeScriptCompile Include="spa\math.ts" />
@@ -117,48 +117,44 @@
     <Content Include="nuget\SPATools.Interactions.nuspec" />
     <Content Include="nuget\SPATools.UI.Slider.nuspec" />
     <Content Include="nuget\SPATools.Math.nuspec" />
-    <None Include="Scripts\jquery-2.0.3.intellisense.js" />
+    <None Include="scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="samples\editor.html" />
     <Content Include="samples\editor.ts" />
-    <Content Include="Scripts\jquery-2.0.3.js" />
-    <Content Include="Scripts\jquery-2.0.3.min.js" />
-    <Content Include="Scripts\jquery-2.0.3.min.map" />
+    <Content Include="scripts\jquery-2.0.3.js" />
+    <Content Include="scripts\jquery-2.0.3.min.js" />
+    <Content Include="scripts\jquery-2.0.3.min.map" />
     <Content Include="samples\contextmenu.ts" />
-    <Content Include="Scripts\jquery-ui-1.10.3.js" />
-    <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
-    <Content Include="Scripts\moment.js" />
-    <Content Include="Scripts\moment.min.js" />
-    <Content Include="Scripts\r.js" />
-    <Content Include="Scripts\require.js" />
-    <Content Include="Scripts\typings\jqueryui\jqueryui.d.ts" />
-    <Content Include="Scripts\typings\jquery\jquery.d.ts" />
-    <Content Include="Scripts\typings\moment\moment.d.ts" />
-    <Content Include="Scripts\typings\requirejs\require.d.ts" />
-    <Content Include="Scripts\typings\sammyjs\sammyjs.d.ts" />
-    <Content Include="Scripts\typings\underscore\underscore.d.ts" />
-    <Content Include="Scripts\underscore.js" />
-    <Content Include="Scripts\underscore.min.js" />
-    <Content Include="Scripts\underscore.min.map" />
-    <Content Include="base\base.ts" />
-    <Content Include="base\base.d.ts" />
-    <Content Include="base\knockout.ts" />
+    <Content Include="scripts\jquery-ui-1.10.3.js" />
+    <Content Include="scripts\jquery-ui-1.10.3.min.js" />
+    <Content Include="scripts\moment.js" />
+    <Content Include="scripts\moment.min.js" />
+    <Content Include="scripts\r.js" />
+    <Content Include="scripts\require.js" />
+    <Content Include="scripts\typings\jqueryui\jqueryui.d.ts" />
+    <Content Include="scripts\typings\jquery\jquery.d.ts" />
+    <Content Include="scripts\typings\moment\moment.d.ts" />
+    <Content Include="scripts\typings\requirejs\require.d.ts" />
+    <Content Include="scripts\typings\sammyjs\sammyjs.d.ts" />
+    <Content Include="scripts\typings\underscore\underscore.d.ts" />
+    <Content Include="scripts\underscore.js" />
+    <Content Include="scripts\underscore.min.js" />
+    <Content Include="scripts\underscore.min.map" />
     <Content Include="Gruntfile.js" />
-    <Content Include="Scripts\knockout-2.3.0.debug.js" />
-    <Content Include="Scripts\knockout-2.3.0.js" />
-    <Content Include="Scripts\knockout.mapping-latest.debug.js" />
-    <Content Include="Scripts\knockout.mapping-latest.js" />
-    <Content Include="Scripts\knockout.validation.debug.js" />
-    <Content Include="Scripts\knockout.validation.js" />
-    <Content Include="Scripts\typings\globalize\globalize.d.ts" />
-    <Content Include="Scripts\typings\knockout.mapping\knockout.mapping.d.ts" />
-    <Content Include="Scripts\typings\knockout.validation\knockout.validation.d.ts" />
-    <Content Include="Scripts\typings\knockout\knockout.d.ts" />
+    <Content Include="scripts\knockout-2.3.0.debug.js" />
+    <Content Include="scripts\knockout-2.3.0.js" />
+    <Content Include="scripts\knockout.mapping-latest.debug.js" />
+    <Content Include="scripts\knockout.mapping-latest.js" />
+    <Content Include="scripts\knockout.validation.debug.js" />
+    <Content Include="scripts\knockout.validation.js" />
+    <Content Include="scripts\typings\globalize\globalize.d.ts" />
+    <Content Include="scripts\typings\knockout.mapping\knockout.mapping.d.ts" />
+    <Content Include="scripts\typings\knockout.validation\knockout.validation.d.ts" />
+    <Content Include="scripts\typings\knockout\knockout.d.ts" />
     <TypeScriptCompile Include="spa\changeTracker.ts" />
     <TypeScriptCompile Include="spa\animation.ts" />
     <TypeScriptCompile Include="spa\cache.ts" />
     <TypeScriptCompile Include="spa\commands.ts" />
     <TypeScriptCompile Include="spa\moment.ts" />
-    <Content Include="base\underscore.ts" />
     <TypeScriptCompile Include="spa\observable.ts" />
     <Content Include="spa\_definitions.d.ts" />
     <TypeScriptCompile Include="spa\data\adapters.ts" />
@@ -175,7 +171,6 @@
     <TypeScriptCompile Include="spa\data\stores\localstorage.ts" />
     <TypeScriptCompile Include="spa\data\stores\indexeddb.ts" />
     <TypeScriptCompile Include="spa\event.ts" />
-    <Content Include="base\handlers.ts" />
     <TypeScriptCompile Include="spa\fullscreen.ts" />
     <TypeScriptCompile Include="spa\keyboard.ts" />
     <TypeScriptCompile Include="spa\messenger.ts" />
@@ -184,7 +179,6 @@
     <TypeScriptCompile Include="spa\path.ts" />
     <TypeScriptCompile Include="spa\router.ts" />
     <TypeScriptCompile Include="spa\timers.ts" />
-    <Content Include="base\moment.ts" />
     <TypeScriptCompile Include="spa\loader.ts" />
     <TypeScriptCompile Include="spa\base64.ts" />
     <TypeScriptCompile Include="spa\underscore.ts" />
@@ -229,9 +223,6 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="spa\knockout.ts" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="base\extenders.ts" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" />
