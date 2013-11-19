@@ -1,5 +1,5 @@
 ﻿/// <reference path="../_references.d.ts" />
-/// <reference path="../Scripts/typings/qunit/qunit.d.ts" />
+/// <reference path="../scripts/typings/qunit/qunit.d.ts" />
 
 import base64 = require("../spa/base64");
 

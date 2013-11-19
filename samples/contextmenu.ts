@@ -5,7 +5,7 @@ import ctx = require("../spa/ui/contextmenu");
 requirejs.config({
     jQuery: true,
     paths: {
-        'text': '../../Scripts/text'
+        'text': '../../scripts/text'
     }
 });
 

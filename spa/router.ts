@@ -1,5 +1,5 @@
 /// <reference path="_definitions.d.ts" />
-/// <reference path="../Scripts/typings/sammyjs/sammyjs.d.ts" />
+/// <reference path="../scripts/typings/sammyjs/sammyjs.d.ts" />
 
 export interface RouteBrokerResult {
     value: boolean;

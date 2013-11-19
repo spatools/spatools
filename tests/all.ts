@@ -1,5 +1,5 @@
 ﻿/// <reference path="../_references.d.ts" />
-/// <reference path="../Scripts/typings/qunit/qunit.d.ts" />
+/// <reference path="../scripts/typings/qunit/qunit.d.ts" />
 
 //QUnit.log(details => {
 //    if (window.console && window.console.log) {
@@ -12,7 +12,7 @@ requirejs.config({
 
     //jQuery: true,
     paths: {
-        'text': '../../Scripts/text'
+        'text': '../../scripts/text'
     }
 });
 

@@ -5,7 +5,7 @@ import editor = require("../spa/ui/editor");
 requirejs.config({
     jQuery: true,
     paths: {
-        'text': '../../Scripts/text'
+        'text': '../../scripts/text'
     }
 });
 
