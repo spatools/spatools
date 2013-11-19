@@ -1,11 +1,11 @@
-/// <reference path="Scripts/typings/jquery/jquery.d.ts" />
-/// <reference path="Scripts/typings/jqueryui/jqueryui.d.ts" />
-/// <reference path="Scripts/typings/knockout/knockout.d.ts" />
-/// <reference path="Scripts/typings/knockout.mapping/knockout.mapping.d.ts" />
-/// <reference path="Scripts/typings/knockout.validation/knockout.validation.d.ts" />
-/// <reference path="Scripts/typings/underscore/underscore.d.ts" />
-/// <reference path="Scripts/typings/moment/moment.d.ts" />
-/// <reference path="Scripts/typings/globalize/globalize.d.ts" />
+/// <reference path="scripts/typings/jquery/jquery.d.ts" />
+/// <reference path="scripts/typings/jqueryui/jqueryui.d.ts" />
+/// <reference path="scripts/typings/knockout/knockout.d.ts" />
+/// <reference path="scripts/typings/knockout.mapping/knockout.mapping.d.ts" />
+/// <reference path="scripts/typings/knockout.validation/knockout.validation.d.ts" />
+/// <reference path="scripts/typings/underscore/underscore.d.ts" />
+/// <reference path="scripts/typings/moment/moment.d.ts" />
+/// <reference path="scripts/typings/globalize/globalize.d.ts" />
 
 declare function escape(text: string): string;
 declare function unescape(text: string): string;
