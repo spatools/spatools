@@ -11,7 +11,7 @@
 	"type": "git",
 	"url": "https://github.com/spatools/spatools.git"
   },
-  "keywords": {
+  "keywords": [
 	"spa",
 	"tools",
 	"spatools",
@@ -24,7 +24,7 @@
 	"library",
 	"require.js",
 	"amd"
-  },
+  ],
   "bugs": {
 	"url": "https://github.com/spatools/spatools/issues"
   },
