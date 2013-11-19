@@ -1,5 +1,6 @@
 ﻿/// <reference path="../_references.d.ts" />
 /// <reference path="../scripts/typings/qunit/qunit.d.ts" />
+/// <amd-dependency path="../spa/knockout" />
 
 import utils = require("../spa/utils");
 
