@@ -172,3 +172,8 @@ tests/ui/*.js
 
 # NuGet generated packages
 nuget/*.nupkg
+
+# Project files
+WE-settings.xml
+*.csproj
+*.sln
