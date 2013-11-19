@@ -2,8 +2,36 @@
   "name": "spatools",
   "version": "0.6.0",
   "description": "SPA Tools is a set of tools to help Single Page Application development",
-  "author": "Somatic",
-  "license": "MIT",
+  "homepage": "http://spatools.github.io/spatools",
+  "author": {
+	"name": "Somatic",
+	"url": "http://www.somatic.fr"
+  },
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/spatools/spatools.git"
+  },
+  "keywords": {
+	"spa",
+	"tools",
+	"spatools",
+	"jquery",
+	"knockout",
+	"underscore",
+	"moment",
+	"orm",
+	"javascript",
+	"library",
+	"require.js",
+	"amd"
+  },
+  "bugs": {
+	"url": "https://github.com/spatools/spatools/issues"
+  },
+  "licenses": {
+	"type": "MIT",
+	"url": "https://github.com/spatools/spatools/blob/master/LICENSE"
+  },
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -11,5 +39,9 @@
     "grunt-contrib": "~0.7.0",
     "grunt-nuget": "~0.1.1",
     "grunt-tslint": "~0.2.2"
+  },
+  "scripts": {
+	"build": "npm install && grunt build",
+	"test": "grunt test"
   }
 }
