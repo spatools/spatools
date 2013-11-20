@@ -1,4 +1,4 @@
-﻿# SPA Tools
+﻿# SPA Tools [![Build Status](https://travis-ci.org/spatools/spatools.png?branch=master)](https://travis-ci.org/spatools/spatools)
 
 SPA Tools is a set of tools and modules to help building Single Page Applications and other modern web applications.
 
