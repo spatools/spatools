@@ -42,6 +42,6 @@
   },
   "scripts": {
 	"build": "npm install && grunt build",
-	"test": "grunt test"
+	"test": "grunt"
   }
 }
