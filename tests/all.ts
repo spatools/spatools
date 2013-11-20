@@ -8,10 +8,9 @@
 //});
 
 requirejs.config({
-    //deps: ["../spa/main"],
+    deps: ["../spa/main"],
 
-    jQuery: true,
-
+    //jQuery: true,
     paths: {
         'text': '../../scripts/text'
     }
@@ -32,10 +31,8 @@ var modules = [
     "data/mapping"
 ];
 
-require(["../spa/main"], () => {
-    require(modules, () => {
-        QUnit.start();
+require(modules, function () {
+    QUnit.start();
 
-        _.each(arguments, test => test.run());
-    });
+    _.each(arguments, test => test.run());
 });
