@@ -8,16 +8,16 @@
 //});
 
 requirejs.config({
-    deps: ["../spa/main"],
+    //deps: ["../spa/main"],
 
-    //jQuery: true,
+    jQuery: true,
+
     paths: {
         'text': '../../scripts/text'
     }
 });
 
 var modules = [
-    //"../spa/main",
     "base",
     "base64",
     "changeTracker",
@@ -32,8 +32,10 @@ var modules = [
     "data/mapping"
 ];
 
-require(modules, function () {
-    QUnit.start();
+require(["../spa/main"], () => {
+    require(modules, () => {
+        QUnit.start();
 
-    _.each(arguments, test => test.run());
+        _.each(arguments, test => test.run());
+    });
 });
