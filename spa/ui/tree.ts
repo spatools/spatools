@@ -627,7 +627,7 @@ export class TreeNode implements TreeContainer {
         store.setItem(stateCacheKey, JSON.stringify(state));
     }
 
-    public clicked(node: TreeNode, event: MouseEvent): void {
+    public clicked(node: TreeNode, event: MouseEvent): any {
         if ($(event.target).is("input")) {
             return true;
         }
