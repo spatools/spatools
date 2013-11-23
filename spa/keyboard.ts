@@ -35,8 +35,9 @@ export class KeyboardManager {
     /** Bind keyboard manager to current window */
     public bind(): void {
         $(window).bind("keydown.kbdManager", e => {
-            if ($(e.target).is("input"))
+            if ($(e.target).is("input")) {
                 return;
+            }
 
             switch (e.keyCode) {
                 case 16: //Shift
@@ -53,8 +54,9 @@ export class KeyboardManager {
             }
         });
         $(window).bind("keyup.kbdManager", e => {
-            if ($(e.target).is("input"))
+            if ($(e.target).is("input")) {
                 return;
+            }
 
             switch (e.keyCode) {
                 case 16: //Shift
