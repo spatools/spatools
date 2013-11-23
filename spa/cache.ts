@@ -37,13 +37,13 @@ export function reset(): JQueryPromise<void> {
 }
 
 /** Load a resource in cache */
-export function load(key: string, url: string, mime: string = "text/plain", force: boolean = false): JQueryPromise<CacheResult> {
-    return cache(key, url, mime, force);
+export function load(key: string, url: string, mime: string = "text/plain", encode: boolean = false, force: boolean = false): JQueryPromise<CacheResult> {
+    return cache(key, url, mime, encode, force);
 }
 
 /** Load a script in cache */
 export function loadScript(key: string, url: string, force: boolean = false): JQueryPromise<any> {
-    return cache(key, url, "application/x-javascript", force).then(entry => {
+    return cache(key, url, "application/x-javascript", true, force).then(entry => {
         return utils.unsafe(() => {
             var deferred = $.Deferred(),
                 script = doc.createElement("script");
@@ -62,49 +62,49 @@ export function loadScript(key: string, url: string, force: boolean = false): JQ
 
 /** Load a style in cache */
 export function loadStyle(key: string, url: string, force: boolean = false): JQueryPromise<void> {
-    return cache(key, url, "text/css", force)
-        .then(entry => base64.decode(entry.content))
+    return cache(key, url, "text/css", false, force)
+        .then(entry => entry.content)
         .then(loader.loadStyle);
 }
 
-/** >Load a style sheet in cache */
+/** Load a style sheet in cache */
 export function loadStylesheet(key: string, url: string, force: boolean = false): JQueryPromise<string> {
-    return cache(key, url, "text/css", force)
+    return cache(key, url, "text/css", true, force)
         .then(entry => base64.createDataURL("text/css", entry.content))
         .then(loader.loadStylesheet);
 }
 
 /** Load an HTML fragment in cache */
 export function loadHTML(key: string, url: string, force: boolean = false): JQueryPromise<string> {
-    return cache(key, url, "text/html", force)
-        .then(entry => base64.decode(entry.content));
+    return cache(key, url, "text/html", false, force)
+        .then(entry => entry.content);
 }
 
 /** Load an JSON result in cache */
 export function loadJSON<T>(key: string, url: string, force: boolean = false): JQueryPromise<T> {
-    return cache(key, url, "text/json", force)
-        .then(entry => JSON.parse(base64.decode(entry.content)));
+    return cache(key, url, "text/json", false, force)
+        .then(entry => JSON.parse(entry.content));
 }
 
 //#endregion
 
 //#region Private Methods
 
-function cache(key: string, url: string, mime: string, force?: boolean): JQueryPromise<CacheResult> {
+function cache(key: string, url: string, mime: string, encode?: boolean, force?: boolean): JQueryPromise<CacheResult> {
     if (!deferreds[key]) {
         deferreds[key] = loadCache(key).then(result => {
             if (result && !force) {
                 return result;
             }
 
-            return downloadAndEncode(key, url, mime, result);
+            return downloadAndEncode(key, url, mime, encode, result);
         }).always(() => { delete deferreds[key]; });
     }
 
     return deferreds[key];
 }
 
-function downloadAndEncode(key: string, url: string, mime: string, cache?: CacheResult): JQueryPromise<CacheResult> {
+function downloadAndEncode(key: string, url: string, mime: string, encode?: boolean, cache?: CacheResult): JQueryPromise<CacheResult> {
     var opts: JQueryAjaxSettings = { url: url, dataType: "text" };
     if (cache)
         opts.data = { date: cache.date };
@@ -118,7 +118,7 @@ function downloadAndEncode(key: string, url: string, mime: string, cache?: Cache
             key: key,
             mime: mime,
             url: url,
-            content: base64.encode(content),
+            content: encode ? base64.encode(content) : content,
             date: new Date().toJSON()
         };
 
