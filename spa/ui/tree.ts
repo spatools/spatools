@@ -628,6 +628,10 @@ export class TreeNode implements TreeContainer {
     }
 
     public clicked(node: TreeNode, event: MouseEvent): void {
+        if ($(event.target).is("input")) {
+            return true;
+        }
+
         switch (event.which) {
             case 1:
                 this.selectNode();
@@ -764,15 +768,12 @@ function nodeRenameUpdateValue(element: HTMLElement, valueAccessor: () => any, a
 ko.bindingHandlers.treenoderename = {
     init: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void {
         var $element = $(element),
-            updateHandler = function () {
-                nodeRenameUpdateValue(element, valueAccessor, allBindingsAccessor, viewModel);
-            };
+            updateHandler = () => { nodeRenameUpdateValue(element, valueAccessor, allBindingsAccessor, viewModel); };
 
-        $element.click(() => false).focus("focus", function () {
-            /* add scroll to element on focus http://stackoverflow.com/questions/4217962/scroll-to-an-element-using-jquery*/
+        $element.on({
+            blur: updateHandler,
+            keyup: e => (e.which === 13) && updateHandler()
         });
-        $element.bind("blur", _.partial(nodeRenameUpdateValue, element, valueAccessor, allBindingsAccessor, viewModel));
-        $element.bind("keyup", e => (e.which === 13) && updateHandler());
     },
     update: function (element: HTMLElement, valueAccessor: () => any, allBindingsAccessor: () => any, viewModel: any): void {
         ko.bindingHandlers.value.update.call(this, element, valueAccessor);
