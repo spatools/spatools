@@ -280,6 +280,7 @@ export interface RibbonButtonOptions {
     title?: any;
     icon?: any;
     selected?: any;
+    class?: any;
     click?: () => any;
 }
 
@@ -287,12 +288,14 @@ export class RibbonButton extends RibbonItem {
     public title: KnockoutObservable<string>;
     public icon: KnockoutObservable<string>;
     public selected: KnockoutObservable<boolean>;
+    public class: KnockoutObservable<string>;
     public click: () => any;
 
     constructor(options: RibbonButtonOptions) {
         this.title = utils.createObservable(options.title, "Button");
         this.icon = utils.createObservable(options.icon, "icon-base");
         this.selected = utils.createObservable(options.selected, false);
+        this.class = utils.createObservable(options.class);
         this.click = options.click || function () { return null; };
 
         super();
@@ -367,6 +370,7 @@ export interface RibbonInputOptions {
 
     valueUpdate?: any;
     attr?: any;
+    on?: any;
 }
 
 export class RibbonInput extends RibbonItem {
@@ -375,6 +379,7 @@ export class RibbonInput extends RibbonItem {
     public type: KnockoutObservable<string>;
     public value: KnockoutObservable<any>;
     public class: KnockoutObservable<any>;
+    public on: KnockoutObservable<any>;
 
     public options: any;
     public optionsText: any;
@@ -389,6 +394,7 @@ export class RibbonInput extends RibbonItem {
         this.type = utils.createObservable(options.type, "text");
         this.value = utils.createObservable(options.value);
         this.class = utils.createObservable(options.class);
+        this.on = utils.createObservable(options.on);
 
         options.options && (this.options = options.options);
         options.optionsText && (this.optionsText = options.optionsText);
@@ -673,7 +679,7 @@ ko.bindingHandlers.ribbonButton = {
 
         $(element).addClass("ribbon-button");
 
-        var bt = $("<button>").attr("data-bind", "click: click, css: { selected: selected }").appendTo(container);
+        var bt = $("<button>").attr("data-bind", "click: click, css: { selected: selected }, classes: $data.class").appendTo(container);
         $("<span>").addClass("ribbon-icon").attr("data-bind", "classes: icon").appendTo(bt);
         $("<span>").addClass("ribbon-button-title").attr("data-bind", "text: title").appendTo(bt);
 
@@ -761,7 +767,7 @@ ko.bindingHandlers.ribbonInput = {
             inputBinding += ", valueUpdate: valueUpdate";
         }
 
-        inputBinding += ", css: $data.class";
+        inputBinding += ", css: $data.class, on: on";
 
         inputElement.attr("data-bind", inputBinding);
         inputElement.appendTo(container);
