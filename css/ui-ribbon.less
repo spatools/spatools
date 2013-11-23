@@ -1,5 +1,5 @@
-﻿@import-once "variables.less";
-@import-once "mixins.less";
+﻿@import "variables.less";
+@import "mixins.less";
 
 @ribbon-size: 120px;
 @ribbon-collapsed-size: 30px;
@@ -199,6 +199,10 @@
                                         width: 100%;
                                     }
                                 }
+                                
+                                &.ribbon-select-block select {
+                                    display: block;
+                                }
 
                                 label {
                                     display: inline-block;
@@ -375,11 +379,22 @@
                                     -webkit-box-shadow: 0 0 1px 1px rgba(0,0,0,0.2);
                                     -moz-box-shadow: 0 0 1px 1px rgba(0,0,0,0.2);
                                     box-shadow: 0 0 1px 1px rgba(0,0,0,0.2);
+                                    white-space: nowrap;
 
                                     li.ribbon-flyout-item {
-                                        float: left;
+                                        display: inline-block;
                                         margin: 2px;
                                         padding: 4px;
+                                    
+                                        .ribbon-long-text {
+                                            display: list-item;
+                                            width: auto;
+
+                                            input.ribbon-input-text {
+                                                display: block;
+                                                width: 150px;
+                                            }
+                                        }
                                     }
                                 }
                             }

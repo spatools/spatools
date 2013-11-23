@@ -614,17 +614,11 @@ function flyoutAfterRender(nodes: any[]): void {
         if (!ul.is(":visible")) {
             $("html").on("click", function (e) {
                 ul.fadeOut();
-                $("html").unbind("click");
+                $("html").off("click");
             });
+
             $(".ribbon-flyout-content").fadeOut();
-            var width = 0;
-            ul.show()
-                .children("li")
-                .each(function () { width += $(this).outerWidth(true); })
-                .end()
-                .width(width)
-                .hide()
-                .fadeIn();
+            ul.fadeIn();
 
             event.stopPropagation();
         }
