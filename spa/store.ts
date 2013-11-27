@@ -21,7 +21,7 @@ function createFromIStorage(type: string, storage: ISimpleStorage): void {
 
 //#region Create Available Stores
 
-class MemoryStorage implements ISimpleStorage {
+export class MemoryStorage implements ISimpleStorage {
     private memory = {};
     private timeouts = {};
     public length: number = 0;
@@ -51,7 +51,7 @@ class MemoryStorage implements ISimpleStorage {
 }
 createFromIStorage("memory", new MemoryStorage());
 
-class WebSQLStorage implements ISimpleStorage {
+export class WebSQLStorage implements ISimpleStorage {
     private memory = {};
     private db = null;
 
@@ -123,6 +123,131 @@ class WebSQLStorage implements ISimpleStorage {
     }
 }
 createFromIStorage("websql", new WebSQLStorage());
+
+export class IndexedDBStorage implements ISimpleStorage {
+    private memory = {};
+    private db: IDBDatabase = null;
+
+    public length: number = 0;
+    public dbversion: number = 1;
+    public dbname = "spastore";
+    public tablename = "storetable";
+
+    constructor() {
+        window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+        window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+        window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+    }
+
+    private createUpgradeNeeded(dfd: JQueryDeferred<any>): (e: IDBVersionChangeEvent) => void {
+        return (e: IDBVersionChangeEvent) => {
+            var _db = e.target.result;
+
+            e.target.transaction.onerror = dfd.reject;
+
+            if (!_db.objectStoreNames.contains(this.tablename)) {
+                _db.createObjectStore(this.tablename, { keyPath: "key" });
+            }
+        };
+    }
+    private checkDatabaseConnection(): JQueryPromise<IDBDatabase> {
+        return $.Deferred<IDBDatabase>(dfd => {
+            var request = indexedDB.open(this.dbname, this.dbversion);
+
+            request.onupgradeneeded = this.createUpgradeNeeded(dfd);
+            request.onsuccess = e => {
+                this.db = e.target.result;
+                dfd.resolve(this.db);
+            };
+
+            request.onerror = dfd.reject;
+            request.onblocked = dfd.reject;
+        }).promise();
+    }
+    private ensureDatabase(): JQueryPromise<IDBDatabase> {
+        return $.when(this.db || this.checkDatabaseConnection());
+    }
+
+    public init(): JQueryPromise<any> {
+        return this.ensureDatabase().then(db => {
+            return $.Deferred(dfd => {
+                var store = db.transaction([this.tablename], "readonly").objectStore(this.tablename),
+                    cursor = store.openCursor(),
+                    length = 0;
+
+                cursor.onsuccess = e => {
+                    var _cursor = e.target.result;
+                    if (_cursor) {
+                        var storeValue = _cursor.value;
+                        this.memory[storeValue.key] = storeValue.value;
+                        length++;
+
+                        _cursor.continue();
+                    }
+                    else {
+                        this.length = length;
+                        dfd.resolve(this.memory);
+                    }
+                };
+
+                cursor.onerror = dfd.reject;
+            }).promise();
+        });
+    }
+    public clear() {
+        this.memory = {};
+        this.length = 0;
+        return this.ensureDatabase().then(db => {
+            return $.Deferred(dfd => {
+                var tx = db.transaction([this.tablename], "readwrite");
+                tx.oncomplete = dfd.resolve;
+                tx.onabort = dfd.reject;
+
+                tx.objectStore(this.tablename).clear();
+            });
+        });
+    }
+
+    public key(index: number) {
+        return _.find(_.values(this.memory), (val, i) => i === index) || null;
+    }
+    public getItem(key: string) {
+        return this.memory[key] || null;
+    }
+    public setItem(key: string, value: any) {
+        if (!this.memory[key])
+            this.length++;
+
+        this.memory[key] = value;
+
+        return this.ensureDatabase().then(db => {
+            return $.Deferred(dfd => {
+                var store = db.transaction([this.tablename], "readwrite").objectStore(this.tablename),
+                    request = store.put({ key: key, value: value });
+
+                request.onerror = dfd.reject;
+                request.onsuccess = e => dfd.resolve(e.target.result);
+            });
+        });
+    }
+    public removeItem(key: string) {
+        if (this.memory[key]) {
+            delete this.memory[key];
+            this.length--;
+
+            return this.ensureDatabase().then(db => {
+                return $.Deferred(dfd => {
+                    var store = db.transaction([this.tablename], "readwrite").objectStore(this.tablename),
+                        request = store.delete(key);
+
+                    request.onerror = dfd.reject;
+                    request.onsuccess = e => dfd.resolve(e.target.result);
+                });
+            });
+        }
+    }
+}
+createFromIStorage("indexeddb", new IndexedDBStorage());
 
 _.each(["localStorage", "sessionStorage"], function (storageType: string): void {
     try {
@@ -200,6 +325,7 @@ export function changeStore(type: string): JQueryPromise<void> {
 
     return utils.wrapError("NOT FOUND");
 }
+
 export function addStorageType(type: string, store: ISimpleStorage, change: boolean): JQueryPromise<void> {
     if (stores[type]) {
         throw new Error("This store already exists !");

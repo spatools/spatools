@@ -37,7 +37,6 @@ interface Window {
     getComputedStyle(element: Node, pseudoElt?: any): CSSStyleDeclaration;
 }
 
-
 interface Element {
     offsetWidth: number;
     offsetHeight: number;
