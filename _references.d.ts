@@ -6,6 +6,7 @@
 /// <reference path="scripts/typings/underscore/underscore.d.ts" />
 /// <reference path="scripts/typings/moment/moment.d.ts" />
 /// <reference path="scripts/typings/globalize/globalize.d.ts" />
+/// <reference path="scripts/typings/modernizr/modernizr.d.ts" />
 
 declare function escape(text: string): string;
 declare function unescape(text: string): string;
