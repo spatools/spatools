@@ -26,28 +26,27 @@ export class MemoryStorage implements ISimpleStorage {
     private timeouts = {};
     public length: number = 0;
 
-    clone = function (obj) {
+    private clone(obj) {
         return obj === undefined ? undefined : JSON.parse(JSON.stringify(obj));
-    };
+    }
 
-    key = function (index: any): any {
-        return _.find(_.values(this.memory), (val, i: number) => i === index);
-    };
-
-    getItem = function (key: any): any {
+    public key(index: any): any {
+        return _.find(_.keys(this.memory), (val, i: number) => i === index) || null;
+    }
+    public getItem(key: any): any {
         return this.clone(this.memory[key]);
-    };
-    setItem = function (key: any, value: any): void {
+    }
+    public setItem(key: any, value: any): void {
         this.memory[key] = value;
-    };
-    removeItem = function (key: any): void {
+    }
+    public removeItem(key: any): void {
         delete this.memory[key];
-    };
+    }
 
-    clear = function (): void {
+    public clear(): void {
         this.memory = {};
         return null;
-    };
+    }
 }
 createFromIStorage("memory", new MemoryStorage());
 
@@ -95,7 +94,7 @@ export class WebSQLStorage implements ISimpleStorage {
     }
 
     public key(index: number) {
-        return _.find(_.values(this.memory), (val, i) => i === index) || null;
+        return _.find(_.keys(this.memory), (val, i) => i === index) || null;
     }
     public getItem(key: string) {
         return this.memory[key] || null;
@@ -209,7 +208,7 @@ export class IndexedDBStorage implements ISimpleStorage {
     }
 
     public key(index: number) {
-        return _.find(_.values(this.memory), (val, i) => i === index) || null;
+        return _.find(_.keys(this.memory), (val, i) => i === index) || null;
     }
     public getItem(key: string) {
         return this.memory[key] || null;
