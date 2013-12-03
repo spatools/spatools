@@ -69,6 +69,10 @@ interface Function {
     result: any;
 }
 
+interface Navigator {
+    pointerEnabled: boolean;
+}
+
 interface Node {
     tagName: string;
 }

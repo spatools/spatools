@@ -3,7 +3,8 @@
 import utils = require("../utils");
 
 var doc = document,
-    $doc = $(doc);
+    $doc = $(doc),
+    pointerEnabled = window.navigator.msPointerEnabled || window.navigator.pointerEnabled;
 
 //#region Private Methods
 
@@ -19,11 +20,27 @@ function getCoefficient(container: JQuery): number {
 function getMousePosition(event: JQueryEventObject, container: JQuery): utils.Point {
     var offset = container.offset(),
         transform = container.get(0).transform,
-        coef = getCoefficient(container);
+        coef = getCoefficient(container),
+        tmp, eX, eY;
+
+    if ((<any>event.originalEvent).touches) {
+        tmp = (<any>event.originalEvent).touches[0];
+        eX = tmp.pageX;
+        eY = tmp.pageY;
+    }
+    else if (pointerEnabled && (<any>event.originalEvent).pointerId) {
+        tmp = (<MSPointerEvent>(<any>event).originalEvent).currentPoint.Position;
+        eX = tmp.x;
+        eY = tmp.y;
+    }
+    else {
+        eX = event.pageX;
+        eY = event.pageY;
+    }
 
     return {
-        x: (event.pageX - offset.left) * (1 / coef),
-        y: (event.pageY - offset.top) * (1 / coef)
+        x: (eX - offset.left) * (1 / coef),
+        y: (eY - offset.top) * (1 / coef)
     };
 }
 
@@ -85,14 +102,22 @@ export class Draggable {
     public enable(): void {
         if (!this.isEnabled()) {
             this.$element.data("ko-draggable", { isMouseDown: false, lastPoint: { x: 0, y: 0 } });
-            this.$element.on("mousedown", this.onMouseDown);
+            this.$element.on("mousedown touchstart pointerdown", this.onMouseDown);
+
+            if (pointerEnabled)
+                this.$element.css({ "touch-action": "none", "-ms-touch-action": "none" });
+
             this.isEnabled(true);
         }
     }
     public disable(): void {
         if (this.isEnabled()) {
             this.$element.data("ko-draggable", { isMouseDown: false, lastPoint: { x: 0, y: 0 } });
-            this.$element.off("mousedown", this.onMouseDown);
+            this.$element.off("mousedown touchstart pointerdown", this.onMouseDown);
+
+            if (pointerEnabled)
+                this.$element.css({ "touch-action": "", "-ms-touch-action": "" });
+
             this.isEnabled(false);
         }
     }
@@ -109,8 +134,8 @@ export class Draggable {
         $data.vector = { x: point.x - pos.x, y: point.y - pos.y };
         $data.isMouseDown = true;
 
-        $doc.on("mouseup", this.onMouseUp);
-        this.container.on("mousemove", this.onMouseMove);
+        $doc.on("mouseup touchend pointerup", this.onMouseUp);
+        this.container.on("mousemove touchmove pointermove", this.onMouseMove);
 
         if (this.dragStart && _.isFunction(this.dragStart)) {
             this.dragStart.call(this.viewModel);
@@ -122,19 +147,15 @@ export class Draggable {
         return false;
     }
     private onMouseUp(e: JQueryEventObject): void {
-        var $data = this.$element.data("ko-draggable"),
-            point = getElementPoint(e, this.$element, this.container);
-
+        var $data = this.$element.data("ko-draggable");
         $data.isMouseDown = false;
 
         if (this.dragEnd && _.isFunction(this.dragEnd)) {
             this.dragEnd.call(this.viewModel);
         }
-        //data.left(point.x);
-        //data.top(point.y);
 
-        $doc.off("mouseup", this.onMouseUp);
-        this.container.off("mousemove", this.onMouseMove);
+        $doc.off("mouseup touchend pointerup", this.onMouseUp);
+        this.container.off("mousemove touchmove pointermove", this.onMouseMove);
 
         doc.onselectstart = null;
         this.$element.get(0).ondragstart = null;
