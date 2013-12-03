@@ -20,27 +20,18 @@ function getCoefficient(container: JQuery): number {
 function getMousePosition(event: JQueryEventObject, container: JQuery): utils.Point {
     var offset = container.offset(),
         transform = container.get(0).transform,
-        coef = getCoefficient(container),
-        tmp, eX, eY;
+        coef = getCoefficient(container);
 
     if ((<any>event.originalEvent).touches) {
-        tmp = (<any>event.originalEvent).touches[0];
-        eX = tmp.pageX;
-        eY = tmp.pageY;
+        event = (<any>event.originalEvent).touches[0];
     }
     else if (pointerEnabled && (<any>event.originalEvent).pointerId) {
-        tmp = (<MSPointerEvent>(<any>event).originalEvent).currentPoint.Position;
-        eX = tmp.x;
-        eY = tmp.y;
-    }
-    else {
-        eX = event.pageX;
-        eY = event.pageY;
+        event = (<any>event.originalEvent);
     }
 
     return {
-        x: (eX - offset.left) * (1 / coef),
-        y: (eY - offset.top) * (1 / coef)
+        x: (event.pageX - offset.left) * (1 / coef),
+        y: (event.pageY - offset.top) * (1 / coef)
     };
 }
 
