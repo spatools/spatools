@@ -136,7 +136,7 @@ export class Filter {
         value = _.isUndefined(value) ? this.value() : value;
 
         if (_.isUndefined(value) || _.isNull(value)) { return "null"; }
-        else if (_.isNumber(value)) { return null; }
+        else if (_.isNumber(value) || _.isBoolean(value)) { return null; }
         else if (guid.isGuid(value)) { return "guid"; }
         else if (moment(value) && moment(value).isValid()) { return "datetime"; }
         else if (_.isString(value)) { return "string"; }
